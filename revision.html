@@ -100,8 +100,15 @@
 
     .qcm-question {
       font-size: 18px; font-weight: 600; line-height: 1.45;
-      margin-bottom: 24px; color: var(--c-dark);
+      margin-bottom: 16px; color: var(--c-dark);
     }
+    .qcm-multi-hint {
+      display: flex; align-items: center; gap: 7px;
+      font-size: 12.5px; font-weight: 600; color: var(--c-blue);
+      background: var(--c-blue-light); border-radius: var(--r-sm);
+      padding: 8px 12px; margin-bottom: 16px;
+    }
+    .qcm-multi-hint .app-icon { width: 15px; height: 15px; }
 
     .options-grid { display: flex; flex-direction: column; gap: 10px; margin-bottom: 20px; }
 
@@ -271,13 +278,17 @@
 
       <div class="qcm-card">
         <div class="qcm-question" id="qcm-question">Question ici</div>
+        <div class="qcm-multi-hint" id="qcm-multi-hint" style="display:none;"><span data-icon="list"></span> Plusieurs réponses possibles — sélectionne-les toutes puis valide.</div>
         <div class="options-grid" id="qcm-options"><!-- filled --></div>
         <div id="qcm-explain"></div>
       </div>
 
       <div class="qcm-nav">
         <div id="qcm-score-live" class="badge badge-green">0 / 0 correctes</div>
-        <button class="btn btn-primary" id="qcm-next" disabled>Suivant →</button>
+        <div style="display:flex;gap:10px;">
+          <button class="btn btn-ocre" id="qcm-validate" style="display:none;" disabled>Valider</button>
+          <button class="btn btn-primary" id="qcm-next" disabled>Suivant →</button>
+        </div>
       </div>
     </div>
 
@@ -341,7 +352,7 @@
 
 <script src="app.js"></script>
 <script>
-const { State, QUESTIONS, shuffle, getQuestionsByDay, formatTime, icon } = window.APP;
+const { State, QUESTIONS, shuffle, getQuestionsByDay, formatTime, icon, isMultiAnswer, answerKey, isSelectionCorrect } = window.APP;
 
 // ── DRAWER MOBILE (hamburger) ─────────────────────────────────
 const sidebarEl  = document.querySelector('.sidebar');
@@ -361,6 +372,8 @@ let currentFormat = 'qcm';
 let answered = false;
 let flipped = false;
 let sessionStart = Date.now();
+let qcmSelected = new Set();   // réponses cochées (mode multi)
+let qcmMulti = false;
 
 // ── SIDEBAR DAYS ────────────────────────────────────────────
 const sidebarDays = document.getElementById('sidebar-days');
@@ -427,6 +440,9 @@ function startSession(mode, dayNum) {
     const today = new Date();
     const dayIndex = (today.getDay() + 6) % 7; // Mon=0
     q = getQuestionsByDay((dayIndex % 8) + 1);
+  } else if (mode === 'srs') {
+    q = State.getDueQuestions(20);
+    if (q.length === 0) q = State.getWeakQuestions(15);
   } else if (mode === 'weak') {
     q = State.getWeakQuestions(20);
   } else if (mode === 'unseen') {
@@ -463,9 +479,10 @@ function showQCM() {
 function renderQCMQuestion() {
   if (current >= queue.length) { showCompletion(); return; }
   answered = false;
+  qcmSelected = new Set();
 
   const q = queue[current];
-  const s = State.data.questionStats[q.id];
+  qcmMulti = isMultiAnswer(q);
 
   document.getElementById('qcm-cat').textContent = q.categorie;
   document.getElementById('qcm-subject').textContent = q.sujet;
@@ -475,12 +492,15 @@ function renderQCMQuestion() {
   document.getElementById('qcm-explain').innerHTML = '';
   document.getElementById('qcm-next').disabled = true;
 
-  // Difficulty dots
+  const hint = document.getElementById('qcm-multi-hint');
+  const validateBtn = document.getElementById('qcm-validate');
+  hint.style.display = qcmMulti ? 'flex' : 'none';
+  validateBtn.style.display = qcmMulti ? 'inline-flex' : 'none';
+  validateBtn.disabled = true;
+
   const optGrid = document.getElementById('qcm-options');
   optGrid.innerHTML = '';
   const letters = ['A', 'B', 'C', 'D'];
-
-  // Shuffle option indices
   const idxs = shuffle([0,1,2,3].slice(0, q.options.length));
 
   idxs.forEach((optIdx, pos) => {
@@ -488,51 +508,65 @@ function renderQCMQuestion() {
     btn.className = 'option-btn';
     btn.dataset.idx = optIdx;
     btn.innerHTML = `<span class="option-letter">${letters[pos]}</span><span>${q.options[optIdx]}</span>`;
-    btn.addEventListener('click', () => handleQCMAnswer(btn, optIdx, q));
+    if (qcmMulti) btn.addEventListener('click', () => toggleMultiOption(btn, optIdx));
+    else btn.addEventListener('click', () => handleQCMAnswer([optIdx], q));
     optGrid.appendChild(btn);
   });
 
   updateScoreLive();
 
-  // animation d'apparition de la carte
   const card = document.querySelector('#qcm-revision .qcm-card');
   if (card) { card.classList.remove('q-anim'); void card.offsetWidth; card.classList.add('q-anim'); }
 }
 
-function handleQCMAnswer(btn, selectedIdx, q) {
+function toggleMultiOption(btn, idx) {
+  if (answered) return;
+  if (qcmSelected.has(idx)) { qcmSelected.delete(idx); btn.classList.remove('selected'); }
+  else { qcmSelected.add(idx); btn.classList.add('selected'); }
+  document.getElementById('qcm-validate').disabled = qcmSelected.size === 0;
+}
+
+function handleQCMAnswer(selectedArr, q) {
   if (answered) return;
   answered = true;
 
-  const isCorrect = selectedIdx === q.bonne;
+  const key = answerKey(q);
+  const keySet = new Set(key);
+  const selSet = new Set(selectedArr);
+  const isCorrect = isSelectionCorrect(q, selectedArr);
   State.recordAnswer(q.id, isCorrect);
   sessionTotal++;
   if (isCorrect) sessionCorrect++;
 
-  // Mark options
-  document.querySelectorAll('.option-btn').forEach(b => {
+  document.querySelectorAll('#qcm-options .option-btn').forEach(b => {
     b.disabled = true;
     const idx = parseInt(b.dataset.idx);
-    if (idx === q.bonne) b.classList.add('correct');
-    else if (idx === selectedIdx && !isCorrect) b.classList.add('wrong');
-    else b.classList.add('show-correct');
+    b.classList.remove('selected');
+    if (keySet.has(idx)) b.classList.add('correct');         // toutes les bonnes en vert
+    else if (selSet.has(idx)) b.classList.add('wrong');      // sélectionnée à tort
   });
-  if (isCorrect) btn.classList.add('correct');
 
-  // Explanation
+  const goodTxt = key.map(i => q.options[i]).join('  ·  ');
   const expEl = document.getElementById('qcm-explain');
   expEl.innerHTML = `
     <div class="explain-box explain-box--${isCorrect ? 'correct' : 'wrong'}">
       <div class="explain-box__title">${isCorrect ? icon('check-circle') + ' Bonne réponse !' : icon('x-circle') + ' Pas tout à fait…'}</div>
-      <div style="font-size:14px;margin-bottom:8px;">${isCorrect ? '' : `<b>La bonne réponse était :</b> ${q.options[q.bonne]}`}</div>
+      <div style="font-size:14px;margin-bottom:8px;">${isCorrect ? '' : `<b>${key.length > 1 ? 'Bonnes réponses' : 'La bonne réponse'} :</b> ${goodTxt}`}</div>
       <div class="explain-section"><b>${icon('lightbulb')} Explication :</b><br>${q.explication}</div>
       ${q.piege ? `<div class="piege-section"><b>${icon('alert-triangle')} Piège :</b><br>${q.piege}</div>` : ''}
       ${q.mnemo ? `<div class="mnemo-section"><b>${icon('brain')} Mémo :</b> ${q.mnemo}</div>` : ''}
     </div>
   `;
 
+  document.getElementById('qcm-validate').style.display = 'none';
   document.getElementById('qcm-next').disabled = false;
   updateScoreLive();
 }
+
+document.getElementById('qcm-validate').addEventListener('click', () => {
+  if (qcmSelected.size === 0) return;
+  handleQCMAnswer([...qcmSelected], queue[current]);
+});
 
 document.getElementById('qcm-next').addEventListener('click', () => {
   current++; renderQCMQuestion();
@@ -573,7 +607,7 @@ function renderFCQuestion() {
   document.getElementById('fc-bar').style.width = `${((current + 1) / queue.length) * 100}%`;
   document.getElementById('fc-cat-inner').textContent = q.categorie;
   document.getElementById('fc-question').textContent = q.question;
-  document.getElementById('fc-answer').textContent = q.options[q.bonne];
+  document.getElementById('fc-answer').textContent = answerKey(q).map(i => q.options[i]).join('  ·  ');
   document.getElementById('fc-explain-back').innerHTML = `<b>${icon('lightbulb')}</b> ${q.explication}`;
 
   const mnemoEl = document.getElementById('fc-mnemo');

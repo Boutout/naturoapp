@@ -74,6 +74,62 @@
     }
     .hero-btn--ghost:hover { background: rgba(255,255,255,0.25); }
 
+    /* ── SRS CTA ── */
+    .srs-cta {
+      display: flex; align-items: center; gap: 14px;
+      background: linear-gradient(135deg, #FCEFD8, #FBF1E2);
+      border: 1.5px solid var(--c-ocre); border-radius: var(--r-lg);
+      padding: 16px 18px; margin-bottom: 24px; text-decoration: none; color: var(--c-dark);
+      transition: transform .2s var(--ease-out), box-shadow .2s var(--ease-out);
+    }
+    .srs-cta:hover { transform: translateY(-2px); box-shadow: var(--shadow-md); }
+    .srs-cta__ico { width: 44px; height: 44px; flex-shrink: 0; border-radius: 14px;
+      background: var(--c-ocre); color: #fff; display: flex; align-items: center; justify-content: center; }
+    .srs-cta__ico .app-icon { width: 24px; height: 24px; }
+    .srs-cta__txt { flex: 1; display: flex; flex-direction: column; }
+    .srs-cta__txt b { font-size: 15.5px; color: #7A4E1A; }
+    .srs-cta__sub { font-size: 12.5px; color: var(--c-mid); margin-top: 2px; }
+    .srs-cta__go { color: var(--c-ocre); }
+    .srs-cta__go .app-icon { width: 20px; height: 20px; }
+    .srs-cta.is-empty { background: var(--c-green-pale); border-color: var(--c-green-light); }
+    .srs-cta.is-empty .srs-cta__ico { background: var(--c-green); }
+    .srs-cta.is-empty .srs-cta__txt b { color: var(--c-green-deep); }
+    .srs-cta.is-empty .srs-cta__go { color: var(--c-green); }
+
+    /* ── GAMIFICATION ── */
+    .gami { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; margin-bottom: 28px; }
+    @media (max-width: 620px) { .gami { grid-template-columns: 1fr; } }
+    .gami-card {
+      background: var(--c-white); border: 1px solid rgba(26,92,69,0.08);
+      border-radius: var(--r-md); box-shadow: var(--shadow-sm);
+      padding: 16px 18px; display: flex; align-items: center; gap: 14px;
+    }
+    .gami-card__label { font-size: 12px; color: var(--c-mid); }
+    .gami-card__label b { color: var(--c-green-deep); }
+    .gami-card__sub { font-size: 12.5px; color: var(--c-mid); margin-top: 4px; }
+    .gami-level__info { flex: 1; min-width: 0; }
+    .gami-level__ring .ring-wrap__num { font-family: var(--font-display); font-size: 17px; font-weight: 700; color: var(--c-green-deep); }
+    .gami-xpbar { height: 8px; border-radius: 4px; background: #E8EAED; overflow: hidden; margin-top: 7px; }
+    .gami-xpbar__fill { height: 100%; border-radius: 4px; background: linear-gradient(90deg, var(--c-green-light), var(--c-green)); transition: width .8s var(--ease-out); }
+    .gami-streak__ico { width: 44px; height: 44px; flex-shrink: 0; border-radius: 14px;
+      background: var(--c-ocre-light); color: var(--c-ocre); display: flex; align-items: center; justify-content: center; }
+    .gami-streak__ico .app-icon { width: 24px; height: 24px; }
+    .gami-big { font-family: var(--font-display); font-size: 28px; font-weight: 700; color: var(--c-green-deep); line-height: 1; }
+    .gami-goal .ring-wrap__num { font-size: 14px; font-weight: 700; color: var(--c-green-deep); }
+    .gami-goal .ring-wrap__cap { display: none; }
+
+    /* ── BADGES ── */
+    .badges-row { display: flex; gap: 10px; overflow-x: auto; padding: 4px 2px 12px; margin-bottom: 20px; -webkit-overflow-scrolling: touch; }
+    .badge-chip { flex-shrink: 0; width: 84px; text-align: center; }
+    .badge-chip__ico { width: 56px; height: 56px; margin: 0 auto 6px; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      background: var(--c-green-pale); color: var(--c-green); transition: transform .2s var(--ease-spring); }
+    .badge-chip__ico .app-icon { width: 26px; height: 26px; }
+    .badge-chip.locked .badge-chip__ico { background: #EEF0F1; color: #B7Bec4; }
+    .badge-chip__name { font-size: 11px; font-weight: 600; line-height: 1.2; }
+    .badge-chip.locked .badge-chip__name { color: var(--c-mid); }
+    .badge-chip.earned .badge-chip__ico { box-shadow: 0 4px 12px rgba(39,137,106,0.25); }
+
     /* Planning grid */
     .plan-grid {
       display: grid;
@@ -256,6 +312,40 @@
     <div class="hero__ring ring-wrap" id="hero-ring"></div>
   </div>
 
+  <!-- SRS : révision du jour (répétition espacée) -->
+  <a class="srs-cta" id="srs-cta" href="revision.html?mode=srs">
+    <span class="srs-cta__ico" data-icon="rotate"></span>
+    <span class="srs-cta__txt">
+      <b id="srs-count">0 question à réviser</b>
+      <span class="srs-cta__sub">Révision intelligente : on te repropose ce que tu risques d'oublier.</span>
+    </span>
+    <span class="srs-cta__go" data-icon="arrow-right"></span>
+  </a>
+
+  <!-- GAMIFICATION -->
+  <div class="gami">
+    <div class="gami-card gami-level">
+      <div class="ring-wrap gami-level__ring" id="gami-level-ring"></div>
+      <div class="gami-level__info">
+        <div class="gami-card__label">Niveau <b id="gami-level">1</b> · <span id="gami-title">Curieux</span></div>
+        <div class="gami-xpbar"><div class="gami-xpbar__fill" id="gami-xpfill"></div></div>
+        <div class="gami-card__sub" id="gami-xp">0 / 150 XP</div>
+      </div>
+    </div>
+    <div class="gami-card gami-streak">
+      <span class="gami-streak__ico" data-icon="flame"></span>
+      <div><div class="gami-big" id="gami-streak">0</div><div class="gami-card__label">jours de suite</div></div>
+    </div>
+    <div class="gami-card gami-goal">
+      <div class="ring-wrap" id="gami-goal-ring"></div>
+      <div><div class="gami-card__label">Objectif du jour</div><div class="gami-card__sub" id="gami-goal-sub">0 / 20</div></div>
+    </div>
+  </div>
+
+  <!-- BADGES -->
+  <div class="section-header" style="margin-bottom:10px;"><h2><span data-icon="award"></span> Succès</h2></div>
+  <div class="badges-row" id="badges-row"></div>
+
   <!-- QUICK STATS -->
   <div class="quick-stats" id="quick-stats">
     <div class="qs-card"><div class="qs-card__icon" data-icon="edit"></div><div class="qs-card__val" id="qs-seen">0</div><div class="qs-card__lbl">Questions vues</div></div>
@@ -340,7 +430,7 @@
 
 <script src="app.js"></script>
 <script>
-  const { State, QUESTIONS, getQuestionsByDay, icon, animateNumber, progressRing, setRing, currentProfile } = window.APP;
+  const { State, QUESTIONS, BADGES, getQuestionsByDay, icon, escapeHtml, animateNumber, progressRing, setRing, currentProfile, celebrate } = window.APP;
 
   const PLAN_THEMES = [
     { title: "Bases fondamentales", q: "Q1–10",  icon: "sprout" },
@@ -354,6 +444,69 @@
     { title: "Examen blanc",        q: "80 Q",   icon: "clipboard", special: true },
     { title: "Révision ciblée",     q: "Erreurs",icon: "target", special: true },
   ];
+
+  function badgeToast(b) {
+    const el = document.createElement('div');
+    el.className = 'toast toast-success';
+    el.innerHTML = `${icon('award')} Badge débloqué : <b>${escapeHtml(b.nom)}</b>`;
+    document.getElementById('toast-container').appendChild(el);
+    setTimeout(() => el.remove(), 4000);
+  }
+
+  function renderGami() {
+    const d = State.data;
+    const RING = { color: '#27896A', track: '#E8EAED' };
+
+    // Badges nouvellement gagnés → célébration
+    const fresh = State.refreshBadges();
+
+    // Révision espacée (SRS)
+    const due = State.countDue();
+    const srs = document.getElementById('srs-cta');
+    const srsCount = document.getElementById('srs-count');
+    const srsSub = srs.querySelector('.srs-cta__sub');
+    if (due > 0) {
+      srs.classList.remove('is-empty');
+      srsCount.textContent = `${due} question${due > 1 ? 's' : ''} à réviser`;
+      srsSub.textContent = "Révision intelligente : on te repropose ce que tu risques d'oublier.";
+    } else {
+      srs.classList.add('is-empty');
+      srsCount.textContent = 'Tout est à jour ✓';
+      srsSub.textContent = 'Reviens demain pour ta révision du jour.';
+    }
+
+    // Niveau + XP
+    const li = State.levelInfo();
+    const lring = document.getElementById('gami-level-ring');
+    lring.innerHTML = progressRing(li.pct, { size: 58, stroke: 6, ...RING }) +
+      `<div class="ring-wrap__label"><div class="ring-wrap__num">${li.level}</div></div>`;
+    setRing(lring.querySelector('.ring__bar'), li.pct);
+    document.getElementById('gami-level').textContent = li.level;
+    document.getElementById('gami-title').textContent = li.title;
+    document.getElementById('gami-xp').textContent = `${li.inLevel} / ${li.perLevel} XP`;
+    requestAnimationFrame(() => { document.getElementById('gami-xpfill').style.width = li.pct + '%'; });
+
+    // Série quotidienne
+    animateNumber(document.getElementById('gami-streak'), d.dailyStreak || 0, { duration: 700 });
+
+    // Objectif du jour
+    const gp = State.goalProgress();
+    const gring = document.getElementById('gami-goal-ring');
+    gring.innerHTML = progressRing(gp.pct, { size: 56, stroke: 6, ...RING }) +
+      `<div class="ring-wrap__label"><div class="ring-wrap__num">${gp.pct}%</div></div>`;
+    setRing(gring.querySelector('.ring__bar'), gp.pct);
+    document.getElementById('gami-goal-sub').textContent = `${gp.done} / ${gp.goal}`;
+
+    // Badges
+    const earned = new Set(d.badges || []);
+    document.getElementById('badges-row').innerHTML = BADGES.map(b => `
+      <div class="badge-chip ${earned.has(b.id) ? 'earned' : 'locked'}" title="${escapeHtml(b.desc)}">
+        <div class="badge-chip__ico">${icon(b.icon)}</div>
+        <div class="badge-chip__name">${escapeHtml(b.nom)}</div>
+      </div>`).join('');
+
+    if (fresh.length) { celebrate(); fresh.forEach(badgeToast); }
+  }
 
   function render() {
     const d = State.data;
@@ -375,6 +528,9 @@
       `<div class="ring-wrap__label"><div class="ring-wrap__num" id="ring-num">0%</div><div class="ring-wrap__cap">maîtrise</div></div>`;
     setRing(ringEl.querySelector('.ring__bar'), score);
     animateNumber(document.getElementById('ring-num'), score, { suffix: '%', duration: 1100 });
+
+    // Gamification (niveau, série, objectif, badges, SRS)
+    renderGami();
 
     // Quick stats (compteurs animés)
     let seen = 0, bestStreak = 0;

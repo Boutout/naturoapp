@@ -291,6 +291,7 @@
     <div class="exam-card">
       <div class="exam-q-num" id="exam-q-num">Question 1 sur 80</div>
       <div class="exam-question" id="exam-question">Chargement…</div>
+      <div class="qcm-multi-hint" id="exam-multi-hint" style="display:none;"><span data-icon="list"></span> Plusieurs réponses possibles — coche toutes les bonnes.</div>
       <div class="exam-options-grid" id="exam-options"></div>
     </div>
 
@@ -333,7 +334,7 @@
 
 <script src="app.js"></script>
 <script>
-const { State, QUESTIONS, shuffle, formatTime, getGrade, getScoreColor, icon } = window.APP;
+const { State, QUESTIONS, shuffle, formatTime, getGrade, getScoreColor, icon, isMultiAnswer, answerKey, isSelectionCorrect } = window.APP;
 
 // ── STATE ────────────────────────────────────────────────────
 let examQueue = [];
@@ -469,6 +470,9 @@ function renderExamQ() {
   document.getElementById('exam-q-count').textContent = `Q ${currentExamIdx + 1} / ${total}`;
   document.getElementById('exam-question').textContent = q.question;
 
+  const multi = isMultiAnswer(q);
+  document.getElementById('exam-multi-hint').style.display = multi ? 'flex' : 'none';
+
   // Nav dot highlight
   document.querySelectorAll('.q-nav-dot').forEach((d, i) => {
     d.classList.toggle('current', i === currentExamIdx);
@@ -478,17 +482,16 @@ function renderExamQ() {
   optGrid.innerHTML = '';
   const letters = ['A', 'B', 'C', 'D'];
   const order = shuffledOptionsMap[q.id] || [0,1,2,3];
+  const sel = examAnswers[q.id];
+  const selArr = Array.isArray(sel) ? sel : (sel == null ? [] : [sel]);
 
   order.forEach((optIdx, pos) => {
     const btn = document.createElement('button');
     btn.className = 'option-btn';
     btn.dataset.optIdx = optIdx;
-
-    const selected = examAnswers[q.id];
-    if (selected === optIdx) btn.classList.add('selected');
-
+    if (selArr.includes(optIdx)) btn.classList.add('selected');
     btn.innerHTML = `<span class="option-letter">${letters[pos]}</span><span>${q.options[optIdx]}</span>`;
-    btn.addEventListener('click', () => selectAnswer(q.id, optIdx));
+    btn.addEventListener('click', () => selectAnswer(q.id, optIdx, multi));
     optGrid.appendChild(btn);
   });
 
@@ -504,19 +507,28 @@ function renderExamQ() {
   if (card) { card.classList.remove('q-anim'); void card.offsetWidth; card.classList.add('q-anim'); }
 }
 
-function selectAnswer(qId, optIdx) {
-  examAnswers[qId] = optIdx;
-  const q = examQueue.find(x => x.id === qId);
+function selectAnswer(qId, optIdx, multi) {
+  if (multi) {
+    const cur = Array.isArray(examAnswers[qId]) ? examAnswers[qId] : [];
+    const i = cur.indexOf(optIdx);
+    if (i >= 0) cur.splice(i, 1); else cur.push(optIdx);
+    examAnswers[qId] = cur;
+    // une question multi est "répondue" dès qu'au moins une case est cochée
+    if (cur.length === 0) delete examAnswers[qId];
+  } else {
+    examAnswers[qId] = optIdx;
+  }
 
   // Update dots
   const qIdx = examQueue.findIndex(x => x.id === qId);
   const dot = document.getElementById(`dot-${qIdx}`);
-  if (dot) dot.classList.add('answered');
+  if (dot) dot.classList.toggle('answered', examAnswers[qId] !== undefined);
 
   // Update buttons
+  const sel = examAnswers[qId];
+  const selArr = Array.isArray(sel) ? sel : (sel == null ? [] : [sel]);
   document.querySelectorAll('#exam-options .option-btn').forEach(btn => {
-    btn.classList.remove('selected');
-    if (parseInt(btn.dataset.optIdx) === optIdx) btn.classList.add('selected');
+    btn.classList.toggle('selected', selArr.includes(parseInt(btn.dataset.optIdx)));
   });
 }
 
@@ -543,16 +555,17 @@ function finishExam() {
 
   examQueue.forEach(q => {
     const ans = examAnswers[q.id];
+    const selArr = Array.isArray(ans) ? ans : (ans == null ? [] : [ans]);
     if (ans === undefined) {
       skipped++;
       results.push({ q, ans: null, correct: false });
-    } else if (ans === q.bonne) {
+    } else if (isSelectionCorrect(q, selArr)) {
       correct++;
-      results.push({ q, ans, correct: true });
+      results.push({ q, ans: selArr, correct: true });
       State.recordAnswer(q.id, true);
     } else {
       wrong++;
-      results.push({ q, ans, correct: false });
+      results.push({ q, ans: selArr, correct: false });
       State.recordAnswer(q.id, false);
     }
   });
@@ -611,8 +624,8 @@ function finishExam() {
     const el = document.createElement('div');
     el.className = `review-item ${isCorrect ? 'correct' : 'wrong'}`;
 
-    const givenAns = ans !== null ? q.options[ans] : '(non répondu)';
-    const correctAns = q.options[q.bonne];
+    const givenAns = (ans && ans.length) ? ans.map(i => q.options[i]).join('  ·  ') : '(non répondu)';
+    const correctAns = answerKey(q).map(i => q.options[i]).join('  ·  ');
 
     el.innerHTML = `
       <div class="review-icon" style="color:${isCorrect ? 'var(--c-green)' : 'var(--c-red)'}">${isCorrect ? icon('check-circle') : icon('x-circle')}</div>

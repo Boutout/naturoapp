@@ -442,8 +442,8 @@ const QUESTIONS = [
   {
     id: 26, jour: 3,
     categorie: "Naturopathie / Typologies",
-    sujet: "Profil vagonotique",
-    question: "Le profil vagonotique de base se caractérise par :",
+    sujet: "Profil vagotonique",
+    question: "Le profil vagotonique de base se caractérise par :",
     options: [
       "Transit intestinal ralenti et dominance du cerveau gauche (logique)",
       "Péristaltisme intestinal augmenté et dominance du cerveau droit (intuition)",
@@ -451,9 +451,9 @@ const QUESTIONS = [
       "Constipation chronique et anxiété généralisée"
     ],
     bonne: 1,
-    explication: "Profil vagonotique = dominance parasympathique (nerf vague = vagus). Conséquences : péristaltisme augmenté (intestin réactif), tendance aux émotions, créativité, intuition, utilisation préférentielle du cerveau droit.",
-    piege: "Vagonotique ≠ sympathicotonique. Le sympathique = stress, accélération, cerveau gauche. Le parasympathique (vague) = repos, digestion, créativité.",
-    mnemo: "VAGO-NOTIQUE = le nerf VAGUE domine. Vague comme la mer = fluide, intuitif, intestin actif.",
+    explication: "Profil vagotonique = dominance parasympathique (nerf vague = vagus). Conséquences : péristaltisme augmenté (intestin réactif), tendance aux émotions, créativité, intuition, utilisation préférentielle du cerveau droit.",
+    piege: "Vagotonique ≠ sympathicotonique. Le sympathique = stress, accélération, cerveau gauche. Le parasympathique (nerf vague) = repos, digestion, créativité.",
+    mnemo: "VAGO-TONIQUE = TONUS du nerf VAGUE dominant. Vague comme la mer = fluide, intuitif, intestin actif.",
     tags: ["typologies", "terrain", "neurologie"]
   },
   {
@@ -1380,6 +1380,66 @@ const QUESTIONS = [
     piege: "Piège fréquent : confondre Candida avec une bactérie car souvent traité avec des antifongiques ressemblant à des antibiotiques. Candida = champignon ≠ bactérie.",
     mnemo: "CANDIDA = CANDIDE comme un champignon blanc innocent. Champignon = FONGIQUE. Candidose = MYCOse.",
     tags: ["pathologies", "mycologie", "microbiote"]
+  },
+
+  // ═══ Questions complémentaires (fondamentaux naturopathie) ═══
+  {
+    id: 81, jour: 1,
+    categorie: "Concepts fondamentaux",
+    sujet: "Les émonctoires",
+    question: "Parmi ces organes, lesquels sont des émonctoires (portes de sortie des déchets) ?",
+    options: ["Le foie", "Les reins", "La peau", "L'estomac"],
+    bonnes: [0, 1, 2],
+    explication: "Les 5 émonctoires de la naturopathie sont : foie, reins, intestins, poumons et peau. Ils éliminent les déchets de l'organisme. L'estomac est un organe de DIGESTION, pas d'élimination.",
+    piege: "L'estomac digère mais n'élimine pas : ce n'est pas un émonctoire. Ne pas le confondre avec les intestins.",
+    mnemo: "FRIPP : Foie, Reins, Intestins, Poumons, Peau = les 5 émonctoires.",
+    tags: ["émonctoires", "fondamentaux", "drainage"], important: true
+  },
+  {
+    id: 82, jour: 1,
+    categorie: "Concepts fondamentaux",
+    sujet: "Les 3 cures de Marchesseau",
+    question: "Quel est l'ordre logique des trois cures naturopathiques ?",
+    options: [
+      "Désintoxication → Revitalisation → Stabilisation",
+      "Revitalisation → Désintoxication → Stabilisation",
+      "Stabilisation → Revitalisation → Désintoxication",
+      "Revitalisation → Stabilisation → Désintoxication"
+    ],
+    bonne: 0,
+    explication: "P.V. Marchesseau décrit 3 cures : 1) la cure de DÉSINTOXICATION (drainage des émonctoires), 2) la REVITALISATION (recharge en nutriments), 3) la STABILISATION (équilibre durable). On nettoie avant de recharger.",
+    piege: "On draine AVANT de revitaliser : inutile de recharger un organisme encore encrassé.",
+    mnemo: "DRS : on Détoxifie, on Recharge, on Stabilise.",
+    tags: ["cures", "fondamentaux", "vitalisme"]
+  },
+  {
+    id: 83, jour: 3,
+    categorie: "Naturopathie / Typologies",
+    sujet: "Tempéraments hippocratiques",
+    question: "Quels tempéraments font partie de la classification hippocratique des 4 humeurs ?",
+    options: ["Sanguin", "Lymphatique", "Bilieux", "Électrique"],
+    bonnes: [0, 1, 2],
+    explication: "Les 4 tempéraments d'Hippocrate reposent sur 4 humeurs : sanguin (sang), lymphatique/flegmatique (lymphe), bilieux/colérique (bile jaune) et nerveux/mélancolique (bile noire). « Électrique » n'existe pas dans cette classification.",
+    piege: "Le 4e tempérament est le NERVEUX (mélancolique), pas « électrique ».",
+    mnemo: "Sang, Lymphe, Bile, Nerfs = les 4 tempéraments.",
+    tags: ["typologies", "tempéraments", "terrain"]
+  },
+  {
+    id: 84, jour: 1,
+    categorie: "Concepts fondamentaux",
+    sujet: "Hydrothérapie",
+    question: "Que provoque l'application de froid (cryothérapie locale) sur la peau ?",
+    options: [
+      "Une vasoconstriction puis une vasodilatation réactionnelle",
+      "Une vasodilatation immédiate et durable",
+      "Aucun effet circulatoire",
+      "Une baisse définitive de la circulation locale"
+    ],
+    bonne: 0,
+    explication: "Le froid provoque d'abord une VASOCONSTRICTION (les vaisseaux se resserrent), suivie d'une VASODILATATION réactionnelle (afflux de sang) une fois le froid retiré. C'est le principe tonifiant des douches froides et du jet écossais.",
+    piege: "Le froid ne « ferme » pas durablement : la réaction du corps est un afflux de sang (effet tonifiant).",
+    mnemo: "Froid = le corps RÉAGIT en envoyant du sang → effet vivifiant.",
+    tags: ["hydrologie", "techniques", "circulation"]
   }
 ];
 
@@ -1410,9 +1470,20 @@ const State = {
     if (!d.lessonsRead) d.lessonsRead = {};
     if (typeof d.onboarded === 'undefined') d.onboarded = false;
     if (!d.questionStats) d.questionStats = {};
+    // Gamification
+    if (typeof d.xp !== 'number') d.xp = 0;
+    if (typeof d.dailyStreak !== 'number') d.dailyStreak = 0;
+    if (typeof d.bestDailyStreak !== 'number') d.bestDailyStreak = 0;
+    if (typeof d.lastStudyDay === 'undefined') d.lastStudyDay = null;
+    if (typeof d.goalPerDay !== 'number') d.goalPerDay = 20;
+    if (!Array.isArray(d.badges)) d.badges = [];
     QUESTIONS.forEach(q => {
-      if (!d.questionStats[q.id]) {
-        d.questionStats[q.id] = { seen: 0, correct: 0, wrong: 0, lastSeen: null, streak: 0, difficulty: 3 };
+      const s = d.questionStats[q.id];
+      if (!s) {
+        d.questionStats[q.id] = { seen: 0, correct: 0, wrong: 0, lastSeen: null, streak: 0, difficulty: 3, box: 0, nextReview: 0 };
+      } else {
+        if (typeof s.box !== 'number') s.box = Math.max(0, Math.min(5, Math.round((5 - s.difficulty) ) ));
+        if (typeof s.nextReview !== 'number') s.nextReview = 0;
       }
     });
   },
@@ -1421,20 +1492,26 @@ const State = {
     this.data = {
       version: APP_VERSION,
       createdAt: Date.now(),
-      questionStats: {},   // id -> { seen, correct, wrong, lastSeen, streak, difficulty }
+      questionStats: {},   // id -> { seen, correct, wrong, lastSeen, streak, difficulty, box, nextReview }
       examSessions: [],    // historique des sessions d'examen
       revisionSessions: [],
       lessonsRead: {},     // idCours -> timestamp
       onboarded: false,
       currentDay: 1,
-      totalPoints: 0,
-      badges: [],
+      // Gamification
+      xp: 0,
+      dailyStreak: 0,
+      bestDailyStreak: 0,
+      lastStudyDay: null,
+      goalPerDay: 20,
+      badges: [],          // ids des badges débloqués
       dailyStats: {},      // "YYYY-MM-DD" -> { questions, correct }
     };
     QUESTIONS.forEach(q => {
       this.data.questionStats[q.id] = {
         seen: 0, correct: 0, wrong: 0,
-        lastSeen: null, streak: 0, difficulty: 3 // 1-5
+        lastSeen: null, streak: 0, difficulty: 3, // 1-5
+        box: 0, nextReview: 0                       // répétition espacée (Leitner)
       };
     });
     this.save();
@@ -1472,20 +1549,97 @@ const State = {
       s.correct++;
       s.streak++;
       s.difficulty = Math.max(1, s.difficulty - 0.5);
+      s.box = Math.min(5, (s.box || 0) + 1);          // SRS : monte d'une boîte
     } else {
       s.wrong++;
       s.streak = 0;
       s.difficulty = Math.min(5, s.difficulty + 1);
+      s.box = 0;                                       // SRS : retombe en boîte 0
     }
+    // Prochaine révision (Leitner) : intervalle croissant en jours
+    const DAY = 86400000;
+    const intervals = [0, 1, 3, 7, 16, 35];            // box 0..5
+    s.nextReview = Date.now() + intervals[s.box] * DAY;
 
-    // daily stats
+    // Daily stats
     const today = new Date().toISOString().split('T')[0];
     if (!this.data.dailyStats[today]) this.data.dailyStats[today] = { questions: 0, correct: 0 };
     this.data.dailyStats[today].questions++;
     if (isCorrect) this.data.dailyStats[today].correct++;
 
+    // Série quotidienne (une fois par jour, au premier travail du jour)
+    if (this.data.lastStudyDay !== today) {
+      const yest = new Date(Date.now() - DAY).toISOString().split('T')[0];
+      this.data.dailyStreak = (this.data.lastStudyDay === yest) ? (this.data.dailyStreak || 0) + 1 : 1;
+      this.data.lastStudyDay = today;
+      if (this.data.dailyStreak > (this.data.bestDailyStreak || 0)) this.data.bestDailyStreak = this.data.dailyStreak;
+    }
+
+    // XP : bonne réponse récompensée, effort aussi
+    this.data.xp = (this.data.xp || 0) + (isCorrect ? 10 : 2);
+
     this.save();
   },
+
+  // ── Répétition espacée (SRS) ────────────────────────────────
+  getDueQuestions(n = 20) {
+    const now = Date.now();
+    const due = QUESTIONS
+      .map(q => ({ q, s: this.data.questionStats[q.id] }))
+      .filter(x => x.s.seen === 0 || (x.s.nextReview || 0) <= now)
+      .sort((a, b) => {
+        // d'abord les plus en retard / jamais vues, puis les boîtes basses
+        const aw = a.s.seen === 0 ? -1e15 : (a.s.nextReview || 0);
+        const bw = b.s.seen === 0 ? -1e15 : (b.s.nextReview || 0);
+        return aw - bw;
+      })
+      .map(x => x.q);
+    return n ? due.slice(0, n) : due;
+  },
+  countDue() {
+    const now = Date.now();
+    return QUESTIONS.reduce((acc, q) => {
+      const s = this.data.questionStats[q.id];
+      return acc + ((s.seen === 0 || (s.nextReview || 0) <= now) ? 1 : 0);
+    }, 0);
+  },
+
+  // ── Gamification : XP / niveaux ─────────────────────────────
+  getXP() { return this.data.xp || 0; },
+  levelInfo() {
+    const xp = this.getXP();
+    const PER = 150;                       // XP par niveau
+    const level = Math.floor(xp / PER) + 1;
+    const inLevel = xp % PER;
+    const titles = ['Curieux', 'Apprenti', 'Initié', 'Praticien', 'Thérapeute', 'Expert', 'Sage', 'Maître naturopathe'];
+    const title = titles[Math.min(titles.length - 1, level - 1)];
+    return { level, title, inLevel, perLevel: PER, pct: Math.round(inLevel / PER * 100), xp };
+  },
+
+  // ── Objectif du jour ────────────────────────────────────────
+  todayCount() {
+    const today = new Date().toISOString().split('T')[0];
+    return (this.data.dailyStats[today] || {}).questions || 0;
+  },
+  goalProgress() {
+    const goal = this.data.goalPerDay || 20;
+    const done = this.todayCount();
+    return { done, goal, pct: Math.min(100, Math.round(done / goal * 100)), reached: done >= goal };
+  },
+  setGoal(n) { this.data.goalPerDay = Math.max(5, Math.min(100, n | 0)); this.save(); },
+
+  // ── Badges ──────────────────────────────────────────────────
+  // Débloque les badges nouvellement gagnés ; renvoie la liste des NOUVEAUX.
+  refreshBadges() {
+    const owned = new Set(this.data.badges || []);
+    const fresh = [];
+    BADGES.forEach(b => {
+      if (!owned.has(b.id) && b.earned(this)) { this.data.badges.push(b.id); fresh.push(b); }
+    });
+    if (fresh.length) this.save();
+    return fresh;
+  },
+  hasBadge(id) { return (this.data.badges || []).includes(id); },
 
   getWeakQuestions(n = 20) {
     return QUESTIONS
@@ -1530,6 +1684,30 @@ const State = {
   }
 };
 
+// ─── BADGES (succès) ─────────────────────────────────────────────
+const BADGES = [
+  { id: 'premier-pas', nom: 'Premier pas',  desc: 'Répondre à sa 1ʳᵉ question', icon: 'sprout',
+    earned: s => Object.values(s.data.questionStats).some(q => q.seen > 0) },
+  { id: 'assidu-3',    nom: 'Régulier',     desc: '3 jours d\'affilée', icon: 'flame',
+    earned: s => (s.data.dailyStreak || 0) >= 3 },
+  { id: 'assidu-7',    nom: 'En feu',       desc: '7 jours d\'affilée', icon: 'flame',
+    earned: s => (s.data.dailyStreak || 0) >= 7 },
+  { id: 'centurion',   nom: 'Centurion',    desc: '100 réponses données', icon: 'target',
+    earned: s => Object.values(s.data.questionStats).reduce((a, q) => a + q.seen, 0) >= 100 },
+  { id: 'sans-faute',  nom: 'Sans-faute',   desc: 'Une session 100 % (5 Q+)', icon: 'check-circle',
+    earned: s => (s.data.revisionSessions || []).some(r => r.pct === 100 && r.count >= 5) },
+  { id: 'examen-or',   nom: 'Mention or',   desc: 'Un examen ≥ 90 %', icon: 'award',
+    earned: s => (s.data.examSessions || []).some(e => e.pct >= 90) },
+  { id: 'lecteur',     nom: 'Lecteur',      desc: 'Lire son 1er cours', icon: 'book',
+    earned: s => Object.keys(s.data.lessonsRead || {}).length >= 1 },
+  { id: 'erudit',      nom: 'Érudit',       desc: 'Lire 5 cours', icon: 'book-open',
+    earned: s => Object.keys(s.data.lessonsRead || {}).length >= 5 },
+  { id: 'niveau-5',    nom: 'Niveau 5',     desc: 'Atteindre le niveau 5', icon: 'star',
+    earned: s => s.levelInfo().level >= 5 },
+  { id: 'maitrise',    nom: 'Maîtrise',     desc: '80 % de réussite (50 Q+)', icon: 'trending-up',
+    earned: s => { let t = 0, c = 0; Object.values(s.data.questionStats).forEach(q => { t += q.seen; c += q.correct; }); return t >= 50 && c / t >= 0.8; } }
+];
+
 // ─── UTILITAIRES ────────────────────────────────────────────────
 function shuffle(arr) {
   const a = [...arr];
@@ -1542,6 +1720,21 @@ function shuffle(arr) {
 
 function getQuestionsByDay(day) {
   return QUESTIONS.filter(q => q.jour === day);
+}
+
+// Réponses correctes d'une question : `bonnes:[...]` (multi) ou `bonne` (unique)
+function answerKey(q) {
+  return Array.isArray(q.bonnes) ? q.bonnes.slice() : [q.bonne];
+}
+function isMultiAnswer(q) {
+  return Array.isArray(q.bonnes) && q.bonnes.length > 1;
+}
+// Vrai si l'ensemble sélectionné == l'ensemble des bonnes réponses
+function isSelectionCorrect(q, selected) {
+  const key = answerKey(q);
+  if (selected.length !== key.length) return false;
+  const set = new Set(key);
+  return selected.every(i => set.has(i));
 }
 
 function formatTime(seconds) {
@@ -2251,7 +2444,8 @@ function celebrate(opts) {
 
 // Export global
 window.APP = {
-  State, QUESTIONS, shuffle, getQuestionsByDay, formatTime, getScoreColor, getGrade,
+  State, QUESTIONS, BADGES, shuffle, getQuestionsByDay, formatTime, getScoreColor, getGrade,
+  answerKey, isMultiAnswer, isSelectionCorrect,
   icon, hydrateIcons, escapeHtml,
   Profiles, onReady, currentProfile,
   animateNumber, progressRing, setRing, prefersReducedMotion, celebrate
