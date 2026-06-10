@@ -5,8 +5,7 @@
 docs
 infrastructure
 compose.yml
-Dockerfile
-nginx.conf
 *.md
 .DS_Store
 .playwright-mcp
+# NB : nginx.conf et Dockerfile NE sont PAS ignorés (utilisés par le build)

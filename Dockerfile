@@ -10,6 +10,10 @@ COPY index.html cours.html revision.html examen.html stats.html \
      /usr/share/nginx/html/
 COPY icons/ /usr/share/nginx/html/icons/
 
+# Les fichiers source peuvent être en 600 sur l'hôte → nginx (user nginx)
+# ne pourrait pas les lire. On force la lecture pour tous.
+RUN chmod -R a+rX /usr/share/nginx/html
+
 EXPOSE 80
 HEALTHCHECK --interval=30s --timeout=4s --retries=3 \
   CMD wget -qO- http://localhost/healthz || exit 1
