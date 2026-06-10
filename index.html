@@ -1,0 +1,514 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>NaturoApp — Tableau de bord</title>
+  <meta name="theme-color" content="#1A5C45">
+  <link rel="manifest" href="manifest.json">
+  <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="NaturoApp">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Lora:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+  <script>try{if(!sessionStorage.getItem('naturoapp_active'))document.documentElement.classList.add('pre-lock');}catch(e){}</script>
+  <style>
+    /* ── PAGE-SPECIFIC ── */
+    .hero {
+      background:
+        radial-gradient(120% 140% at 0% 0%, #1F6B50 0%, rgba(31,107,80,0) 55%),
+        radial-gradient(130% 120% at 100% 100%, #0E3A2B 0%, rgba(14,58,43,0) 50%),
+        linear-gradient(135deg, var(--c-green-deep) 0%, var(--c-green) 100%);
+      color: #fff;
+      border-radius: var(--r-xl);
+      padding: 44px 44px;
+      margin-bottom: 32px;
+      position: relative; overflow: hidden;
+      box-shadow: var(--shadow-lg);
+    }
+    .hero::before {
+      content: ''; position: absolute; inset: 0;
+      background: radial-gradient(60% 80% at 85% 10%, rgba(111,215,174,0.25), transparent 60%);
+      pointer-events: none;
+    }
+    .hero > * { position: relative; }
+    .hero { display: flex; align-items: center; gap: 36px; }
+    .hero__content { flex: 1; min-width: 0; }
+
+    .hero h1 { font-size: 36px; color: #fff; margin-bottom: 8px; }
+    .hero p  { font-size: 16px; color: rgba(255,255,255,0.8); max-width: 540px; }
+
+    /* Anneau de progression du héros */
+    .hero__ring { flex-shrink: 0; }
+    .hero__ring .ring-wrap__num { font-family: var(--font-display); font-size: 30px; font-weight: 700; color: #fff; }
+    .hero__ring .ring-wrap__cap { font-size: 10px; letter-spacing: .5px; text-transform: uppercase; color: rgba(255,255,255,0.78); margin-top: 3px; }
+
+    @media (max-width: 640px) {
+      .hero { flex-direction: column-reverse; align-items: stretch; gap: 22px; }
+      .hero__ring { align-self: center; }
+    }
+
+    .hero-actions { display: flex; gap: 12px; margin-top: 28px; flex-wrap: wrap; }
+
+    .hero-btn {
+      padding: 13px 24px;
+      border-radius: var(--r-md);
+      font-weight: 600; font-size: 15px;
+      cursor: pointer; text-decoration: none;
+      transition: all .2s; display: inline-flex; align-items: center; gap: 8px;
+      border: none;
+    }
+
+    .hero-btn--primary {
+      background: #fff; color: var(--c-green-deep);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    }
+    .hero-btn--primary:hover { transform: translateY(-2px); box-shadow: 0 6px 18px rgba(0,0,0,0.2); }
+
+    .hero-btn--ghost {
+      background: rgba(255,255,255,0.15);
+      color: #fff; border: 1.5px solid rgba(255,255,255,0.4);
+    }
+    .hero-btn--ghost:hover { background: rgba(255,255,255,0.25); }
+
+    /* Planning grid */
+    .plan-grid {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 10px;
+    }
+
+    @media (max-width: 900px) { .plan-grid { grid-template-columns: repeat(3, 1fr); } }
+    @media (max-width: 600px) { .plan-grid { grid-template-columns: repeat(2, 1fr); } }
+
+    .plan-day {
+      background: var(--c-white);
+      border: 1.5px solid var(--c-border);
+      border-radius: var(--r-md);
+      padding: 14px;
+      cursor: pointer;
+      transition: all .18s;
+      text-decoration: none;
+      color: var(--c-dark);
+      display: block;
+    }
+
+    .plan-day:hover {
+      border-color: var(--c-green-light);
+      box-shadow: var(--shadow-md);
+      transform: translateY(-2px);
+    }
+
+    .plan-day.active {
+      border-color: var(--c-green);
+      background: var(--c-green-pale);
+    }
+
+    .plan-day.completed {
+      border-color: var(--c-green);
+      background: var(--c-green-pale);
+    }
+
+    .plan-day__num {
+      font-size: 11px; font-weight: 700;
+      text-transform: uppercase; letter-spacing: 0.5px;
+      color: var(--c-mid); margin-bottom: 6px;
+    }
+
+    .plan-day.active .plan-day__num,
+    .plan-day.completed .plan-day__num { color: var(--c-green); }
+
+    .plan-day__title {
+      font-size: 13px; font-weight: 600;
+      line-height: 1.3; margin-bottom: 8px;
+    }
+
+    .plan-day__progress {
+      font-size: 11px; color: var(--c-mid);
+    }
+
+    .plan-day__bar { margin-top: 8px; }
+
+    /* Quick stats row */
+    .quick-stats {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 14px; margin-bottom: 32px;
+    }
+    @media (max-width: 700px) { .quick-stats { grid-template-columns: repeat(2, 1fr); } }
+
+    .qs-card {
+      background: var(--c-white);
+      border-radius: var(--r-md);
+      padding: 20px 16px;
+      border: 1px solid rgba(26,92,69,0.08);
+      box-shadow: var(--shadow-sm);
+      text-align: center;
+      transition: transform .25s var(--ease-out), box-shadow .25s var(--ease-out);
+    }
+    .qs-card:hover { transform: translateY(-2px); box-shadow: var(--shadow-md); }
+
+    .qs-card__icon {
+      width: 46px; height: 46px; margin: 0 auto 10px;
+      display: flex; align-items: center; justify-content: center;
+      background: var(--c-green-pale); border-radius: 14px;
+    }
+    .qs-card__val  { font-size: 28px; font-weight: 700; color: var(--c-green-deep); line-height: 1; }
+    .qs-card__lbl  { font-size: 11.5px; color: var(--c-mid); margin-top: 4px; }
+
+    /* Weak questions */
+    .weak-list { display: flex; flex-direction: column; gap: 8px; }
+
+    .weak-item {
+      display: flex; align-items: center; gap: 12px;
+      padding: 12px 16px;
+      background: var(--c-white);
+      border: 1px solid var(--c-border);
+      border-radius: var(--r-sm);
+      cursor: pointer; text-decoration: none; color: var(--c-dark);
+      transition: all .15s;
+    }
+    .weak-item:hover { border-color: var(--c-red); background: var(--c-red-light); }
+
+    .weak-item__num {
+      width: 30px; height: 30px; border-radius: 50%;
+      background: var(--c-red-light); color: var(--c-red);
+      display: flex; align-items: center; justify-content: center;
+      font-weight: 700; font-size: 13px; flex-shrink: 0;
+    }
+
+    .weak-item__info { flex: 1; }
+    .weak-item__subj { font-weight: 600; font-size: 14px; }
+    .weak-item__stat { font-size: 12px; color: var(--c-mid); }
+
+    /* Section titles */
+    .section-header {
+      display: flex; align-items: center; justify-content: space-between;
+      margin-bottom: 16px;
+    }
+
+    .section-header h2 {
+      display: flex; align-items: center; gap: 10px;
+    }
+
+    /* Recent sessions */
+    .session-list { display: flex; flex-direction: column; gap: 8px; }
+
+    .session-item {
+      display: flex; align-items: center;
+      padding: 12px 16px;
+      background: var(--c-white);
+      border: 1px solid var(--c-border);
+      border-radius: var(--r-sm);
+      gap: 12px;
+    }
+
+    .session-icon {
+      width: 36px; height: 36px; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 16px; flex-shrink: 0;
+    }
+
+    .session-icon--exam    { background: var(--c-ocre-light); }
+    .session-icon--revision { background: var(--c-green-pale); }
+
+    .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+    @media (max-width: 800px) { .two-col { grid-template-columns: 1fr; } }
+  </style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav class="topnav">
+  <a href="index.html" class="topnav__logo">
+    <div class="topnav__logo-icon" data-icon="leaf"></div>
+    <div>
+      <div class="topnav__logo-text">NaturoApp</div>
+      <span class="topnav__logo-sub">Révision Naturopathie</span>
+    </div>
+  </a>
+  <ul class="topnav__nav">
+    <li><a href="index.html" class="active"><span class="nav-ico" data-icon="home"></span> <span class="nav-label">Accueil</span></a></li>
+    <li><a href="cours.html"><span class="nav-ico" data-icon="book"></span> <span class="nav-label">Cours</span></a></li>
+    <li><a href="revision.html"><span class="nav-ico" data-icon="book-open"></span> <span class="nav-label">Révision</span></a></li>
+    <li><a href="examen.html"><span class="nav-ico" data-icon="edit"></span> <span class="nav-label">Examen</span></a></li>
+    <li><a href="stats.html"><span class="nav-ico" data-icon="chart"></span> <span class="nav-label">Stats</span></a></li>
+  </ul>
+  <div class="topnav__score" id="nav-score">Score : —</div>
+  <button class="nav-lock" id="nav-lock" data-icon="lock" title="Verrouiller l'app" aria-label="Verrouiller"></button>
+</nav>
+
+<div class="page">
+
+  <!-- HERO -->
+  <div class="hero">
+    <div class="hero__content">
+      <h1>Bienvenue, Clara&nbsp;!</h1>
+      <p>Ton programme de révision naturopathie en 10 jours. 80 questions, 2 modes d'entraînement, des statistiques pour suivre ta progression.</p>
+      <div class="hero-actions">
+        <a href="revision.html" class="hero-btn hero-btn--primary"><span data-icon="book-open"></span> Commencer la révision</a>
+        <a href="examen.html"   class="hero-btn hero-btn--ghost"><span data-icon="edit"></span> Passer un examen blanc</a>
+      </div>
+    </div>
+    <div class="hero__ring ring-wrap" id="hero-ring"></div>
+  </div>
+
+  <!-- QUICK STATS -->
+  <div class="quick-stats" id="quick-stats">
+    <div class="qs-card"><div class="qs-card__icon" data-icon="edit"></div><div class="qs-card__val" id="qs-seen">0</div><div class="qs-card__lbl">Questions vues</div></div>
+    <div class="qs-card"><div class="qs-card__icon" data-icon="check-circle"></div><div class="qs-card__val" id="qs-correct">0%</div><div class="qs-card__lbl">Taux de réussite</div></div>
+    <div class="qs-card"><div class="qs-card__icon" data-icon="flame"></div><div class="qs-card__val" id="qs-streak">0</div><div class="qs-card__lbl">Meilleure série</div></div>
+    <div class="qs-card"><div class="qs-card__icon" data-icon="award"></div><div class="qs-card__val" id="qs-exams">0</div><div class="qs-card__lbl">Examens passés</div></div>
+  </div>
+
+  <!-- PLANNING 10 JOURS -->
+  <div class="section-header">
+    <h2><span data-icon="calendar"></span> Programme 10 jours</h2>
+    <a href="revision.html" class="btn btn-ghost btn-sm">Voir tout →</a>
+  </div>
+
+  <div class="plan-grid" id="plan-grid"><!-- filled by JS --></div>
+
+  <div class="mt-32 two-col">
+
+    <!-- WEAK QUESTIONS -->
+    <div>
+      <div class="section-header">
+        <h2><span data-icon="alert-triangle"></span> À retravailler</h2>
+        <a href="revision.html?mode=weak" class="btn btn-ghost btn-sm">Tout →</a>
+      </div>
+      <div class="weak-list" id="weak-list">
+        <div class="empty-state">
+          <span data-icon="sprout"></span>
+          <div class="empty-state__text">Commence à réviser pour voir tes points faibles ici.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- RECENT SESSIONS -->
+    <div>
+      <div class="section-header">
+        <h2><span data-icon="clock"></span> Sessions récentes</h2>
+      </div>
+      <div class="session-list" id="session-list">
+        <div class="empty-state">
+          <span data-icon="clock"></span>
+          <div class="empty-state__text">Aucune session pour l'instant. Lance-toi&nbsp;!</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- QUICK START BUTTONS -->
+  <div class="mt-32">
+    <div class="section-header">
+      <h2><span data-icon="rocket"></span> Entraînement rapide</h2>
+    </div>
+    <div class="grid-3" id="quick-modes">
+      <a href="revision.html?mode=today"  class="card card--hover" style="text-decoration:none;color:inherit;padding:22px;">
+        <div class="quick-mode-ico" data-icon="calendar"></div>
+        <h3>Questions du jour</h3>
+        <p class="text-sm text-mid mt-8">Les 10 questions du programme du jour</p>
+      </a>
+      <a href="revision.html?mode=weak"   class="card card--hover" style="text-decoration:none;color:inherit;padding:22px;">
+        <div class="quick-mode-ico" data-icon="target"></div>
+        <h3>Points faibles</h3>
+        <p class="text-sm text-mid mt-8">Les questions où tu as des erreurs</p>
+      </a>
+      <a href="revision.html?mode=all"    class="card card--hover" style="text-decoration:none;color:inherit;padding:22px;">
+        <div class="quick-mode-ico" data-icon="shuffle"></div>
+        <h3>Révision aléatoire</h3>
+        <p class="text-sm text-mid mt-8">Toutes les questions mélangées</p>
+      </a>
+    </div>
+  </div>
+
+</div>
+
+<nav class="bottomnav">
+  <a href="index.html" class="active"><span class="bn-ico" data-icon="home"></span> Accueil</a>
+  <a href="cours.html"><span class="bn-ico" data-icon="book"></span> Cours</a>
+  <a href="revision.html"><span class="bn-ico" data-icon="book-open"></span> Révision</a>
+  <a href="examen.html"><span class="bn-ico" data-icon="edit"></span> Examen</a>
+  <a href="stats.html"><span class="bn-ico" data-icon="chart"></span> Stats</a>
+</nav>
+
+<div id="toast-container"></div>
+
+<script src="app.js"></script>
+<script>
+  const { State, QUESTIONS, getQuestionsByDay, icon, animateNumber, progressRing, setRing, currentProfile } = window.APP;
+
+  const PLAN_THEMES = [
+    { title: "Bases fondamentales", q: "Q1–10",  icon: "sprout" },
+    { title: "Plantes & allergie",  q: "Q11–20", icon: "flower" },
+    { title: "Peau & hormones",     q: "Q21–30", icon: "sparkles" },
+    { title: "Gynéco & pancréas",   q: "Q31–40", icon: "flower" },
+    { title: "Nutrition & oméga",   q: "Q41–50", icon: "leaf" },
+    { title: "Microbiote & régimes",q: "Q51–60", icon: "activity" },
+    { title: "Revital. & digestion",q: "Q61–70", icon: "droplet" },
+    { title: "Neuro & prébiotiques",q: "Q71–80", icon: "brain" },
+    { title: "Examen blanc",        q: "80 Q",   icon: "clipboard", special: true },
+    { title: "Révision ciblée",     q: "Erreurs",icon: "target", special: true },
+  ];
+
+  function render() {
+    const d = State.data;
+    const qs = d.questionStats;
+
+    // Personnalisation : prénom du profil actif
+    const prof = currentProfile();
+    const name = prof ? prof.name : 'toi';
+    const h1 = document.querySelector('.hero__content h1');
+    if (h1) h1.textContent = `Bienvenue, ${name} !`;
+
+    // Score bar
+    const score = State.getOverallScore();
+    document.getElementById('nav-score').textContent = `Score : ${score}%`;
+
+    // Anneau de progression du héros
+    const ringEl = document.getElementById('hero-ring');
+    ringEl.innerHTML = progressRing(score, { size: 132, stroke: 11, color: '#fff', track: 'rgba(255,255,255,0.18)' }) +
+      `<div class="ring-wrap__label"><div class="ring-wrap__num" id="ring-num">0%</div><div class="ring-wrap__cap">maîtrise</div></div>`;
+    setRing(ringEl.querySelector('.ring__bar'), score);
+    animateNumber(document.getElementById('ring-num'), score, { suffix: '%', duration: 1100 });
+
+    // Quick stats (compteurs animés)
+    let seen = 0, bestStreak = 0;
+    Object.values(qs).forEach(s => {
+      if (s.seen > 0) seen++;
+      if (s.streak > bestStreak) bestStreak = s.streak;
+    });
+    animateNumber(document.getElementById('qs-seen'), seen, { duration: 900 });
+    animateNumber(document.getElementById('qs-correct'), score, { suffix: '%', duration: 1000 });
+    animateNumber(document.getElementById('qs-streak'), bestStreak, { duration: 900 });
+    animateNumber(document.getElementById('qs-exams'), d.examSessions.length, { duration: 900 });
+
+    // Plan grid
+    const pgEl = document.getElementById('plan-grid');
+    pgEl.innerHTML = '';
+    const progress = State.getProgressByDay();
+
+    PLAN_THEMES.forEach((t, i) => {
+      const day = i + 1;
+      const p = progress[day] || { total: 10, seen: 0, correct: 0 };
+      const pct = p.total > 0 ? Math.round((p.seen / p.total) * 100) : 0;
+      const url = t.special
+        ? (day === 9 ? 'examen.html?mode=full' : 'revision.html?mode=weak')
+        : `revision.html?day=${day}`;
+
+      const el = document.createElement('a');
+      el.href = url;
+      el.className = `plan-day${pct === 100 ? ' completed' : ''}`;
+      el.innerHTML = `
+        <div class="plan-day__num"><span class="plan-day__ico">${icon(t.icon)}</span> Jour ${day}</div>
+        <div class="plan-day__title">${t.title}</div>
+        <div class="plan-day__progress">${t.q} · ${pct}% vu</div>
+        <div class="plan-day__bar">
+          <div class="progress-bar progress-bar--sm">
+            <div class="progress-bar__fill" style="width:${pct}%"></div>
+          </div>
+        </div>
+      `;
+      pgEl.appendChild(el);
+    });
+
+    // Weak questions (top 5)
+    const weak = State.getWeakQuestions(5);
+    const wEl = document.getElementById('weak-list');
+    if (weak.filter(q => qs[q.id].seen > 0).length === 0) return;
+    wEl.innerHTML = '';
+    weak.filter(q => qs[q.id].seen > 0).forEach(q => {
+      const s = qs[q.id];
+      const pct = s.seen > 0 ? Math.round((s.correct / s.seen) * 100) : 0;
+      const el = document.createElement('a');
+      el.href = `revision.html?id=${q.id}`;
+      el.className = 'weak-item';
+      el.innerHTML = `
+        <div class="weak-item__num">Q${q.id}</div>
+        <div class="weak-item__info">
+          <div class="weak-item__subj">${q.sujet}</div>
+          <div class="weak-item__stat">${s.correct}/${s.seen} correctes · ${pct}% réussite</div>
+        </div>
+        <span class="badge badge-red">${pct}%</span>
+      `;
+      wEl.appendChild(el);
+    });
+
+    // Recent sessions
+    const sessions = [...d.examSessions, ...d.revisionSessions]
+      .sort((a, b) => b.timestamp - a.timestamp)
+      .slice(0, 4);
+
+    if (sessions.length > 0) {
+      const sEl = document.getElementById('session-list');
+      sEl.innerHTML = '';
+      sessions.forEach(s => {
+        const date = new Date(s.timestamp).toLocaleDateString('fr-FR', { day:'2-digit', month:'short', hour:'2-digit', minute:'2-digit' });
+        const isExam = s.type === 'exam';
+        const el = document.createElement('div');
+        el.className = 'session-item';
+        el.innerHTML = `
+          <div class="session-icon session-icon--${isExam ? 'exam' : 'revision'}">${isExam ? icon('edit') : icon('book-open')}</div>
+          <div style="flex:1">
+            <div class="fw-700" style="font-size:14px">${isExam ? 'Examen' : 'Révision'} — ${s.label || s.mode}</div>
+            <div class="text-sm text-mid">${date}</div>
+          </div>
+          ${isExam ? `<span class="badge badge-${s.pct >= 80 ? 'green' : s.pct >= 60 ? 'ocre' : 'red'}">${s.pct}%</span>` : `<span class="badge badge-blue">${s.count} Q</span>`}
+        `;
+        sEl.appendChild(el);
+      });
+    }
+  }
+
+  // ── ONBOARDING (première visite du profil) ─────────────────
+  function maybeOnboard() {
+    if (State.data.onboarded) return;
+    const totalSeen = Object.values(State.data.questionStats).reduce((a, s) => a + s.seen, 0);
+    if (totalSeen > 0) { State.setOnboarded(); return; }
+
+    const prof = currentProfile();
+    const name = prof ? prof.name : 'toi';
+    const ov = document.createElement('div');
+    ov.className = 'modal-overlay';
+    ov.innerHTML = `
+      <div class="modal onboard">
+        <div class="onboard__hero">
+          <div class="onboard__logo">${icon('leaf')}</div>
+          <h2>Bienvenue, ${window.APP.escapeHtml(name)}&nbsp;!</h2>
+          <p>Ton compagnon de révision en naturopathie. Voici comment ça marche&nbsp;:</p>
+        </div>
+        <div class="modal__body">
+          <div class="onboard__step"><span class="onboard__ico" style="background:var(--c-green-pale)">${icon('list')}</span><div><b>QCM</b><div class="text-sm text-mid">Réponds, et reçois aussitôt l'explication, le piège et le moyen mnémotechnique.</div></div></div>
+          <div class="onboard__step"><span class="onboard__ico" style="background:var(--c-blue-light)">${icon('layers')}</span><div><b>Flashcards</b><div class="text-sm text-mid">Retourne la carte pour t'auto-évaluer. Idéal pour ancrer la mémoire.</div></div></div>
+          <div class="onboard__step"><span class="onboard__ico" style="background:var(--c-ocre-light)">${icon('edit')}</span><div><b>Examens blancs</b><div class="text-sm text-mid">Conditions réelles, chrono et bilan détaillé pour te préparer au jour J.</div></div></div>
+          <div class="onboard__step"><span class="onboard__ico" style="background:var(--c-purple-light)">${icon('trending-up')}</span><div><b>Statistiques</b><div class="text-sm text-mid">Tes points faibles sont repérés et reproposés en priorité.</div></div></div>
+        </div>
+        <div class="modal__footer">
+          <button class="btn btn-primary btn-lg w-full" id="onboard-go"><span data-icon="book-open"></span> C'est parti&nbsp;!</button>
+        </div>
+      </div>`;
+    document.body.appendChild(ov);
+    window.APP.hydrateIcons(ov);
+    requestAnimationFrame(() => ov.classList.add('open'));
+    function close() {
+      State.setOnboarded();
+      ov.classList.remove('open');
+      setTimeout(() => ov.remove(), 250);
+    }
+    ov.querySelector('#onboard-go').addEventListener('click', close);
+    ov.addEventListener('click', e => { if (e.target === ov) close(); });
+  }
+
+  // Rendu différé : on attend qu'un profil soit déverrouillé.
+  window.APP.onReady(() => {
+    State.init();
+    render();
+    maybeOnboard();
+  });
+</script>
+</body>
+</html>

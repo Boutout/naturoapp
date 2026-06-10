@@ -1,0 +1,606 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>NaturoApp — Statistiques</title>
+  <meta name="theme-color" content="#1A5C45">
+  <link rel="manifest" href="manifest.json">
+  <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="NaturoApp">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Lora:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+  <script>try{if(!sessionStorage.getItem('naturoapp_active'))document.documentElement.classList.add('pre-lock');}catch(e){}</script>
+  <style>
+    .section { margin-bottom: 36px; }
+
+    /* Category progress bars */
+    .cat-row {
+      display: flex; align-items: center; gap: 12px;
+      padding: 12px 0; border-bottom: 1px solid var(--c-border);
+    }
+    .cat-row:last-child { border-bottom: none; }
+    .cat-name { width: 200px; flex-shrink: 0; font-size: 13.5px; font-weight: 500; }
+    .cat-bar  { flex: 1; }
+    .cat-pct  { width: 48px; text-align: right; font-size: 13px; font-weight: 700; }
+
+    /* Exam history table */
+    .history-table { width: 100%; border-collapse: collapse; }
+    .history-table th {
+      text-align: left; font-size: 12px; font-weight: 700;
+      text-transform: uppercase; letter-spacing: 0.5px; color: var(--c-mid);
+      padding: 10px 14px; border-bottom: 2px solid var(--c-border);
+    }
+    .history-table td {
+      padding: 12px 14px; font-size: 14px;
+      border-bottom: 1px solid var(--c-border);
+    }
+    .history-table tr:last-child td { border-bottom: none; }
+    .history-table tr:hover td { background: var(--c-cream); }
+
+    /* Heatmap */
+    .heatmap-wrapper { overflow-x: auto; }
+    .heatmap {
+      display: inline-flex; gap: 3px;
+      padding: 4px 0;
+    }
+    .heatmap-col { display: flex; flex-direction: column; gap: 3px; }
+
+    /* Top header zone */
+    .stats-hero {
+      background:
+        radial-gradient(120% 140% at 0% 0%, #1F6B50 0%, rgba(31,107,80,0) 55%),
+        radial-gradient(80% 100% at 100% 0%, rgba(111,215,174,0.22), transparent 55%),
+        linear-gradient(135deg, var(--c-green-deep), var(--c-green));
+      border-radius: var(--r-xl); padding: 34px 40px; color: #fff;
+      margin-bottom: 32px; display: flex; align-items: center; gap: 32px; flex-wrap: wrap;
+      box-shadow: var(--shadow-lg); position: relative; overflow: hidden;
+    }
+    .stats-hero__score {
+      font-family: var(--font-display); font-size: 72px; font-weight: 700; line-height: 1;
+      flex-shrink: 0;
+    }
+    .stats-hero__label { font-size: 14px; opacity: 0.8; margin-top: 4px; }
+
+    .circular-progress { position: relative; width: 110px; height: 110px; flex-shrink: 0; }
+    .circular-progress svg { transform: rotate(-90deg); }
+    .circular-progress__text {
+      position: absolute; inset: 0;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+    }
+
+    /* Q detail grid */
+    .q-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+      gap: 8px;
+    }
+    .q-tile {
+      background: var(--c-white);
+      border: 1.5px solid var(--c-border);
+      border-radius: var(--r-sm);
+      padding: 10px 12px; cursor: pointer;
+      transition: all .15s; text-decoration: none; color: inherit;
+    }
+    .q-tile:hover { border-color: var(--c-green-light); transform: translateY(-1px); }
+    .q-tile.good   { border-color: var(--c-green-light); background: var(--c-green-pale); }
+    .q-tile.medium { border-color: #F9E79F; background: #FEFDE7; }
+    .q-tile.bad    { border-color: #F1948A; background: var(--c-red-light); }
+    .q-tile.unseen { background: #F8F9FA; }
+
+    .q-tile__id    { font-size: 11px; font-weight: 700; color: var(--c-mid); }
+    .q-tile__subj  { font-size: 12px; font-weight: 600; margin: 3px 0; line-height: 1.3; }
+    .q-tile__stat  { font-size: 11px; color: var(--c-mid); }
+
+    .account-row { display: flex; align-items: center; justify-content: space-between; gap: 14px; flex-wrap: wrap; }
+
+    /* Reset zone */
+    .danger-zone {
+      background: var(--c-red-light);
+      border: 1.5px solid #F1948A;
+      border-radius: var(--r-md);
+      padding: 20px 24px;
+      display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap;
+    }
+  </style>
+</head>
+<body>
+
+<nav class="topnav">
+  <a href="index.html" class="topnav__logo">
+    <div class="topnav__logo-icon" data-icon="leaf"></div>
+    <div>
+      <div class="topnav__logo-text">NaturoApp</div>
+      <span class="topnav__logo-sub">Révision Naturopathie</span>
+    </div>
+  </a>
+  <ul class="topnav__nav">
+    <li><a href="index.html"><span class="nav-ico" data-icon="home"></span> <span class="nav-label">Accueil</span></a></li>
+    <li><a href="cours.html"><span class="nav-ico" data-icon="book"></span> <span class="nav-label">Cours</span></a></li>
+    <li><a href="revision.html"><span class="nav-ico" data-icon="book-open"></span> <span class="nav-label">Révision</span></a></li>
+    <li><a href="examen.html"><span class="nav-ico" data-icon="edit"></span> <span class="nav-label">Examen</span></a></li>
+    <li><a href="stats.html" class="active"><span class="nav-ico" data-icon="chart"></span> <span class="nav-label">Stats</span></a></li>
+  </ul>
+  <button class="nav-lock" id="nav-lock" data-icon="lock" title="Verrouiller l'app" aria-label="Verrouiller"></button>
+</nav>
+
+<div class="page">
+
+  <!-- HERO SCORE -->
+  <div class="stats-hero" id="stats-hero">
+    <div>
+      <div class="stats-hero__score" id="hero-score">—%</div>
+      <div style="color:rgba(255,255,255,0.85);font-size:16px;font-weight:600;" id="hero-label">Taux de réussite global</div>
+      <div class="stats-hero__label" id="hero-sub">Commence à réviser pour voir tes stats !</div>
+    </div>
+    <div style="flex:1;display:flex;gap:24px;flex-wrap:wrap;justify-content:flex-end;">
+      <div style="text-align:center;color:#fff;">
+        <div style="font-size:32px;font-weight:700;" id="hero-seen">0</div>
+        <div style="font-size:12px;opacity:.75;">Questions vues</div>
+      </div>
+      <div style="text-align:center;color:#fff;">
+        <div style="font-size:32px;font-weight:700;" id="hero-exams">0</div>
+        <div style="font-size:12px;opacity:.75;">Examens passés</div>
+      </div>
+      <div style="text-align:center;color:#fff;">
+        <div style="font-size:32px;font-weight:700;" id="hero-best">—</div>
+        <div style="font-size:12px;opacity:.75;">Meilleur examen</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ACTIVITÉ QUOTIDIENNE (HEATMAP) -->
+  <div class="section">
+    <div class="section-header" style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;">
+      <h2><span data-icon="calendar"></span> Activité quotidienne</h2>
+      <div style="display:flex;align-items:center;gap:8px;font-size:12px;color:var(--c-mid);">
+        <span>Moins</span>
+        <div class="heatmap-cell" style="width:14px;height:14px;"></div>
+        <div class="heatmap-cell" style="width:14px;height:14px;" data-level="1"></div>
+        <div class="heatmap-cell" style="width:14px;height:14px;" data-level="2"></div>
+        <div class="heatmap-cell" style="width:14px;height:14px;" data-level="3"></div>
+        <div class="heatmap-cell" style="width:14px;height:14px;" data-level="4"></div>
+        <span>Plus</span>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card__body">
+        <div class="heatmap-wrapper">
+          <div class="heatmap" id="heatmap"><!-- JS --></div>
+        </div>
+        <div id="heatmap-tooltip" style="font-size:12px;color:var(--c-mid);margin-top:8px;height:18px;"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PROGRESSION PAR JOUR -->
+  <div class="section">
+    <div class="section-header" style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;">
+      <h2><span data-icon="trending-up"></span> Progression par thème</h2>
+      <a href="revision.html" class="btn btn-ghost btn-sm">Réviser →</a>
+    </div>
+    <div class="card">
+      <div class="card__body" id="day-progress"><!-- JS --></div>
+    </div>
+  </div>
+
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:24px;margin-bottom:36px;" class="two-col-stats">
+
+    <!-- PAR CATÉGORIE -->
+    <div>
+      <h2 class="mb-16"><span data-icon="tag"></span> Par catégorie</h2>
+      <div class="card">
+        <div class="card__body" id="cat-progress"><!-- JS --></div>
+      </div>
+    </div>
+
+    <!-- HISTORIQUE EXAMENS -->
+    <div>
+      <h2 class="mb-16"><span data-icon="edit"></span> Historique examens</h2>
+      <div class="card">
+        <div class="card__body" style="padding:0;overflow:hidden;">
+          <div id="exam-history" style="overflow-x:auto;">
+            <table class="history-table">
+              <thead>
+                <tr>
+                  <th>Date</th>
+                  <th>Format</th>
+                  <th>Score</th>
+                  <th>Note</th>
+                </tr>
+              </thead>
+              <tbody id="exam-history-body">
+                <tr><td colspan="4" style="text-align:center;color:var(--c-mid);padding:24px;">Aucun examen passé</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TOUTES LES QUESTIONS -->
+  <div class="section">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;flex-wrap:wrap;gap:12px;">
+      <h2><span data-icon="clipboard"></span> Toutes les questions</h2>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;">
+        <button class="btn btn-ghost btn-sm" id="filter-all"    onclick="setFilter('all')">Toutes</button>
+        <button class="btn btn-ghost btn-sm" id="filter-bad"    onclick="setFilter('bad')"><span data-icon="x-circle"></span> Difficiles</button>
+        <button class="btn btn-ghost btn-sm" id="filter-unseen" onclick="setFilter('unseen')"><span data-icon="eye"></span> Non vues</button>
+        <button class="btn btn-ghost btn-sm" id="filter-good"   onclick="setFilter('good')"><span data-icon="check-circle"></span> Maîtrisées</button>
+      </div>
+    </div>
+    <div class="q-grid" id="q-grid"><!-- JS --></div>
+  </div>
+
+  <!-- COMPTE & SAUVEGARDE -->
+  <div class="section">
+    <h2 class="mb-16"><span data-icon="lock"></span> Compte &amp; sauvegarde</h2>
+    <div class="card"><div class="card__body">
+      <div class="account-row">
+        <div>
+          <div class="text-sm text-mid">Compte actif</div>
+          <div id="acc-name" style="font-weight:700;font-size:16px;">—</div>
+        </div>
+        <button class="btn btn-ghost btn-sm" id="rename-btn"><span data-icon="edit"></span> Renommer</button>
+      </div>
+      <hr style="border:none;border-top:1px solid var(--c-border);margin:14px 0;">
+      <div class="account-row">
+        <div>
+          <div style="font-weight:600;">Sauvegarde de la progression</div>
+          <div class="text-sm text-mid">Exporte un fichier pour changer d'appareil ou ne rien perdre.</div>
+        </div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;">
+          <button class="btn btn-ghost btn-sm" id="export-btn"><span data-icon="download"></span> Exporter</button>
+          <button class="btn btn-ghost btn-sm" id="import-btn"><span data-icon="rotate"></span> Importer</button>
+          <input type="file" id="import-file" accept="application/json,.json" style="display:none">
+        </div>
+      </div>
+    </div></div>
+  </div>
+
+  <!-- RESET -->
+  <div class="section">
+    <div class="danger-zone">
+      <div>
+        <div style="font-weight:700;color:var(--c-red);margin-bottom:4px;display:flex;align-items:center;gap:6px;"><span data-icon="alert-triangle"></span> Réinitialiser la progression</div>
+        <div style="font-size:13px;color:var(--c-mid);">Efface toutes tes statistiques, sessions et historique d'examens (ce compte uniquement). Irréversible.</div>
+      </div>
+      <button class="btn btn-danger btn-sm" id="reset-btn">Réinitialiser</button>
+    </div>
+  </div>
+
+</div>
+
+<nav class="bottomnav">
+  <a href="index.html"><span class="bn-ico" data-icon="home"></span> Accueil</a>
+  <a href="cours.html"><span class="bn-ico" data-icon="book"></span> Cours</a>
+  <a href="revision.html"><span class="bn-ico" data-icon="book-open"></span> Révision</a>
+  <a href="examen.html"><span class="bn-ico" data-icon="edit"></span> Examen</a>
+  <a href="stats.html" class="active"><span class="bn-ico" data-icon="chart"></span> Stats</a>
+</nav>
+
+<div id="toast-container"></div>
+
+<script src="app.js"></script>
+<script>
+const { State, QUESTIONS, getGrade, getScoreColor, animateNumber, currentProfile, Profiles } = window.APP;
+
+const CATEGORIES = [...new Set(QUESTIONS.map(q => q.categorie))];
+const DAY_LABELS = [
+  'Bases fondamentales', 'Plantes & allergie', 'Peau & hormones',
+  'Gynéco & pancréas',  'Nutrition & oméga',  'Microbiote & régimes',
+  'Revitalisation & digestion', 'Neuro & prébiotiques'
+];
+
+let currentFilter = 'all';
+
+function render() {
+  const d = State.data;
+  const qs = d.questionStats;
+
+  // Hero
+  const score = State.getOverallScore();
+  const g = getGrade(score);
+  animateNumber(document.getElementById('hero-score'), score, { suffix: '%', duration: 1100 });
+  document.getElementById('hero-label').textContent = g.label;
+
+  let seen = 0;
+  Object.values(qs).forEach(s => { if (s.seen > 0) seen++; });
+  animateNumber(document.getElementById('hero-seen'), seen, { duration: 900 });
+  animateNumber(document.getElementById('hero-exams'), d.examSessions.length, { duration: 900 });
+
+  const bestExam = d.examSessions.length > 0
+    ? Math.max(...d.examSessions.map(s => s.pct)) + '%'
+    : '—';
+  document.getElementById('hero-best').textContent = bestExam;
+  document.getElementById('hero-sub').textContent = `${seen} / 80 questions vues · ${d.examSessions.length} examen(s) passé(s)`;
+
+  // Heatmap (last 12 weeks)
+  renderHeatmap();
+
+  // Day progress
+  renderDayProgress();
+
+  // Category progress
+  renderCatProgress();
+
+  // Exam history
+  renderExamHistory();
+
+  // Q grid
+  renderQGrid();
+}
+
+function renderHeatmap() {
+  const heatmap = document.getElementById('heatmap');
+  heatmap.innerHTML = '';
+  const daily = State.data.dailyStats;
+
+  const today = new Date();
+  const startDate = new Date(today);
+  startDate.setDate(today.getDate() - 83); // ~12 weeks
+
+  // Build week columns
+  let currentCol = null;
+  let dayOfWeek = startDate.getDay(); // 0=Sun
+
+  for (let i = 0; i <= 83; i++) {
+    const d = new Date(startDate);
+    d.setDate(startDate.getDate() + i);
+    const key = d.toISOString().split('T')[0];
+    const dayData = daily[key];
+
+    if (i === 0 || d.getDay() === 0) {
+      currentCol = document.createElement('div');
+      currentCol.className = 'heatmap-col';
+      heatmap.appendChild(currentCol);
+    }
+
+    const cell = document.createElement('div');
+    cell.className = 'heatmap-cell';
+    cell.style.width = '14px';
+    cell.style.height = '14px';
+
+    if (dayData && dayData.questions > 0) {
+      const level = dayData.questions < 5 ? 1 : dayData.questions < 15 ? 2 : dayData.questions < 30 ? 3 : 4;
+      cell.dataset.level = level;
+    }
+
+    const dateStr = d.toLocaleDateString('fr-FR', { day: '2-digit', month: 'short' });
+    cell.title = dayData ? `${dateStr} — ${dayData.questions} q, ${dayData.correct} correctes` : dateStr;
+
+    cell.addEventListener('mouseenter', () => {
+      document.getElementById('heatmap-tooltip').textContent =
+        dayData ? `${dateStr} : ${dayData.questions} questions, ${dayData.correct} correctes` : `${dateStr} : aucune activité`;
+    });
+
+    currentCol.appendChild(cell);
+  }
+}
+
+function renderDayProgress() {
+  const el = document.getElementById('day-progress');
+  const progress = State.getProgressByDay();
+  el.innerHTML = '';
+
+  for (let day = 1; day <= 8; day++) {
+    const p = progress[day] || { total: 10, seen: 0, correct: 0 };
+    const seenPct = p.total > 0 ? Math.round((p.seen / p.total) * 100) : 0;
+    const correctPct = p.seen > 0 ? Math.round((p.correct / p.seen) * 100) : 0;
+
+    const row = document.createElement('div');
+    row.className = 'cat-row';
+    row.style.alignItems = 'flex-start';
+    row.style.padding = '14px 0';
+    row.innerHTML = `
+      <div class="cat-name">
+        <div style="font-weight:600;font-size:13.5px;">J${day} — ${DAY_LABELS[day-1]}</div>
+        <div style="font-size:11.5px;color:var(--c-mid);margin-top:2px;">${p.seen}/${p.total} vues</div>
+      </div>
+      <div class="cat-bar">
+        <div style="display:flex;justify-content:space-between;font-size:11px;color:var(--c-mid);margin-bottom:4px;">
+          <span>Vues : ${seenPct}%</span>
+          <span>Réussite : ${correctPct}%</span>
+        </div>
+        <div class="progress-bar" style="margin-bottom:5px;">
+          <div class="progress-bar__fill" style="width:${seenPct}%;background:var(--c-green-light)"></div>
+        </div>
+        <div class="progress-bar progress-bar--sm">
+          <div class="progress-bar__fill" style="width:${correctPct}%;background:${getScoreColor(correctPct)}"></div>
+        </div>
+      </div>
+      <div style="text-align:right;min-width:52px;">
+        <span class="badge badge-${correctPct >= 80 ? 'green' : correctPct >= 60 ? 'ocre' : p.seen > 0 ? 'red' : 'gray'}">${p.seen > 0 ? correctPct + '%' : 'N/A'}</span>
+      </div>
+    `;
+    el.appendChild(row);
+  }
+}
+
+function renderCatProgress() {
+  const el = document.getElementById('cat-progress');
+  el.innerHTML = '';
+  const qs = State.data.questionStats;
+
+  CATEGORIES.forEach(cat => {
+    const catQs = QUESTIONS.filter(q => q.categorie === cat);
+    let correct = 0, total = 0;
+    catQs.forEach(q => {
+      const s = qs[q.id];
+      total += s.seen;
+      correct += s.correct;
+    });
+    const pct = total > 0 ? Math.round((correct / total) * 100) : 0;
+
+    const row = document.createElement('div');
+    row.className = 'cat-row';
+    row.innerHTML = `
+      <div class="cat-name">${cat}</div>
+      <div class="cat-bar">
+        <div class="progress-bar progress-bar--sm">
+          <div class="progress-bar__fill" style="width:${pct}%;background:${getScoreColor(pct)}"></div>
+        </div>
+      </div>
+      <div class="cat-pct" style="color:${getScoreColor(pct)}">${total > 0 ? pct + '%' : '—'}</div>
+    `;
+    el.appendChild(row);
+  });
+}
+
+function renderExamHistory() {
+  const body = document.getElementById('exam-history-body');
+  const sessions = [...State.data.examSessions].reverse();
+
+  if (sessions.length === 0) return;
+
+  body.innerHTML = '';
+  sessions.forEach(s => {
+    const date = new Date(s.timestamp).toLocaleDateString('fr-FR', {
+      day: '2-digit', month: 'short', year: '2-digit'
+    });
+    const g = getGrade(s.pct);
+    const labels = { full: '80 Q', half: '40 Q', mini: '20 Q', weak: 'Points faibles' };
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td>${date}</td>
+      <td>${labels[s.mode] || s.mode}</td>
+      <td><b>${s.correct}/${s.total}</b> <span style="color:var(--c-mid)">(${s.pct}%)</span></td>
+      <td><span class="badge badge-${s.pct >= 80 ? 'green' : s.pct >= 60 ? 'ocre' : 'red'}">${g.grade}</span></td>
+    `;
+    body.appendChild(tr);
+  });
+}
+
+function renderQGrid() {
+  const grid = document.getElementById('q-grid');
+  grid.innerHTML = '';
+  const qs = State.data.questionStats;
+
+  let filtered = QUESTIONS;
+  if (currentFilter === 'bad')    filtered = QUESTIONS.filter(q => { const s = qs[q.id]; return s.seen > 0 && (s.correct / s.seen) < 0.6; });
+  if (currentFilter === 'unseen') filtered = QUESTIONS.filter(q => qs[q.id].seen === 0);
+  if (currentFilter === 'good')   filtered = QUESTIONS.filter(q => { const s = qs[q.id]; return s.seen > 0 && (s.correct / s.seen) >= 0.8; });
+
+  filtered.forEach(q => {
+    const s = qs[q.id];
+    const pct = s.seen > 0 ? Math.round((s.correct / s.seen) * 100) : null;
+    const cls = s.seen === 0 ? 'unseen' : pct >= 80 ? 'good' : pct >= 60 ? 'medium' : 'bad';
+
+    const tile = document.createElement('a');
+    tile.href = `revision.html?id=${q.id}`;
+    tile.className = `q-tile ${cls}`;
+    tile.innerHTML = `
+      <div class="q-tile__id">Q${q.id} · J${q.jour}</div>
+      <div class="q-tile__subj">${q.sujet}</div>
+      <div class="q-tile__stat">${s.seen === 0 ? 'Pas encore vue' : `${s.correct}/${s.seen} · ${pct}%`}</div>
+    `;
+    grid.appendChild(tile);
+  });
+
+  if (filtered.length === 0) {
+    grid.innerHTML = '<div style="padding:24px;text-align:center;color:var(--c-mid);grid-column:1/-1;">Aucune question dans ce filtre</div>';
+  }
+
+  // Active filter button
+  document.querySelectorAll('[id^="filter-"]').forEach(b => {
+    b.className = b.id === `filter-${currentFilter}` ? 'btn btn-primary btn-sm' : 'btn btn-ghost btn-sm';
+  });
+}
+
+function setFilter(f) {
+  currentFilter = f;
+  renderQGrid();
+}
+
+// Reset
+document.getElementById('reset-btn').addEventListener('click', () => {
+  if (confirm('Effacer TOUTE ta progression ? Cette action est irréversible.')) {
+    if (confirm('Dernière confirmation — vraiment tout effacer ?')) {
+      State.reset();
+      render();
+      showToast('Progression réinitialisée.', 'info');
+    }
+  }
+});
+
+function showToast(msg, type = 'info') {
+  const el = document.createElement('div');
+  el.className = `toast toast-${type}`;
+  el.textContent = msg;
+  document.getElementById('toast-container').appendChild(el);
+  setTimeout(() => el.remove(), 3000);
+}
+
+// Responsive 2-col
+const mq = window.matchMedia('(max-width: 800px)');
+function applyLayout(mq) {
+  document.querySelector('.two-col-stats').style.gridTemplateColumns = mq.matches ? '1fr' : '1fr 1fr';
+}
+mq.addEventListener('change', applyLayout);
+applyLayout(mq);
+
+// ── COMPTE & SAUVEGARDE ───────────────────────────────────────
+function wireAccount() {
+  const prof = currentProfile();
+  document.getElementById('acc-name').textContent = prof ? prof.name : '—';
+
+  document.getElementById('rename-btn').addEventListener('click', () => {
+    const prof = currentProfile();
+    const name = prompt('Nouveau prénom :', prof ? prof.name : '');
+    if (name && name.trim()) {
+      Profiles.rename(prof.id, name.trim());
+      document.getElementById('acc-name').textContent = name.trim();
+      showToast('Prénom mis à jour.', 'success');
+    }
+  });
+
+  document.getElementById('export-btn').addEventListener('click', () => {
+    const prof = currentProfile();
+    const payload = JSON.stringify({ app: 'NaturoApp', version: 1, name: prof ? prof.name : '', data: State.data }, null, 2);
+    const blob = new Blob([payload], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    const stamp = new Date().toISOString().split('T')[0];
+    a.href = url; a.download = `naturoapp-sauvegarde-${stamp}.json`;
+    document.body.appendChild(a); a.click(); a.remove();
+    setTimeout(() => URL.revokeObjectURL(url), 1000);
+    showToast('Sauvegarde exportée.', 'success');
+  });
+
+  const fileInput = document.getElementById('import-file');
+  document.getElementById('import-btn').addEventListener('click', () => fileInput.click());
+  fileInput.addEventListener('change', e => {
+    const file = e.target.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = () => {
+      try {
+        const parsed = JSON.parse(reader.result);
+        const data = parsed.data || parsed;          // accepte le format exporté ou des données brutes
+        if (!confirm('Remplacer la progression de ce compte par la sauvegarde importée ?')) return;
+        State.importData(data);
+        render();
+        showToast('Sauvegarde importée.', 'success');
+      } catch (err) {
+        showToast('Fichier invalide.', 'error');
+      } finally { fileInput.value = ''; }
+    };
+    reader.readAsText(file);
+  });
+}
+
+// Rendu différé : on attend qu'un profil soit déverrouillé.
+window.APP.onReady(() => {
+  State.init();
+  render();
+  wireAccount();
+});
+</script>
+</body>
+</html>

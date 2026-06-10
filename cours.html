@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>NaturoApp — Cours</title>
+  <meta name="theme-color" content="#1A5C45">
+  <link rel="manifest" href="manifest.json">
+  <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="NaturoApp">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Lora:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+  <script>try{if(!sessionStorage.getItem('naturoapp_active'))document.documentElement.classList.add('pre-lock');}catch(e){}</script>
+  <style>
+    .cours-hero {
+      background:
+        radial-gradient(120% 140% at 0% 0%, #1F6B50 0%, rgba(31,107,80,0) 55%),
+        linear-gradient(135deg, var(--c-green-deep), var(--c-green));
+      color:#fff; border-radius:var(--r-xl); padding:30px 32px; margin-bottom:24px;
+      box-shadow:var(--shadow-lg); display:flex; align-items:center; gap:24px; flex-wrap:wrap;
+    }
+    .cours-hero h1 { color:#fff; font-size:28px; }
+    .cours-hero p { color:rgba(255,255,255,.82); font-size:14px; margin-top:4px; }
+    .cours-hero .ring-wrap__num { font-family:var(--font-display); font-size:24px; font-weight:700; color:#fff; }
+    .cours-hero .ring-wrap__cap { font-size:9.5px; letter-spacing:.5px; text-transform:uppercase; color:rgba(255,255,255,.75); margin-top:2px; }
+
+    .search-bar { position:relative; margin-bottom:24px; }
+    .search-bar .app-icon { position:absolute; left:14px; top:50%; transform:translateY(-50%); width:18px; height:18px; color:var(--c-mid); }
+    .search-bar input { padding-left:42px; height:48px; font-size:15px; }
+
+    .cat-title { display:flex; align-items:center; gap:8px; font-size:13px; font-weight:700; text-transform:uppercase; letter-spacing:.5px; color:var(--c-green); margin:24px 0 12px; }
+    .cat-title .app-icon { width:16px; height:16px; }
+
+    .course-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(260px,1fr)); gap:14px; }
+    .course-card { display:flex; flex-direction:column; padding:18px 20px; cursor:pointer; }
+    .course-card__top { display:flex; align-items:center; justify-content:space-between; gap:10px; margin-bottom:8px; }
+    .course-card h3 { font-size:16px; line-height:1.3; }
+    .course-card__meta { font-size:11.5px; color:var(--c-mid); display:flex; align-items:center; gap:6px; margin-top:2px; }
+    .course-card p { font-size:13px; color:var(--c-mid); margin-top:8px; line-height:1.5; }
+    .course-card__read { margin-top:12px; align-self:flex-start; }
+
+    /* glossaire */
+    .gloss-list { display:flex; flex-direction:column; gap:0; }
+    .gloss-item { padding:14px 0; border-bottom:1px solid var(--c-border); }
+    .gloss-item:last-child { border-bottom:none; }
+    .gloss-term { font-weight:700; font-size:14.5px; color:var(--c-green-deep); }
+    .gloss-def { font-size:13.5px; color:var(--c-mid); margin-top:2px; }
+    .gloss-cat { font-size:10.5px; }
+
+    /* lecteur plein écran */
+    .reader { position:fixed; inset:0; z-index:200; background:var(--c-cream); overflow-y:auto;
+      transform:translateY(100%); transition:transform .32s var(--ease-out); }
+    .reader.open { transform:translateY(0); }
+    .reader__bar { position:sticky; top:0; z-index:2; background:rgba(255,255,255,.92);
+      -webkit-backdrop-filter:blur(12px); backdrop-filter:blur(12px);
+      border-bottom:1px solid var(--c-border); display:flex; align-items:center; gap:12px;
+      padding:14px 18px calc(14px); }
+    .reader__bar .btn-ghost { padding:8px 14px; }
+    .reader__body { max-width:720px; margin:0 auto; padding:28px 20px 60px; }
+    .reader__cat { font-size:11.5px; font-weight:700; text-transform:uppercase; letter-spacing:.5px; color:var(--c-green); }
+    .reader__body h1 { font-size:30px; margin:6px 0 6px; }
+    .reader__resume { font-size:15px; color:var(--c-mid); margin-bottom:20px; }
+    .reader__section { margin-bottom:22px; }
+    .reader__section h2 { font-size:18px; margin-bottom:8px; }
+    .reader__section p { font-size:15px; line-height:1.7; }
+    .keypoints { background:var(--c-green-pale); border-radius:var(--r-md); padding:18px 20px; margin:24px 0; }
+    .keypoints h3 { display:flex; align-items:center; gap:8px; font-size:13px; text-transform:uppercase; letter-spacing:.5px; color:var(--c-green-deep); margin-bottom:10px; }
+    .keypoints h3 .app-icon { width:17px; height:17px; }
+    .keypoints ul { list-style:none; display:flex; flex-direction:column; gap:8px; }
+    .keypoints li { display:flex; gap:9px; font-size:14px; align-items:flex-start; }
+    .keypoints li .app-icon { width:16px; height:16px; color:var(--c-green); flex-shrink:0; margin-top:3px; }
+    .defs { margin:24px 0; }
+    .def-row { padding:10px 0; border-bottom:1px solid var(--c-border); font-size:14px; }
+    .def-row:last-child { border-bottom:none; }
+    .def-row b { color:var(--c-green-deep); }
+    .reader__actions { display:flex; gap:12px; flex-wrap:wrap; margin-top:26px; }
+  </style>
+</head>
+<body>
+
+<nav class="topnav">
+  <a href="index.html" class="topnav__logo">
+    <div class="topnav__logo-icon" data-icon="leaf"></div>
+    <div>
+      <div class="topnav__logo-text">NaturoApp</div>
+      <span class="topnav__logo-sub">Révision Naturopathie</span>
+    </div>
+  </a>
+  <ul class="topnav__nav">
+    <li><a href="index.html"><span class="nav-ico" data-icon="home"></span> <span class="nav-label">Accueil</span></a></li>
+    <li><a href="cours.html" class="active"><span class="nav-ico" data-icon="book"></span> <span class="nav-label">Cours</span></a></li>
+    <li><a href="revision.html"><span class="nav-ico" data-icon="book-open"></span> <span class="nav-label">Révision</span></a></li>
+    <li><a href="examen.html"><span class="nav-ico" data-icon="edit"></span> <span class="nav-label">Examen</span></a></li>
+    <li><a href="stats.html"><span class="nav-ico" data-icon="chart"></span> <span class="nav-label">Stats</span></a></li>
+  </ul>
+  <button class="nav-lock" id="nav-lock" data-icon="lock" title="Verrouiller l'app" aria-label="Verrouiller"></button>
+</nav>
+
+<div class="page">
+  <div class="cours-hero">
+    <div style="flex:1;min-width:0;">
+      <h1>Cours &amp; concepts</h1>
+      <p>Lis tes fiches, puis entraîne-toi sur les QCM liés.</p>
+    </div>
+    <div class="ring-wrap" id="cours-ring"></div>
+  </div>
+
+  <div class="search-bar">
+    <span data-icon="eye"></span>
+    <input type="text" id="course-search" placeholder="Rechercher un cours, un terme…" autocomplete="off" />
+  </div>
+
+  <div id="course-list"></div>
+
+  <div class="section" style="margin-top:32px;">
+    <div class="cat-title"><span data-icon="tag"></span> Glossaire</div>
+    <div class="card"><div class="card__body"><div class="gloss-list" id="glossary"></div></div></div>
+  </div>
+</div>
+
+<!-- LECTEUR -->
+<div class="reader" id="reader">
+  <div class="reader__bar">
+    <button class="btn btn-ghost" id="reader-back"><span data-icon="arrow-left"></span> Cours</button>
+    <div style="flex:1"></div>
+    <button class="btn btn-ghost btn-sm" id="reader-print"><span data-icon="printer"></span> Imprimer</button>
+  </div>
+  <div class="reader__body" id="reader-body"></div>
+</div>
+
+<nav class="bottomnav">
+  <a href="index.html"><span class="bn-ico" data-icon="home"></span> Accueil</a>
+  <a href="cours.html" class="active"><span class="bn-ico" data-icon="book"></span> Cours</a>
+  <a href="revision.html"><span class="bn-ico" data-icon="book-open"></span> Révision</a>
+  <a href="examen.html"><span class="bn-ico" data-icon="edit"></span> Examen</a>
+  <a href="stats.html"><span class="bn-ico" data-icon="chart"></span> Stats</a>
+</nav>
+
+<div id="toast-container"></div>
+
+<script src="content.js"></script>
+<script src="app.js"></script>
+<script>
+const { State, icon, escapeHtml, progressRing, setRing, animateNumber } = window.APP;
+const CONTENT = window.NATURO_CONTENT || { cours: [], glossaire: [] };
+
+// Mise en forme légère et SÛRE : on échappe, puis on applique **gras**/*italique*/sauts de ligne.
+function fmt(text) {
+  let s = escapeHtml(text);
+  s = s.replace(/\*\*(.+?)\*\*/g, '<b>$1</b>').replace(/\*(.+?)\*/g, '<i>$1</i>');
+  s = s.replace(/\n/g, '<br>');
+  return s;
+}
+
+let currentQuery = '';
+
+function matches(c, q) {
+  if (!q) return true;
+  const hay = (c.titre + ' ' + c.categorie + ' ' + (c.resume||'') + ' ' +
+    (c.pointsCles||[]).join(' ') + ' ' + (c.definitions||[]).map(d=>d.terme+' '+d.def).join(' ')).toLowerCase();
+  return hay.includes(q);
+}
+
+function renderList() {
+  const host = document.getElementById('course-list');
+  host.innerHTML = '';
+  const q = currentQuery.trim().toLowerCase();
+  const shown = CONTENT.cours.filter(c => matches(c, q));
+
+  if (!shown.length) {
+    host.innerHTML = `<div class="empty-state"><span data-icon="book"></span><div class="empty-state__text">Aucun cours pour cette recherche.<br>Ajoute-en dans <code>content.js</code>.</div></div>`;
+    window.APP.hydrateIcons(host);
+    return;
+  }
+
+  // Regroupe par catégorie
+  const cats = {};
+  shown.forEach(c => { (cats[c.categorie] = cats[c.categorie] || []).push(c); });
+
+  Object.keys(cats).forEach(cat => {
+    const sec = document.createElement('div');
+    sec.innerHTML = `<div class="cat-title"><span data-icon="tag"></span> ${escapeHtml(cat)}</div><div class="course-grid"></div>`;
+    const grid = sec.querySelector('.course-grid');
+    cats[cat].forEach(c => {
+      const read = State.isLessonRead(c.id);
+      const el = document.createElement('div');
+      el.className = 'card card--hover course-card';
+      el.innerHTML = `
+        <div class="course-card__top">
+          <h3>${escapeHtml(c.titre)}</h3>
+          ${read ? `<span class="badge badge-green">${icon('check')} Lu</span>` : ''}
+        </div>
+        <div class="course-card__meta">
+          ${c.duree ? `${icon('clock')} ${c.duree} min` : ''}
+          ${c.questionIds && c.questionIds.length ? ` · ${c.questionIds.length} QCM` : ''}
+        </div>
+        <p>${escapeHtml(c.resume || '')}</p>
+        <span class="btn btn-ghost btn-sm course-card__read">${icon('book-open')} Lire</span>`;
+      el.addEventListener('click', () => openReader(c.id));
+      grid.appendChild(el);
+    });
+    document.getElementById('course-list').appendChild(sec);
+  });
+  window.APP.hydrateIcons(document.getElementById('course-list'));
+}
+
+function renderGlossary() {
+  // termes du glossaire + définitions issues des cours
+  const fromCourses = [];
+  CONTENT.cours.forEach(c => (c.definitions||[]).forEach(d => fromCourses.push({ terme:d.terme, definition:d.def, categorie:c.categorie })));
+  const all = [...(CONTENT.glossaire||[]), ...fromCourses];
+  // dédoublonne par terme
+  const seen = new Set(); const uniq = [];
+  all.forEach(t => { const k=t.terme.toLowerCase(); if(!seen.has(k)){seen.add(k); uniq.push(t);} });
+  uniq.sort((a,b) => a.terme.localeCompare(b.terme,'fr'));
+
+  const q = currentQuery.trim().toLowerCase();
+  const shown = uniq.filter(t => !q || (t.terme+' '+t.definition).toLowerCase().includes(q));
+
+  const host = document.getElementById('glossary');
+  if (!shown.length) { host.innerHTML = `<div class="empty-state"><div class="empty-state__text">Aucun terme.</div></div>`; return; }
+  host.innerHTML = shown.map(t => `
+    <div class="gloss-item">
+      <div class="gloss-term">${escapeHtml(t.terme)} ${t.categorie ? `<span class="badge badge-gray gloss-cat">${escapeHtml(t.categorie)}</span>`:''}</div>
+      <div class="gloss-def">${escapeHtml(t.definition)}</div>
+    </div>`).join('');
+}
+
+function openReader(id) {
+  const c = CONTENT.cours.find(x => x.id === id);
+  if (!c) return;
+  const body = document.getElementById('reader-body');
+  body.innerHTML = `
+    <div class="reader__cat">${escapeHtml(c.categorie)}${c.jour ? ' · Jour '+c.jour : ''}</div>
+    <h1>${escapeHtml(c.titre)}</h1>
+    <div class="reader__resume">${escapeHtml(c.resume||'')}</div>
+    ${(c.sections||[]).map(s => `<div class="reader__section"><h2>${escapeHtml(s.titre)}</h2><p>${fmt(s.contenu)}</p></div>`).join('')}
+    ${(c.pointsCles&&c.pointsCles.length) ? `
+      <div class="keypoints">
+        <h3>${icon('lightbulb')} À retenir</h3>
+        <ul>${c.pointsCles.map(p => `<li>${icon('check')} <span>${escapeHtml(p)}</span></li>`).join('')}</ul>
+      </div>` : ''}
+    ${(c.definitions&&c.definitions.length) ? `
+      <div class="defs">
+        <div class="cat-title"><span data-icon="tag"></span> Définitions</div>
+        ${c.definitions.map(d => `<div class="def-row"><b>${escapeHtml(d.terme)}</b> — ${escapeHtml(d.def)}</div>`).join('')}
+      </div>` : ''}
+    <div class="reader__actions">
+      <button class="btn btn-primary" id="reader-mark">${icon('check')} ${State.isLessonRead(c.id)?'Cours lu ✓':'Marquer comme lu'}</button>
+      ${(c.questionIds&&c.questionIds.length) ? `<a class="btn btn-ocre" href="revision.html?ids=${c.questionIds.join(',')}">${icon('list')} S'entraîner (${c.questionIds.length})</a>` : ''}
+    </div>`;
+  window.APP.hydrateIcons(body);
+  document.getElementById('reader-mark').addEventListener('click', () => {
+    State.markLessonRead(c.id);
+    document.getElementById('reader-mark').innerHTML = icon('check') + ' Cours lu ✓';
+    renderProgress(); renderList();
+  });
+  document.getElementById('reader').classList.add('open');
+  document.getElementById('reader-body').scrollTop = 0;
+}
+
+function closeReader() { document.getElementById('reader').classList.remove('open'); }
+
+function renderProgress() {
+  const total = CONTENT.cours.length;
+  const read = CONTENT.cours.filter(c => State.isLessonRead(c.id)).length;
+  const pct = total ? Math.round(read/total*100) : 0;
+  const ring = document.getElementById('cours-ring');
+  ring.innerHTML = progressRing(pct, { size: 92, stroke: 8, color:'#fff', track:'rgba(255,255,255,.2)' }) +
+    `<div class="ring-wrap__label"><div class="ring-wrap__num" id="cours-pct">0%</div><div class="ring-wrap__cap">${read}/${total} lus</div></div>`;
+  setRing(ring.querySelector('.ring__bar'), pct);
+  animateNumber(document.getElementById('cours-pct'), pct, { suffix:'%', duration:900 });
+}
+
+document.getElementById('reader-back').addEventListener('click', closeReader);
+document.getElementById('reader-print').addEventListener('click', () => window.print());
+document.getElementById('course-search').addEventListener('input', e => {
+  currentQuery = e.target.value; renderList(); renderGlossary();
+});
+
+window.APP.onReady(() => {
+  State.init();
+  renderProgress();
+  renderList();
+  renderGlossary();
+});
+</script>
+</body>
+</html>

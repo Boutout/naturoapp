@@ -1,0 +1,691 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>NaturoApp — Mode Révision</title>
+  <meta name="theme-color" content="#1A5C45">
+  <link rel="manifest" href="manifest.json">
+  <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="NaturoApp">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Lora:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+  <script>try{if(!sessionStorage.getItem('naturoapp_active'))document.documentElement.classList.add('pre-lock');}catch(e){}</script>
+  <style>
+    /* SIDEBAR */
+    .layout { display: flex; min-height: calc(100vh - var(--nav-h)); }
+
+    .sidebar {
+      width: 260px; flex-shrink: 0;
+      background: var(--c-white);
+      border-right: 1px solid var(--c-border);
+      padding: 20px 0;
+      overflow-y: auto;
+      position: sticky; top: var(--nav-h); height: calc(100vh - var(--nav-h));
+    }
+
+    @media (max-width: 900px) { .sidebar { display: none; } }
+
+    .sidebar-section { padding: 0 16px 16px; margin-bottom: 8px; border-bottom: 1px solid var(--c-border); }
+    .sidebar-label { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; color: var(--c-mid); margin-bottom: 8px; }
+
+    .mode-btn {
+      display: flex; align-items: center; gap: 10px;
+      width: 100%; padding: 10px 14px;
+      border: none; background: transparent;
+      border-radius: var(--r-sm); cursor: pointer;
+      font-family: var(--font-body); font-size: 13.5px; color: var(--c-dark);
+      transition: all .15s; text-align: left;
+    }
+
+    .mode-btn:hover { background: var(--c-green-pale); }
+    .mode-btn.active { background: var(--c-green-pale); color: var(--c-green-deep); font-weight: 600; }
+    .mode-btn.active::before {
+      content: ''; flex-shrink: 0;
+      width: 0; height: 0; margin-right: 2px;
+      border-style: solid; border-width: 5px 0 5px 7px;
+      border-color: transparent transparent transparent var(--c-green);
+    }
+    .mode-btn .app-icon { width: 16px; height: 16px; color: var(--c-green); }
+    .mode-chip .app-icon { width: 15px; height: 15px; vertical-align: -0.15em; }
+
+    .day-btn {
+      display: flex; align-items: center; justify-content: space-between;
+      width: 100%; padding: 8px 14px;
+      border: none; background: transparent;
+      border-radius: var(--r-sm); cursor: pointer;
+      font-family: var(--font-body); font-size: 13px; color: var(--c-dark);
+      transition: all .15s;
+    }
+    .day-btn:hover { background: var(--c-green-pale); }
+    .day-btn.active { font-weight: 600; color: var(--c-green-deep); background: var(--c-green-pale); }
+
+    /* MAIN */
+    .main { flex: 1; padding: 28px; max-width: 800px; }
+
+    @media (max-width: 900px) { .main { padding: 16px; max-width: none; } }
+
+    /* CARD CONTAINER */
+    .revision-area { display: none; }
+    .revision-area.active { display: block; }
+
+    /* FLASHCARD */
+    .fc-container {
+      display: flex; flex-direction: column; align-items: center;
+    }
+
+    .fc-meta {
+      display: flex; align-items: center; gap: 10px;
+      margin-bottom: 16px; width: 100%; max-width: 700px;
+      flex-wrap: wrap;
+    }
+
+    .fc-progress-text { font-size: 13px; color: var(--c-mid); margin-left: auto; }
+
+    /* QCM MODE */
+    .qcm-card {
+      background: var(--c-white);
+      border-radius: var(--r-xl);
+      padding: 32px 36px;
+      box-shadow: var(--shadow-md);
+      border: 1px solid var(--c-border);
+      max-width: 700px; margin: 0 auto;
+    }
+
+    @media (max-width: 600px) { .qcm-card { padding: 22px 18px; } }
+
+    .qcm-question {
+      font-size: 18px; font-weight: 600; line-height: 1.45;
+      margin-bottom: 24px; color: var(--c-dark);
+    }
+
+    .options-grid { display: flex; flex-direction: column; gap: 10px; margin-bottom: 20px; }
+
+    .qcm-nav {
+      display: flex; align-items: center; justify-content: space-between;
+      margin-top: 20px; max-width: 700px; margin-left: auto; margin-right: auto;
+    }
+
+    /* FLIP HINT */
+    .flip-hint {
+      font-size: 12.5px; color: var(--c-mid);
+      margin-bottom: 14px; text-align: center;
+      display: flex; align-items: center; gap: 6px; justify-content: center;
+    }
+
+    /* SELF-ASSESS */
+    .self-assess {
+      display: none; gap: 12px; justify-content: center;
+      margin-top: 20px;
+    }
+    .self-assess.visible { display: flex; }
+
+    /* PROGRESS TOP */
+    .revision-header {
+      display: flex; align-items: center; gap: 14px;
+      margin-bottom: 24px; flex-wrap: wrap;
+    }
+
+    .revision-header h2 { flex: 1; }
+
+    /* MODE SELECTOR */
+    .mode-chips {
+      display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 24px;
+    }
+    .mode-chip {
+      padding: 7px 14px; border-radius: 20px;
+      border: 1.5px solid var(--c-border); cursor: pointer;
+      font-size: 13.5px; font-weight: 500;
+      background: var(--c-white); color: var(--c-dark);
+      transition: all .15s;
+    }
+    .mode-chip:hover { border-color: var(--c-green-light); background: var(--c-green-pale); }
+    .mode-chip.active { border-color: var(--c-green); background: var(--c-green-pale); color: var(--c-green-deep); font-weight: 600; }
+
+    /* COMPLETION */
+    .completion-card {
+      background: linear-gradient(135deg, var(--c-green-deep), var(--c-green));
+      color: #fff; border-radius: var(--r-xl);
+      padding: 48px 40px; text-align: center;
+      max-width: 500px; margin: 40px auto;
+    }
+    .completion-card h2 { color: #fff; font-size: 28px; margin-bottom: 12px; }
+    .completion-card p  { color: rgba(255,255,255,0.85); }
+
+    .correct-count { font-size: 52px; font-weight: 700; line-height: 1; margin: 20px 0; }
+    .completion-ico { display: flex; justify-content: center; }
+    .completion-ico .app-icon { width: 48px; height: 48px; color: #fff; }
+
+    /* Category label */
+    .q-category {
+      font-size: 11.5px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px;
+      color: var(--c-green);
+    }
+  </style>
+</head>
+<body>
+
+<nav class="topnav">
+  <a href="index.html" class="topnav__logo">
+    <div class="topnav__logo-icon" data-icon="leaf"></div>
+    <div>
+      <div class="topnav__logo-text">NaturoApp</div>
+      <span class="topnav__logo-sub">Révision Naturopathie</span>
+    </div>
+  </a>
+  <ul class="topnav__nav">
+    <li><a href="index.html"><span class="nav-ico" data-icon="home"></span> <span class="nav-label">Accueil</span></a></li>
+    <li><a href="cours.html"><span class="nav-ico" data-icon="book"></span> <span class="nav-label">Cours</span></a></li>
+    <li><a href="revision.html" class="active"><span class="nav-ico" data-icon="book-open"></span> <span class="nav-label">Révision</span></a></li>
+    <li><a href="examen.html"><span class="nav-ico" data-icon="edit"></span> <span class="nav-label">Examen</span></a></li>
+    <li><a href="stats.html"><span class="nav-ico" data-icon="chart"></span> <span class="nav-label">Stats</span></a></li>
+  </ul>
+  <button class="nav-lock" id="nav-lock" data-icon="lock" title="Verrouiller l'app" aria-label="Verrouiller"></button>
+</nav>
+
+<div class="layout">
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div class="sidebar-section">
+      <div class="sidebar-label">Mode</div>
+      <button class="mode-btn" data-mode="today"><span data-icon="calendar"></span> Questions du jour</button>
+      <button class="mode-btn" data-mode="all"><span data-icon="shuffle"></span> Aléatoire (toutes)</button>
+      <button class="mode-btn" data-mode="weak"><span data-icon="alert-triangle"></span> Points faibles</button>
+      <button class="mode-btn" data-mode="unseen"><span data-icon="eye"></span> Non vues</button>
+      <button class="mode-btn" data-mode="important"><span data-icon="star"></span> Importantes</button>
+    </div>
+    <div class="sidebar-section">
+      <div class="sidebar-label">Par jour</div>
+      <div id="sidebar-days"><!-- filled --></div>
+    </div>
+  </aside>
+
+  <!-- Backdrop du drawer mobile -->
+  <div class="sidebar-backdrop" id="sidebar-backdrop"></div>
+
+  <!-- MAIN -->
+  <main class="main" id="main-content">
+
+    <button class="menu-toggle" id="menu-toggle"><span data-icon="menu"></span> Modes &amp; jours</button>
+
+    <!-- MODE PICKER (when nothing selected) -->
+    <div id="pick-mode">
+      <h2 class="mb-16"><span data-icon="book-open"></span> Mode Révision</h2>
+
+      <p class="text-mid mb-24">Le mode révision te montre les questions une par une, t'explique pourquoi la réponse est bonne, et mémorise tes erreurs pour les retravailler en priorité.</p>
+
+      <div class="mode-chips" id="mode-chips">
+        <button class="mode-chip" data-mode="today"><span data-icon="calendar"></span> Questions du jour</button>
+        <button class="mode-chip" data-mode="all"><span data-icon="shuffle"></span> Toutes (aléatoire)</button>
+        <button class="mode-chip" data-mode="weak"><span data-icon="alert-triangle"></span> Mes points faibles</button>
+        <button class="mode-chip" data-mode="unseen"><span data-icon="eye"></span> Non vues</button>
+        <button class="mode-chip" data-mode="important"><span data-icon="star"></span> Questions clés</button>
+      </div>
+
+      <div style="margin-bottom:20px;">
+        <label style="font-size:13px;font-weight:600;display:block;margin-bottom:8px;">Format de révision :</label>
+        <div class="mode-chips">
+          <button class="mode-chip active" data-format="qcm"><span data-icon="list"></span> QCM (choix multiple)</button>
+          <button class="mode-chip" data-format="flashcard"><span data-icon="layers"></span> Flashcards (recto/verso)</button>
+        </div>
+      </div>
+
+      <div style="margin-bottom:24px;">
+        <label style="font-size:13px;font-weight:600;display:block;margin-bottom:8px;">Jour spécifique :</label>
+        <select id="day-select" style="max-width:280px;">
+          <option value="">— Choisir un jour —</option>
+          <option value="1">Jour 1 — Bases fondamentales (Q1–10)</option>
+          <option value="2">Jour 2 — Plantes & allergie (Q11–20)</option>
+          <option value="3">Jour 3 — Peau & hormones (Q21–30)</option>
+          <option value="4">Jour 4 — Gynéco & pancréas (Q31–40)</option>
+          <option value="5">Jour 5 — Nutrition & oméga (Q41–50)</option>
+          <option value="6">Jour 6 — Microbiote & régimes (Q51–60)</option>
+          <option value="7">Jour 7 — Revitalisation & digestion (Q61–70)</option>
+          <option value="8">Jour 8 — Neuro & prébiotiques (Q71–80)</option>
+        </select>
+      </div>
+
+      <button class="btn btn-primary btn-lg" id="start-revision"><span data-icon="book-open"></span> Commencer la révision →</button>
+    </div>
+
+    <!-- QCM REVISION -->
+    <div id="qcm-revision" class="revision-area">
+      <div class="revision-header">
+        <div>
+          <div class="q-category" id="qcm-cat">Catégorie</div>
+          <h2 id="qcm-subject">Sujet</h2>
+        </div>
+        <div style="text-align:right">
+          <div style="font-size:13px;color:var(--c-mid);" id="qcm-progress">1 / 10</div>
+          <div class="progress-bar progress-bar--sm" style="width:120px;margin-top:6px;">
+            <div class="progress-bar__fill" id="qcm-bar" style="width:10%"></div>
+          </div>
+        </div>
+        <button class="btn btn-ghost btn-sm" id="qcm-stop"><span data-icon="x"></span> Arrêter</button>
+      </div>
+
+      <div class="qcm-card">
+        <div class="qcm-question" id="qcm-question">Question ici</div>
+        <div class="options-grid" id="qcm-options"><!-- filled --></div>
+        <div id="qcm-explain"></div>
+      </div>
+
+      <div class="qcm-nav">
+        <div id="qcm-score-live" class="badge badge-green">0 / 0 correctes</div>
+        <button class="btn btn-primary" id="qcm-next" disabled>Suivant →</button>
+      </div>
+    </div>
+
+    <!-- FLASHCARD REVISION -->
+    <div id="flashcard-revision" class="revision-area">
+      <div class="revision-header">
+        <div>
+          <div class="q-category" id="fc-cat">Catégorie</div>
+          <h2 id="fc-subject">Sujet</h2>
+        </div>
+        <div style="text-align:right">
+          <div style="font-size:13px;color:var(--c-mid);" id="fc-progress">1 / 10</div>
+          <div class="progress-bar progress-bar--sm" style="width:120px;margin-top:6px;">
+            <div class="progress-bar__fill" id="fc-bar" style="width:10%"></div>
+          </div>
+        </div>
+        <button class="btn btn-ghost btn-sm" id="fc-stop"><span data-icon="x"></span> Arrêter</button>
+      </div>
+
+      <div class="flip-hint"><span data-icon="pointer"></span> Clique sur la carte pour voir la réponse</div>
+
+      <div class="flip-card" id="flip-card">
+        <div class="flip-card__inner">
+          <div class="flip-card__front">
+            <div class="q-category" id="fc-cat-inner" style="margin-bottom:8px;"></div>
+            <div style="font-size:11px;color:var(--c-mid);margin-bottom:16px;display:flex;align-items:center;gap:5px;justify-content:center;"><span data-icon="help-circle"></span> QUESTION</div>
+            <div style="font-size:19px;font-weight:600;line-height:1.4;" id="fc-question">Question</div>
+            <div style="margin-top:20px;font-size:12px;color:var(--c-mid);">Clique pour révéler la réponse →</div>
+          </div>
+          <div class="flip-card__back">
+            <div style="font-size:11px;color:var(--c-green);font-weight:700;letter-spacing:0.5px;text-transform:uppercase;margin-bottom:12px;display:flex;align-items:center;gap:5px;justify-content:center;"><span data-icon="check-circle"></span> RÉPONSE</div>
+            <div style="font-size:17px;font-weight:700;color:var(--c-green-deep);line-height:1.4;margin-bottom:16px;" id="fc-answer">Réponse</div>
+            <div id="fc-explain-back" style="font-size:13px;color:var(--c-mid);border-top:1px solid var(--c-border);padding-top:12px;margin-top:4px;"></div>
+            <div id="fc-mnemo" class="mnemo-section" style="margin-top:12px;display:none;"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="self-assess" id="self-assess">
+        <span style="font-size:13px;color:var(--c-mid);margin-right:4px;">Tu savais ?</span>
+        <button class="btn btn-danger btn-sm" id="fc-wrong-btn"><span data-icon="x"></span> Non</button>
+        <button class="btn btn-primary btn-sm" id="fc-correct-btn"><span data-icon="check"></span> Oui</button>
+      </div>
+    </div>
+
+    <!-- COMPLETION -->
+    <div id="completion" class="revision-area"></div>
+
+  </main>
+</div>
+
+<nav class="bottomnav">
+  <a href="index.html"><span class="bn-ico" data-icon="home"></span> Accueil</a>
+  <a href="cours.html"><span class="bn-ico" data-icon="book"></span> Cours</a>
+  <a href="revision.html" class="active"><span class="bn-ico" data-icon="book-open"></span> Révision</a>
+  <a href="examen.html"><span class="bn-ico" data-icon="edit"></span> Examen</a>
+  <a href="stats.html"><span class="bn-ico" data-icon="chart"></span> Stats</a>
+</nav>
+
+<div id="toast-container"></div>
+
+<script src="app.js"></script>
+<script>
+const { State, QUESTIONS, shuffle, getQuestionsByDay, formatTime, icon } = window.APP;
+
+// ── DRAWER MOBILE (hamburger) ─────────────────────────────────
+const sidebarEl  = document.querySelector('.sidebar');
+const backdropEl = document.getElementById('sidebar-backdrop');
+function openDrawer()  { sidebarEl.classList.add('open'); backdropEl.classList.add('open'); }
+function closeDrawer() { sidebarEl.classList.remove('open'); backdropEl.classList.remove('open'); }
+document.getElementById('menu-toggle').addEventListener('click', openDrawer);
+backdropEl.addEventListener('click', closeDrawer);
+
+// ── STATE ─────────────────────────────────────────────────────
+let queue = [];
+let current = 0;
+let sessionCorrect = 0;
+let sessionTotal = 0;
+let currentMode = 'today';
+let currentFormat = 'qcm';
+let answered = false;
+let flipped = false;
+let sessionStart = Date.now();
+
+// ── SIDEBAR DAYS ────────────────────────────────────────────
+const sidebarDays = document.getElementById('sidebar-days');
+const DAY_LABELS = ['Bases fondamentales','Plantes & allergie','Peau & hormones','Gynéco & pancréas','Nutrition & oméga','Microbiote & régimes','Revital. & digestion','Neuro & prébiotiques'];
+
+function buildSidebarDays() {
+  sidebarDays.innerHTML = '';
+  for (let d = 1; d <= 8; d++) {
+    const btn = document.createElement('button');
+    btn.className = 'day-btn';
+    btn.dataset.day = d;
+    const p = State.getProgressByDay()[d] || { total: 10, seen: 0 };
+    const pct = Math.round((p.seen / p.total) * 100);
+    btn.innerHTML = `<span>J${d} — ${DAY_LABELS[d-1].slice(0,20)}…</span><span style="font-size:11px;color:var(--c-mid)">${pct}%</span>`;
+    btn.onclick = () => { closeDrawer(); startSession('day', d); };
+    sidebarDays.appendChild(btn);
+  }
+}
+
+// ── MODE BUTTONS ────────────────────────────────────────────
+document.querySelectorAll('[data-mode]').forEach(btn => {
+  btn.addEventListener('click', () => {
+    currentMode = btn.dataset.mode;
+    document.querySelectorAll('[data-mode]').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    document.querySelectorAll(`[data-mode="${currentMode}"]`).forEach(b => b.classList.add('active'));
+    closeDrawer();
+  });
+});
+
+document.querySelectorAll('[data-format]').forEach(btn => {
+  btn.addEventListener('click', () => {
+    currentFormat = btn.dataset.format;
+    document.querySelectorAll('[data-format]').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll(`[data-format="${currentFormat}"]`).forEach(b => b.classList.add('active'));
+  });
+});
+
+document.getElementById('day-select').addEventListener('change', e => {
+  if (e.target.value) {
+    document.querySelectorAll('[data-mode]').forEach(b => b.classList.remove('active'));
+  }
+});
+
+// ── START ───────────────────────────────────────────────────
+document.getElementById('start-revision').addEventListener('click', () => {
+  const dayVal = document.getElementById('day-select').value;
+  if (dayVal) {
+    startSession('day', parseInt(dayVal));
+  } else {
+    startSession(currentMode);
+  }
+});
+
+function startSession(mode, dayNum) {
+  closeDrawer();
+  sessionStart = Date.now();
+  sessionCorrect = 0; sessionTotal = 0; current = 0; answered = false;
+
+  let q = [];
+  if (mode === 'day') {
+    q = getQuestionsByDay(dayNum);
+  } else if (mode === 'today') {
+    const today = new Date();
+    const dayIndex = (today.getDay() + 6) % 7; // Mon=0
+    q = getQuestionsByDay((dayIndex % 8) + 1);
+  } else if (mode === 'weak') {
+    q = State.getWeakQuestions(20);
+  } else if (mode === 'unseen') {
+    q = QUESTIONS.filter(q => State.data.questionStats[q.id].seen === 0);
+    if (q.length === 0) q = State.getWeakQuestions(10);
+  } else if (mode === 'important') {
+    q = QUESTIONS.filter(q => q.important);
+  } else {
+    q = shuffle(QUESTIONS);
+  }
+
+  if (q.length === 0) {
+    showToast('Aucune question dans cette sélection.', 'info');
+    return;
+  }
+
+  queue = shuffle(q);
+  document.getElementById('pick-mode').style.display = 'none';
+
+  if (currentFormat === 'flashcard') {
+    showFC();
+  } else {
+    showQCM();
+  }
+}
+
+// ── QCM MODE ────────────────────────────────────────────────
+function showQCM() {
+  document.querySelectorAll('.revision-area').forEach(a => a.classList.remove('active'));
+  document.getElementById('qcm-revision').classList.add('active');
+  renderQCMQuestion();
+}
+
+function renderQCMQuestion() {
+  if (current >= queue.length) { showCompletion(); return; }
+  answered = false;
+
+  const q = queue[current];
+  const s = State.data.questionStats[q.id];
+
+  document.getElementById('qcm-cat').textContent = q.categorie;
+  document.getElementById('qcm-subject').textContent = q.sujet;
+  document.getElementById('qcm-progress').textContent = `${current + 1} / ${queue.length}`;
+  document.getElementById('qcm-bar').style.width = `${((current + 1) / queue.length) * 100}%`;
+  document.getElementById('qcm-question').textContent = q.question;
+  document.getElementById('qcm-explain').innerHTML = '';
+  document.getElementById('qcm-next').disabled = true;
+
+  // Difficulty dots
+  const optGrid = document.getElementById('qcm-options');
+  optGrid.innerHTML = '';
+  const letters = ['A', 'B', 'C', 'D'];
+
+  // Shuffle option indices
+  const idxs = shuffle([0,1,2,3].slice(0, q.options.length));
+
+  idxs.forEach((optIdx, pos) => {
+    const btn = document.createElement('button');
+    btn.className = 'option-btn';
+    btn.dataset.idx = optIdx;
+    btn.innerHTML = `<span class="option-letter">${letters[pos]}</span><span>${q.options[optIdx]}</span>`;
+    btn.addEventListener('click', () => handleQCMAnswer(btn, optIdx, q));
+    optGrid.appendChild(btn);
+  });
+
+  updateScoreLive();
+
+  // animation d'apparition de la carte
+  const card = document.querySelector('#qcm-revision .qcm-card');
+  if (card) { card.classList.remove('q-anim'); void card.offsetWidth; card.classList.add('q-anim'); }
+}
+
+function handleQCMAnswer(btn, selectedIdx, q) {
+  if (answered) return;
+  answered = true;
+
+  const isCorrect = selectedIdx === q.bonne;
+  State.recordAnswer(q.id, isCorrect);
+  sessionTotal++;
+  if (isCorrect) sessionCorrect++;
+
+  // Mark options
+  document.querySelectorAll('.option-btn').forEach(b => {
+    b.disabled = true;
+    const idx = parseInt(b.dataset.idx);
+    if (idx === q.bonne) b.classList.add('correct');
+    else if (idx === selectedIdx && !isCorrect) b.classList.add('wrong');
+    else b.classList.add('show-correct');
+  });
+  if (isCorrect) btn.classList.add('correct');
+
+  // Explanation
+  const expEl = document.getElementById('qcm-explain');
+  expEl.innerHTML = `
+    <div class="explain-box explain-box--${isCorrect ? 'correct' : 'wrong'}">
+      <div class="explain-box__title">${isCorrect ? icon('check-circle') + ' Bonne réponse !' : icon('x-circle') + ' Pas tout à fait…'}</div>
+      <div style="font-size:14px;margin-bottom:8px;">${isCorrect ? '' : `<b>La bonne réponse était :</b> ${q.options[q.bonne]}`}</div>
+      <div class="explain-section"><b>${icon('lightbulb')} Explication :</b><br>${q.explication}</div>
+      ${q.piege ? `<div class="piege-section"><b>${icon('alert-triangle')} Piège :</b><br>${q.piege}</div>` : ''}
+      ${q.mnemo ? `<div class="mnemo-section"><b>${icon('brain')} Mémo :</b> ${q.mnemo}</div>` : ''}
+    </div>
+  `;
+
+  document.getElementById('qcm-next').disabled = false;
+  updateScoreLive();
+}
+
+document.getElementById('qcm-next').addEventListener('click', () => {
+  current++; renderQCMQuestion();
+});
+
+document.getElementById('qcm-stop').addEventListener('click', () => {
+  showPickMode();
+});
+
+function updateScoreLive() {
+  const el = document.getElementById('qcm-score-live');
+  const pct = sessionTotal === 0 ? 0 : Math.round((sessionCorrect / sessionTotal) * 100);
+  el.textContent = `${sessionCorrect} / ${sessionTotal} correctes`;
+  el.className = `badge badge-${pct >= 80 ? 'green' : pct >= 60 ? 'ocre' : 'red'}`;
+}
+
+// ── FLASHCARD MODE ───────────────────────────────────────────
+function showFC() {
+  document.querySelectorAll('.revision-area').forEach(a => a.classList.remove('active'));
+  document.getElementById('flashcard-revision').classList.add('active');
+  flipped = false;
+  renderFCQuestion();
+}
+
+function renderFCQuestion() {
+  if (current >= queue.length) { showCompletion(); return; }
+  const q = queue[current];
+
+  // Reset flip
+  const card = document.getElementById('flip-card');
+  card.classList.remove('flipped');
+  flipped = false;
+  document.getElementById('self-assess').classList.remove('visible');
+
+  document.getElementById('fc-cat').textContent = q.categorie;
+  document.getElementById('fc-subject').textContent = q.sujet;
+  document.getElementById('fc-progress').textContent = `${current + 1} / ${queue.length}`;
+  document.getElementById('fc-bar').style.width = `${((current + 1) / queue.length) * 100}%`;
+  document.getElementById('fc-cat-inner').textContent = q.categorie;
+  document.getElementById('fc-question').textContent = q.question;
+  document.getElementById('fc-answer').textContent = q.options[q.bonne];
+  document.getElementById('fc-explain-back').innerHTML = `<b>${icon('lightbulb')}</b> ${q.explication}`;
+
+  const mnemoEl = document.getElementById('fc-mnemo');
+  if (q.mnemo) {
+    mnemoEl.style.display = 'block';
+    mnemoEl.innerHTML = `<b>${icon('brain')} Mémo :</b> ${q.mnemo}`;
+  } else {
+    mnemoEl.style.display = 'none';
+  }
+}
+
+document.getElementById('flip-card').addEventListener('click', () => {
+  if (flipped) return;
+  flipped = true;
+  document.getElementById('flip-card').classList.add('flipped');
+  setTimeout(() => document.getElementById('self-assess').classList.add('visible'), 300);
+});
+
+document.getElementById('fc-wrong-btn').addEventListener('click', () => {
+  const q = queue[current];
+  State.recordAnswer(q.id, false);
+  sessionTotal++; current++;
+  renderFCQuestion();
+});
+
+document.getElementById('fc-correct-btn').addEventListener('click', () => {
+  const q = queue[current];
+  State.recordAnswer(q.id, true);
+  sessionTotal++; sessionCorrect++; current++;
+  renderFCQuestion();
+});
+
+document.getElementById('fc-stop').addEventListener('click', showPickMode);
+
+// ── COMPLETION ───────────────────────────────────────────────
+function showCompletion() {
+  document.querySelectorAll('.revision-area').forEach(a => a.classList.remove('active'));
+  const pct = sessionTotal === 0 ? 0 : Math.round((sessionCorrect / sessionTotal) * 100);
+  const dur = Math.round((Date.now() - sessionStart) / 1000);
+
+  State.saveRevisionSession({
+    type: 'revision', mode: currentMode,
+    label: `Révision — ${sessionTotal} questions`,
+    timestamp: Date.now(), count: sessionTotal,
+    correct: sessionCorrect, pct
+  });
+
+  const g = window.APP.getGrade(pct);
+  const el = document.getElementById('completion');
+  el.classList.add('active');
+  el.innerHTML = `
+    <div class="completion-card">
+      <div class="completion-ico">${pct >= 80 ? icon('party') : pct >= 60 ? icon('thumbs-up') : icon('book')}</div>
+      <h2>Session terminée !</h2>
+      <div class="correct-count">${pct}%</div>
+      <p>${sessionCorrect} correctes sur ${sessionTotal} questions</p>
+      <p style="margin-top:8px;font-size:14px;">${formatTime(dur)} · ${g.label}</p>
+      <div style="margin-top:28px;display:flex;gap:12px;justify-content:center;flex-wrap:wrap;">
+        <button class="btn" style="background:rgba(255,255,255,0.2);color:#fff" onclick="showPickMode()"><span data-icon="arrow-left"></span> Retour</button>
+        <button class="btn" style="background:#fff;color:var(--c-green-deep)" onclick="startSession('weak')"><span data-icon="alert-triangle"></span> Retravailler les erreurs</button>
+        <a href="index.html" class="btn" style="background:rgba(255,255,255,0.15);color:#fff"><span data-icon="home"></span> Accueil</a>
+      </div>
+    </div>
+  `;
+  window.APP.hydrateIcons(el);
+  if (pct >= 90 && sessionTotal >= 3) window.APP.celebrate();
+}
+
+function showPickMode() {
+  document.querySelectorAll('.revision-area').forEach(a => a.classList.remove('active'));
+  document.getElementById('pick-mode').style.display = 'block';
+}
+
+// ── TOAST ─────────────────────────────────────────────────────
+function showToast(msg, type = 'info') {
+  const el = document.createElement('div');
+  el.className = `toast toast-${type}`;
+  el.textContent = msg;
+  document.getElementById('toast-container').appendChild(el);
+  setTimeout(() => el.remove(), 3000);
+}
+
+// ── URL PARAMS ───────────────────────────────────────────────
+function handleParams() {
+  const params = new URLSearchParams(location.search);
+  if (params.get('day')) {
+    startSession('day', parseInt(params.get('day')));
+  } else if (params.get('ids')) {
+    // entraînement ciblé sur une liste d'ids (ex : depuis un cours)
+    const ids = params.get('ids').split(',').map(n => parseInt(n)).filter(Boolean);
+    queue = shuffle(QUESTIONS.filter(q => ids.includes(q.id)));
+    if (queue.length) { current = 0; sessionCorrect = 0; sessionTotal = 0; sessionStart = Date.now();
+      document.getElementById('pick-mode').style.display = 'none';
+      (currentFormat === 'flashcard') ? showFC() : showQCM();
+    }
+  } else if (params.get('mode')) {
+    currentMode = params.get('mode');
+    document.querySelectorAll(`[data-mode="${currentMode}"]`).forEach(b => b.classList.add('active'));
+    startSession(currentMode);
+  } else if (params.get('id')) {
+    const qId = parseInt(params.get('id'));
+    queue = QUESTIONS.filter(q => q.id === qId);
+    if (queue.length) { current = 0; showQCM(); }
+  }
+}
+
+// Rendu différé : on attend qu'un profil soit déverrouillé.
+window.APP.onReady(() => {
+  State.init();
+  buildSidebarDays();
+  handleParams();
+});
+</script>
+</body>
+</html>

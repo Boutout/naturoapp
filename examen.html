@@ -1,0 +1,671 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>NaturoApp — Mode Examen</title>
+  <meta name="theme-color" content="#1A5C45">
+  <link rel="manifest" href="manifest.json">
+  <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="NaturoApp">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Lora:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+  <script>try{if(!sessionStorage.getItem('naturoapp_active'))document.documentElement.classList.add('pre-lock');}catch(e){}</script>
+  <style>
+    /* EXAM SPECIFIC */
+    .exam-setup {
+      max-width: 680px; margin: 0 auto; padding: 40px 20px;
+    }
+
+    .exam-hero {
+      background:
+        radial-gradient(120% 140% at 0% 0%, #24465E 0%, rgba(36,70,94,0) 55%),
+        linear-gradient(135deg, #16283A, #2C3E50);
+      color: #fff; border-radius: var(--r-xl);
+      padding: 38px 40px; margin-bottom: 32px;
+      position: relative; overflow: hidden;
+      box-shadow: var(--shadow-lg);
+    }
+    .exam-deco {
+      position: absolute; right: 24px; bottom: -16px;
+      opacity: 0.12; color: #fff; pointer-events: none;
+    }
+    .exam-deco .app-icon { width: 120px; height: 120px; }
+
+    .exam-hero h1 { color: #fff; font-size: 30px; margin-bottom: 8px; }
+    .exam-hero p  { color: rgba(255,255,255,0.75); }
+
+    .exam-options {
+      display: flex; flex-direction: column; gap: 14px; margin-bottom: 28px;
+    }
+
+    .exam-option {
+      background: var(--c-white);
+      border: 2px solid var(--c-border);
+      border-radius: var(--r-md);
+      padding: 18px 22px;
+      cursor: pointer; transition: all .18s;
+      display: flex; align-items: center; gap: 16px;
+    }
+    .exam-option:hover   { border-color: var(--c-green-light); background: var(--c-green-pale); }
+    .exam-option.selected { border-color: var(--c-green); background: var(--c-green-pale); }
+
+    .exam-option__icon { font-size: 32px; flex-shrink: 0; }
+    .exam-option__title { font-weight: 700; font-size: 16px; margin-bottom: 3px; }
+    .exam-option__desc { font-size: 13px; color: var(--c-mid); }
+
+    /* EXAM SCREEN */
+    .exam-screen { display: none; }
+    .exam-screen.active { display: flex; flex-direction: column; min-height: calc(100vh - var(--nav-h)); }
+
+    .exam-topbar {
+      background: var(--c-dark); color: #fff;
+      padding: 12px 24px;
+      display: flex; align-items: center; gap: 20px; flex-wrap: wrap;
+    }
+
+    .exam-topbar__title { font-weight: 600; font-size: 15px; flex: 1; }
+
+    .exam-q-count { font-size: 13.5px; color: rgba(255,255,255,0.7); }
+
+    .exam-body {
+      flex: 1; max-width: 750px;
+      margin: 0 auto; width: 100%;
+      padding: 28px 20px;
+    }
+
+    .exam-card {
+      background: var(--c-white);
+      border-radius: var(--r-xl);
+      padding: 36px 40px;
+      box-shadow: var(--shadow-md);
+      border: 1px solid var(--c-border);
+    }
+    @media (max-width: 600px) { .exam-card { padding: 22px 18px; } }
+
+    .exam-q-num {
+      font-size: 12px; font-weight: 700; letter-spacing: 0.5px;
+      text-transform: uppercase; color: var(--c-mid);
+      margin-bottom: 8px;
+    }
+
+    .exam-question {
+      font-size: 19px; font-weight: 600; line-height: 1.45;
+      margin-bottom: 28px;
+    }
+
+    .exam-options-grid { display: flex; flex-direction: column; gap: 10px; }
+
+    .exam-nav {
+      display: flex; align-items: center; justify-content: space-between;
+      margin-top: 24px;
+      padding: 0 4px;
+    }
+
+    /* QUESTION NAVIGATOR */
+    .q-nav-grid {
+      display: flex; flex-wrap: wrap; gap: 6px;
+      margin-top: 12px;
+    }
+
+    .q-nav-dot {
+      width: 32px; height: 32px; border-radius: var(--r-sm);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 12px; font-weight: 600;
+      cursor: pointer; border: 1.5px solid var(--c-border);
+      background: var(--c-white); color: var(--c-dark);
+      transition: all .12s;
+    }
+    .q-nav-dot:hover { border-color: var(--c-green); background: var(--c-green-pale); }
+    .q-nav-dot.answered { background: var(--c-blue-light); border-color: var(--c-blue); color: var(--c-blue); }
+    .q-nav-dot.current  { background: var(--c-green); border-color: var(--c-green); color: #fff; }
+    .q-nav-dot.correct  { background: var(--c-green); border-color: var(--c-green); color: #fff; }
+    .q-nav-dot.wrong    { background: var(--c-red); border-color: var(--c-red); color: #fff; }
+
+    /* RESULTS */
+    .results-screen { display: none; padding: 40px 20px; max-width: 800px; margin: 0 auto; }
+    .results-screen.active { display: block; }
+
+    .results-hero {
+      border-radius: var(--r-xl);
+      padding: 40px; text-align: center;
+      margin-bottom: 28px; color: #fff;
+    }
+
+    .results-grade {
+      font-size: 80px; font-weight: 700; line-height: 1;
+      font-family: var(--font-display);
+      margin: 16px 0 8px;
+    }
+
+    .results-pct { font-size: 22px; font-weight: 600; opacity: 0.9; }
+    .results-label { font-size: 16px; opacity: 0.8; margin-top: 4px; }
+
+    .results-stats {
+      display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px;
+      margin-bottom: 28px;
+    }
+    @media (max-width: 600px) { .results-stats { grid-template-columns: 1fr; } }
+
+    /* REVIEW TABLE */
+    .review-item {
+      display: flex; align-items: flex-start; gap: 14px;
+      padding: 16px 18px;
+      border-radius: var(--r-md);
+      margin-bottom: 8px;
+      border: 1.5px solid;
+    }
+    .review-item.correct { background: var(--c-green-pale); border-color: var(--c-green-light); }
+    .review-item.wrong   { background: var(--c-red-light);  border-color: #F1948A; }
+
+    .review-icon { font-size: 20px; flex-shrink: 0; margin-top: 2px; }
+    .review-q    { font-weight: 600; font-size: 14px; margin-bottom: 4px; }
+    .review-answer { font-size: 13px; }
+
+    /* COUNTDOWN */
+    .countdown-overlay {
+      position: fixed; inset: 0; z-index: 500;
+      background: rgba(0,0,0,0.85);
+      display: flex; align-items: center; justify-content: center;
+      flex-direction: column; gap: 12px;
+      color: #fff;
+    }
+    .countdown-num {
+      font-size: 120px; font-weight: 700;
+      font-family: var(--font-display);
+      animation: countPulse .9s ease;
+    }
+    @keyframes countPulse { from { transform: scale(1.4); opacity: .5; } to { transform: scale(1); opacity: 1; } }
+
+    /* WARNING BANNER */
+    .warning-banner {
+      background: var(--c-ocre);
+      color: #fff; padding: 10px 24px;
+      text-align: center; font-weight: 600;
+      display: none;
+    }
+    .warning-banner.show { display: block; }
+  </style>
+</head>
+<body>
+
+<nav class="topnav">
+  <a href="index.html" class="topnav__logo">
+    <div class="topnav__logo-icon" data-icon="leaf"></div>
+    <div>
+      <div class="topnav__logo-text">NaturoApp</div>
+      <span class="topnav__logo-sub">Révision Naturopathie</span>
+    </div>
+  </a>
+  <ul class="topnav__nav">
+    <li><a href="index.html"><span class="nav-ico" data-icon="home"></span> <span class="nav-label">Accueil</span></a></li>
+    <li><a href="cours.html"><span class="nav-ico" data-icon="book"></span> <span class="nav-label">Cours</span></a></li>
+    <li><a href="revision.html"><span class="nav-ico" data-icon="book-open"></span> <span class="nav-label">Révision</span></a></li>
+    <li><a href="examen.html" class="active"><span class="nav-ico" data-icon="edit"></span> <span class="nav-label">Examen</span></a></li>
+    <li><a href="stats.html"><span class="nav-ico" data-icon="chart"></span> <span class="nav-label">Stats</span></a></li>
+  </ul>
+  <button class="nav-lock" id="nav-lock" data-icon="lock" title="Verrouiller l'app" aria-label="Verrouiller"></button>
+</nav>
+
+<!-- COUNTDOWN OVERLAY -->
+<div class="countdown-overlay" id="countdown" style="display:none">
+  <div style="font-size:16px;letter-spacing:2px;text-transform:uppercase;opacity:.7">L'examen commence dans…</div>
+  <div class="countdown-num" id="countdown-num">3</div>
+</div>
+
+<!-- WARNING BANNER -->
+<div class="warning-banner" id="warning-banner"><span data-icon="timer"></span> Attention — 5 minutes restantes !</div>
+
+<!-- SETUP SCREEN -->
+<div class="exam-setup" id="setup-screen">
+  <div class="exam-hero">
+    <span class="exam-deco" data-icon="edit"></span>
+    <h1>Mode Examen</h1>
+    <p>Simule les conditions réelles d'examen : temps limité, pas d'aide, score final et bilan complet. Toutes tes tentatives sont enregistrées.</p>
+  </div>
+
+  <h3 class="mb-16">Choisir le format d'examen :</h3>
+
+  <div class="exam-options">
+    <div class="exam-option selected" data-exam="full">
+      <div class="exam-option__icon" data-icon="clipboard"></div>
+      <div>
+        <div class="exam-option__title">Examen complet — 80 questions</div>
+        <div class="exam-option__desc">Toutes les questions · 80 minutes · Conditions réelles</div>
+      </div>
+    </div>
+    <div class="exam-option" data-exam="half">
+      <div class="exam-option__icon" data-icon="zap"></div>
+      <div>
+        <div class="exam-option__title">Examen rapide — 40 questions</div>
+        <div class="exam-option__desc">Questions aléatoires · 40 minutes · Entraînement intensif</div>
+      </div>
+    </div>
+    <div class="exam-option" data-exam="mini">
+      <div class="exam-option__icon" data-icon="target"></div>
+      <div>
+        <div class="exam-option__title">Mini-examen — 20 questions</div>
+        <div class="exam-option__desc">Révision rapide · 20 minutes · Points forts et faibles</div>
+      </div>
+    </div>
+    <div class="exam-option" data-exam="weak">
+      <div class="exam-option__icon" data-icon="alert-triangle"></div>
+      <div>
+        <div class="exam-option__title">Examen ciblé — Points faibles</div>
+        <div class="exam-option__desc">Tes questions avec le plus d'erreurs · 30 minutes</div>
+      </div>
+    </div>
+  </div>
+
+  <div style="display:flex;align-items:center;gap:12px;margin-bottom:24px;flex-wrap:wrap;">
+    <label style="font-size:14px;font-weight:600;display:inline-flex;align-items:center;gap:5px;"><span data-icon="timer"></span> Durée :</label>
+    <select id="time-select" style="width:180px;">
+      <option value="0">Sans limite de temps</option>
+      <option value="20">20 minutes</option>
+      <option value="40" selected>40 minutes</option>
+      <option value="60">60 minutes</option>
+      <option value="80">80 minutes</option>
+    </select>
+    <label style="font-size:14px;font-weight:600;margin-left:12px;display:inline-flex;align-items:center;gap:5px;"><span data-icon="shuffle"></span> Mélanger les options :</label>
+    <input type="checkbox" id="shuffle-opts" checked style="width:auto;transform:scale(1.3);">
+  </div>
+
+  <button class="btn btn-primary btn-lg" id="start-exam-btn" style="width:100%"><span data-icon="edit"></span> Commencer l'examen →</button>
+</div>
+
+<!-- EXAM SCREEN -->
+<div class="exam-screen" id="exam-screen">
+
+  <div class="exam-topbar">
+    <div class="exam-topbar__title"><span data-icon="edit"></span> Examen Naturopathie</div>
+    <div class="exam-q-count" id="exam-q-count">Question 1 / 80</div>
+    <div class="exam-timer" id="exam-timer">40:00</div>
+    <button class="btn btn-danger btn-sm" id="end-exam-btn">Terminer</button>
+  </div>
+
+  <div class="exam-body">
+    <div class="exam-card">
+      <div class="exam-q-num" id="exam-q-num">Question 1 sur 80</div>
+      <div class="exam-question" id="exam-question">Chargement…</div>
+      <div class="exam-options-grid" id="exam-options"></div>
+    </div>
+
+    <div class="exam-nav">
+      <button class="btn btn-ghost" id="exam-prev">← Précédent</button>
+      <div id="exam-q-nav-dots" style="overflow-x:auto;max-width:400px;">
+        <div class="q-nav-grid" id="q-nav-grid"></div>
+      </div>
+      <button class="btn btn-primary" id="exam-next">Suivant →</button>
+    </div>
+  </div>
+</div>
+
+<!-- RESULTS SCREEN -->
+<div class="results-screen" id="results-screen">
+  <div id="results-hero-el" class="results-hero"></div>
+
+  <div class="results-stats" id="results-stats"></div>
+
+  <div style="display:flex;gap:12px;margin-bottom:28px;flex-wrap:wrap;">
+    <button class="btn btn-primary" onclick="showSetup()"><span data-icon="rotate"></span> Nouvel examen</button>
+    <a href="revision.html?mode=weak" class="btn btn-ghost"><span data-icon="alert-triangle"></span> Retravailler les erreurs</a>
+    <a href="stats.html" class="btn btn-ghost"><span data-icon="chart"></span> Voir mes stats</a>
+    <button class="btn btn-ghost" onclick="window.print()"><span data-icon="printer"></span> Imprimer le bilan</button>
+  </div>
+
+  <h3 class="mb-16"><span data-icon="clipboard"></span> Détail des réponses</h3>
+  <div id="review-list"><!-- filled --></div>
+</div>
+
+<nav class="bottomnav">
+  <a href="index.html"><span class="bn-ico" data-icon="home"></span> Accueil</a>
+  <a href="cours.html"><span class="bn-ico" data-icon="book"></span> Cours</a>
+  <a href="revision.html"><span class="bn-ico" data-icon="book-open"></span> Révision</a>
+  <a href="examen.html" class="active"><span class="bn-ico" data-icon="edit"></span> Examen</a>
+  <a href="stats.html"><span class="bn-ico" data-icon="chart"></span> Stats</a>
+</nav>
+
+<div id="toast-container"></div>
+
+<script src="app.js"></script>
+<script>
+const { State, QUESTIONS, shuffle, formatTime, getGrade, getScoreColor, icon } = window.APP;
+
+// ── STATE ────────────────────────────────────────────────────
+let examQueue = [];
+let examAnswers = {}; // questionId -> selectedIndex
+let currentExamIdx = 0;
+let examType = 'full';
+let timerSeconds = 0;
+let timerMax = 0;
+let timerInterval = null;
+let examStartTime = null;
+let shuffleOptions = true;
+let shuffledOptionsMap = {}; // qId -> shuffled option indices
+
+// ── SETUP ────────────────────────────────────────────────────
+document.querySelectorAll('.exam-option').forEach(el => {
+  el.addEventListener('click', () => {
+    document.querySelectorAll('.exam-option').forEach(e => e.classList.remove('selected'));
+    el.classList.add('selected');
+    examType = el.dataset.exam;
+    const timeMap = { full: 80, half: 40, mini: 20, weak: 30 };
+    document.getElementById('time-select').value = timeMap[examType] || 40;
+  });
+});
+
+document.getElementById('start-exam-btn').addEventListener('click', startExam);
+
+function buildQueue() {
+  switch (examType) {
+    case 'full': return shuffle([...QUESTIONS]);
+    case 'half': return shuffle([...QUESTIONS]).slice(0, 40);
+    case 'mini': return shuffle([...QUESTIONS]).slice(0, 20);
+    case 'weak': return State.getWeakQuestions(30);
+    default: return shuffle([...QUESTIONS]).slice(0, 20);
+  }
+}
+
+function startExam() {
+  examQueue = buildQueue();
+  examAnswers = {};
+  currentExamIdx = 0;
+  shuffleOptions = document.getElementById('shuffle-opts').checked;
+  shuffledOptionsMap = {};
+  examStartTime = Date.now();
+
+  // Build shuffled option orders
+  examQueue.forEach(q => {
+    const idxs = [0, 1, 2, 3].slice(0, q.options.length);
+    shuffledOptionsMap[q.id] = shuffleOptions ? shuffle(idxs) : idxs;
+  });
+
+  // Timer
+  const timeVal = parseInt(document.getElementById('time-select').value);
+  timerMax = timeVal * 60;
+  timerSeconds = timerMax;
+
+  // Build nav dots
+  const navGrid = document.getElementById('q-nav-grid');
+  navGrid.innerHTML = '';
+  examQueue.forEach((q, i) => {
+    const dot = document.createElement('div');
+    dot.className = 'q-nav-dot';
+    dot.textContent = i + 1;
+    dot.id = `dot-${i}`;
+    dot.addEventListener('click', () => { currentExamIdx = i; renderExamQ(); });
+    navGrid.appendChild(dot);
+  });
+
+  // Countdown
+  showCountdown(3, () => {
+    document.getElementById('setup-screen').style.display = 'none';
+    document.getElementById('exam-screen').classList.add('active');
+    document.body.classList.add('in-exam');
+    renderExamQ();
+    if (timerMax > 0) startTimer();
+  });
+}
+
+function showCountdown(n, cb) {
+  const overlay = document.getElementById('countdown');
+  const numEl   = document.getElementById('countdown-num');
+  overlay.style.display = 'flex';
+  numEl.textContent = n;
+
+  const tick = () => {
+    n--;
+    if (n <= 0) {
+      overlay.style.display = 'none';
+      cb();
+      return;
+    }
+    numEl.textContent = n;
+    numEl.style.animation = 'none';
+    numEl.offsetHeight; // reflow
+    numEl.style.animation = 'countPulse .9s ease';
+    setTimeout(tick, 900);
+  };
+  setTimeout(tick, 900);
+}
+
+// ── TIMER ────────────────────────────────────────────────────
+function startTimer() {
+  clearInterval(timerInterval);
+  timerInterval = setInterval(() => {
+    timerSeconds--;
+    updateTimerDisplay();
+    if (timerSeconds <= 300 && timerSeconds > 299) {
+      document.getElementById('warning-banner').classList.add('show');
+      setTimeout(() => document.getElementById('warning-banner').classList.remove('show'), 5000);
+    }
+    if (timerSeconds <= 0) { clearInterval(timerInterval); finishExam(); }
+  }, 1000);
+}
+
+function updateTimerDisplay() {
+  const el = document.getElementById('exam-timer');
+  el.textContent = formatTime(timerSeconds);
+  el.className = 'exam-timer';
+  if (timerMax > 0) {
+    const ratio = timerSeconds / timerMax;
+    if (ratio < 0.1) el.classList.add('danger');
+    else if (ratio < 0.25) el.classList.add('warning');
+  }
+}
+
+// ── RENDER QUESTION ───────────────────────────────────────────
+function renderExamQ() {
+  if (currentExamIdx >= examQueue.length) { finishExam(); return; }
+
+  const q = examQueue[currentExamIdx];
+  const total = examQueue.length;
+
+  document.getElementById('exam-q-num').textContent = `Question ${currentExamIdx + 1} sur ${total}`;
+  document.getElementById('exam-q-count').textContent = `Q ${currentExamIdx + 1} / ${total}`;
+  document.getElementById('exam-question').textContent = q.question;
+
+  // Nav dot highlight
+  document.querySelectorAll('.q-nav-dot').forEach((d, i) => {
+    d.classList.toggle('current', i === currentExamIdx);
+  });
+
+  const optGrid = document.getElementById('exam-options');
+  optGrid.innerHTML = '';
+  const letters = ['A', 'B', 'C', 'D'];
+  const order = shuffledOptionsMap[q.id] || [0,1,2,3];
+
+  order.forEach((optIdx, pos) => {
+    const btn = document.createElement('button');
+    btn.className = 'option-btn';
+    btn.dataset.optIdx = optIdx;
+
+    const selected = examAnswers[q.id];
+    if (selected === optIdx) btn.classList.add('selected');
+
+    btn.innerHTML = `<span class="option-letter">${letters[pos]}</span><span>${q.options[optIdx]}</span>`;
+    btn.addEventListener('click', () => selectAnswer(q.id, optIdx));
+    optGrid.appendChild(btn);
+  });
+
+  // Nav buttons
+  document.getElementById('exam-prev').disabled = currentExamIdx === 0;
+  const isLast = currentExamIdx === examQueue.length - 1;
+  const nextBtn = document.getElementById('exam-next');
+  nextBtn.textContent = isLast ? 'Terminer ✓' : 'Suivant →';
+  nextBtn.className = isLast ? 'btn btn-ocre' : 'btn btn-primary';
+
+  // animation d'apparition de la carte
+  const card = document.querySelector('#exam-screen .exam-card');
+  if (card) { card.classList.remove('q-anim'); void card.offsetWidth; card.classList.add('q-anim'); }
+}
+
+function selectAnswer(qId, optIdx) {
+  examAnswers[qId] = optIdx;
+  const q = examQueue.find(x => x.id === qId);
+
+  // Update dots
+  const qIdx = examQueue.findIndex(x => x.id === qId);
+  const dot = document.getElementById(`dot-${qIdx}`);
+  if (dot) dot.classList.add('answered');
+
+  // Update buttons
+  document.querySelectorAll('#exam-options .option-btn').forEach(btn => {
+    btn.classList.remove('selected');
+    if (parseInt(btn.dataset.optIdx) === optIdx) btn.classList.add('selected');
+  });
+}
+
+document.getElementById('exam-next').addEventListener('click', () => {
+  if (currentExamIdx >= examQueue.length - 1) finishExam();
+  else { currentExamIdx++; renderExamQ(); }
+});
+
+document.getElementById('exam-prev').addEventListener('click', () => {
+  if (currentExamIdx > 0) { currentExamIdx--; renderExamQ(); }
+});
+
+document.getElementById('end-exam-btn').addEventListener('click', () => {
+  if (confirm('Terminer l\'examen maintenant ? Tu pourras voir le bilan complet.')) finishExam();
+});
+
+// ── FINISH ────────────────────────────────────────────────────
+function finishExam() {
+  clearInterval(timerInterval);
+  const duration = Math.round((Date.now() - examStartTime) / 1000);
+
+  let correct = 0, wrong = 0, skipped = 0;
+  const results = [];
+
+  examQueue.forEach(q => {
+    const ans = examAnswers[q.id];
+    if (ans === undefined) {
+      skipped++;
+      results.push({ q, ans: null, correct: false });
+    } else if (ans === q.bonne) {
+      correct++;
+      results.push({ q, ans, correct: true });
+      State.recordAnswer(q.id, true);
+    } else {
+      wrong++;
+      results.push({ q, ans, correct: false });
+      State.recordAnswer(q.id, false);
+    }
+  });
+
+  const total = examQueue.length;
+  const pct = Math.round((correct / total) * 100);
+  const g = getGrade(pct);
+
+  // Save session
+  State.saveExamSession({
+    type: 'exam', mode: examType,
+    label: `Examen ${examType} — ${total} Q`,
+    timestamp: Date.now(), total, correct, wrong, skipped,
+    pct, duration,
+  });
+
+  // Show results
+  document.getElementById('exam-screen').classList.remove('active');
+  document.body.classList.remove('in-exam');
+  const resultsScreen = document.getElementById('results-screen');
+  resultsScreen.classList.add('active');
+
+  const heroEl = document.getElementById('results-hero-el');
+  heroEl.style.background = `linear-gradient(135deg, ${getScoreColor(pct)}, ${getScoreColor(pct)}CC)`;
+  heroEl.innerHTML = `
+    <div style="font-size:16px;letter-spacing:1px;text-transform:uppercase;opacity:.8;margin-bottom:4px;">Résultat de l'examen</div>
+    <div class="results-grade">${g.grade}</div>
+    <div class="results-pct">${pct}%</div>
+    <div class="results-label">${g.label}</div>
+    <div style="margin-top:12px;font-size:14px;opacity:.75;">${formatTime(duration)} · ${total} questions</div>
+  `;
+
+  document.getElementById('results-stats').innerHTML = `
+    <div class="stat-card">
+      <div class="stat-card__value" style="color:var(--c-green)">${correct}</div>
+      <div class="stat-card__label">${icon('check')} Correctes</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-card__value" style="color:var(--c-red)">${wrong}</div>
+      <div class="stat-card__label">${icon('x')} Incorrectes</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-card__value" style="color:var(--c-mid)">${skipped}</div>
+      <div class="stat-card__label">${icon('skip')} Non répondues</div>
+    </div>
+  `;
+
+  const reviewList = document.getElementById('review-list');
+  reviewList.innerHTML = '';
+
+  // Wrongs first, then corrects
+  const sortedResults = [...results.filter(r => !r.correct), ...results.filter(r => r.correct)];
+
+  sortedResults.forEach(r => {
+    const { q, ans, correct: isCorrect } = r;
+    const el = document.createElement('div');
+    el.className = `review-item ${isCorrect ? 'correct' : 'wrong'}`;
+
+    const givenAns = ans !== null ? q.options[ans] : '(non répondu)';
+    const correctAns = q.options[q.bonne];
+
+    el.innerHTML = `
+      <div class="review-icon" style="color:${isCorrect ? 'var(--c-green)' : 'var(--c-red)'}">${isCorrect ? icon('check-circle') : icon('x-circle')}</div>
+      <div style="flex:1">
+        <div class="review-q">Q${q.id} — ${q.sujet}</div>
+        <div class="review-answer">
+          ${isCorrect
+            ? `<span style="color:var(--c-green);font-weight:600;">${correctAns}</span>`
+            : `<span style="color:var(--c-red)">Répondu : ${givenAns}</span><br>
+               <span style="color:var(--c-green);font-weight:600;">${icon('check')} Correct : ${correctAns}</span>`
+          }
+        </div>
+        ${!isCorrect ? `<div class="explain-section" style="margin-top:8px;font-size:13px;">${icon('lightbulb')} ${q.explication}</div>` : ''}
+      </div>
+    `;
+    reviewList.appendChild(el);
+  });
+
+  if (pct >= 90) window.APP.celebrate();
+
+  // Update nav dots
+  const navGrid = document.getElementById('q-nav-grid');
+  if (navGrid) {
+    results.forEach((r, i) => {
+      const dot = document.getElementById(`dot-${i}`);
+      if (dot) {
+        dot.classList.remove('current', 'answered');
+        dot.classList.add(r.correct ? 'correct' : 'wrong');
+      }
+    });
+  }
+}
+
+function showSetup() {
+  document.getElementById('results-screen').classList.remove('active');
+  document.getElementById('exam-screen').classList.remove('active');
+  document.body.classList.remove('in-exam');
+  document.getElementById('setup-screen').style.display = 'block';
+}
+
+// Rendu différé : on attend qu'un profil soit déverrouillé.
+window.APP.onReady(() => {
+  State.init();
+  updateTimerDisplay();
+
+  const params = new URLSearchParams(location.search);
+  if (params.get('mode') === 'full') {
+    examType = 'full';
+    document.querySelectorAll('.exam-option').forEach(e => {
+      e.classList.toggle('selected', e.dataset.exam === 'full');
+    });
+  }
+});
+</script>
+</body>
+</html>

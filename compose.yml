@@ -1,0 +1,29 @@
+# NaturoApp — déploiement sur le VPS konect (Traefik partagé)
+# Lancé par infrastructure/deploy.sh :
+#   docker compose -f compose.yml up -d --build
+#
+# Le domaine est déjà câblé : naturoapp.konect.xyz → Cloudflare → VPS.
+# Traefik (réseau partagé "novafleet-proxy") route le Host et gère le TLS (Let's Encrypt).
+
+services:
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: naturoapp-web
+    container_name: naturoapp-web
+    restart: unless-stopped
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.naturoapp.rule=Host(`${NATURO_DOMAIN:-naturoapp.konect.xyz}`)"
+      - "traefik.http.routers.naturoapp.entrypoints=websecure"
+      - "traefik.http.routers.naturoapp.tls=true"
+      - "traefik.http.routers.naturoapp.tls.certresolver=le"
+      - "traefik.http.services.naturoapp.loadbalancer.server.port=80"
+    networks:
+      - proxy
+
+networks:
+  proxy:
+    external: true
+    name: novafleet-proxy
