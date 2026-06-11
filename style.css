@@ -839,6 +839,42 @@ select:focus, input:focus, textarea:focus {
 .hidden { display: none !important; }
 .rounded-full { border-radius: 50%; }
 
+/* ── INTERRUPTEUR (toggle) ───────────────────────────────────── */
+.switch { position: relative; display: inline-block; width: 50px; height: 28px; flex-shrink: 0; }
+.switch input { opacity: 0; width: 0; height: 0; }
+.switch__track {
+  position: absolute; inset: 0; cursor: pointer;
+  background: #CdD3D6; border-radius: 999px; transition: background .2s;
+}
+.switch__track::before {
+  content: ''; position: absolute; height: 22px; width: 22px; left: 3px; top: 3px;
+  background: #fff; border-radius: 50%; transition: transform .22s var(--ease-spring);
+  box-shadow: 0 1px 3px rgba(0,0,0,0.25);
+}
+.switch input:checked + .switch__track { background: var(--c-green); }
+.switch input:checked + .switch__track::before { transform: translateX(22px); }
+.switch input:focus-visible + .switch__track { outline: 3px solid rgba(78,191,147,0.6); outline-offset: 2px; }
+
+/* ── CONTRÔLE SEGMENTÉ ───────────────────────────────────────── */
+.segment { display: inline-flex; background: var(--c-green-pale); border-radius: var(--r-md); padding: 4px; gap: 4px; }
+.segment button {
+  border: none; background: transparent; cursor: pointer;
+  font-family: var(--font-body); font-size: 13px; font-weight: 600; color: var(--c-mid);
+  padding: 8px 14px; border-radius: 10px; display: inline-flex; align-items: center; gap: 6px;
+  transition: all .15s;
+}
+.segment button .app-icon { width: 15px; height: 15px; }
+.segment button.active { background: var(--c-white); color: var(--c-green-deep); box-shadow: var(--shadow-sm); }
+
+/* ── LIGNE DE RÉGLAGE ────────────────────────────────────────── */
+.setting-row {
+  display: flex; align-items: center; justify-content: space-between; gap: 16px;
+  padding: 18px 0; border-bottom: 1px solid var(--c-border); flex-wrap: wrap;
+}
+.setting-row:last-child { border-bottom: none; }
+.setting-row__label b { font-size: 15px; }
+.setting-row__label p { font-size: 12.5px; color: var(--c-mid); margin-top: 2px; }
+
 /* ── SVG ICONS ───────────────────────────────────────────────── */
 .icon { font-style: normal; }
 

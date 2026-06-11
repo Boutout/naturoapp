@@ -237,6 +237,152 @@ window.NATURO_CONTENT = {
         { terme: 'Vasodilatation', def: 'Élargissement des vaisseaux sanguins.' }
       ],
       questionIds: [84]
+    },
+
+    {
+      id: 'c-phytotherapie',
+      categorie: 'Phytothérapie',
+      jour: 2,
+      titre: 'Les bases de la phytothérapie',
+      resume: 'Soigner avec les plantes : formes galéniques et notion de totum.',
+      duree: 6,
+      sections: [
+        { titre: 'Le « totum »', contenu: "La phytothérapie utilise la plante **entière** (ou ses parties) : c'est le **totum**, l'ensemble des principes actifs qui agissent en synergie — différent d'une molécule isolée." },
+        { titre: 'Les formes', contenu: "**Tisane / infusion** (parties fragiles : fleurs, feuilles), **décoction** (parties dures : racines, écorces), **teinture-mère** (macération alcoolique), **EPS / extraits**, **gélules de poudre**, **huiles essentielles** (aromathérapie)." },
+        { titre: 'Prudence', contenu: "« Naturel » ne veut pas dire « sans risque » : interactions médicamenteuses, grossesse, terrain. Toujours se renseigner et orienter vers un professionnel si besoin." }
+      ],
+      pointsCles: [
+        'Totum = plante entière en synergie',
+        'Infusion (fragile) vs décoction (dur)',
+        'Naturel ≠ sans risque : attention aux interactions'
+      ],
+      definitions: [
+        { terme: 'Totum', def: "Ensemble des composants d'une plante agissant en synergie." },
+        { terme: 'Teinture-mère', def: 'Extrait obtenu par macération de la plante dans l\'alcool.' },
+        { terme: 'Décoction', def: 'Extraction par ébullition (racines, écorces).' }
+      ],
+      questionIds: []
+    },
+
+    {
+      id: 'c-aromatherapie',
+      categorie: 'Aromathérapie',
+      jour: 3,
+      titre: 'Aromathérapie : familles biochimiques',
+      resume: 'Comprendre les huiles essentielles par leurs molécules dominantes.',
+      duree: 7,
+      sections: [
+        { titre: 'Une HE = un bouquet de molécules', contenu: "Une **huile essentielle** est très concentrée. On la lit par sa **famille biochimique** dominante, qui oriente ses propriétés… et sa **dangerosité**." },
+        { titre: 'Quelques familles', contenu: "**Monoterpènes** : toniques (agrumes, pin).\n**Esters** : apaisants, antispasmodiques (lavande vraie).\n**Phénols** : anti-infectieux puissants mais **dermocaustiques/hépatotoxiques** (origan, thym à thymol).\n**Cétones** : mucolytiques mais **neurotoxiques/abortives** à doses élevées (menthe, romarin à camphre)." },
+        { titre: 'Sécurité', contenu: "Jamais d'HE pures sur la peau (sauf exception), prudence chez l'enfant, la femme enceinte, l'épileptique. Diluer dans une **huile végétale**." }
+      ],
+      pointsCles: [
+        'On lit une HE par sa famille biochimique dominante',
+        'Phénols = anti-infectieux mais dermocaustiques',
+        'Cétones = mucolytiques mais neurotoxiques à dose élevée'
+      ],
+      definitions: [
+        { terme: 'Huile essentielle', def: 'Extrait aromatique volatil et très concentré d\'une plante.' },
+        { terme: 'Phénols (HE)', def: 'Molécules anti-infectieuses puissantes, mais agressives pour la peau et le foie.' },
+        { terme: 'Cétones (HE)', def: 'Molécules mucolytiques, neurotoxiques et abortives à doses élevées.' }
+      ],
+      questionIds: [27]
+    },
+
+    {
+      id: 'c-micronutrition',
+      categorie: 'Nutrition',
+      jour: 5,
+      titre: 'Micronutrition : vitamines & minéraux clés',
+      resume: 'Les micronutriments qui reviennent le plus souvent en accompagnement.',
+      duree: 6,
+      sections: [
+        { titre: 'Vitamines', contenu: "**Vitamine D** (immunité, os ; synthèse via le soleil), **vitamines B** (énergie, système nerveux), **vitamine C** (antioxydant, immunité, fer), **vitamine E** (antioxydant)." },
+        { titre: 'Minéraux', contenu: "**Magnésium** (stress, muscles, sommeil), **fer** (transport de l'oxygène), **zinc** (immunité, peau), **iode** (thyroïde)." },
+        { titre: 'Logique naturo', contenu: "On vise d'abord l'**alimentation** (assiette dense en nutriments), la complémentation venant en **soutien ciblé**, pas en automatique." }
+      ],
+      pointsCles: [
+        'Vitamine D : immunité + os (soleil)',
+        'Magnésium : stress, muscles, sommeil',
+        'Alimentation d\'abord, complément en soutien ciblé'
+      ],
+      definitions: [
+        { terme: 'Micronutriment', def: 'Nutriment nécessaire en petite quantité (vitamines, minéraux, oligo-éléments).' },
+        { terme: 'Antioxydant', def: "Molécule qui neutralise les radicaux libres (vit. C, E, zinc…)." }
+      ],
+      questionIds: []
+    },
+
+    {
+      id: 'c-sommeil',
+      categorie: 'Hygiène de vie',
+      jour: 8,
+      titre: 'Le sommeil',
+      resume: 'Rythmes, mélatonine et bonnes habitudes du soir.',
+      duree: 5,
+      sections: [
+        { titre: 'L\'horloge interne', contenu: "Le sommeil est piloté par un rythme **circadien**. La **mélatonine** (hormone du sommeil) est sécrétée le soir, dans l'**obscurité** — la lumière (surtout bleue des écrans) la freine." },
+        { titre: 'Le train du sommeil', contenu: "Le sommeil arrive par **cycles** de ~90 min. Rater son « train » (signaux : bâillements, yeux qui piquent) oblige à attendre le suivant." },
+        { titre: 'Bonnes habitudes', contenu: "Lumière baissée le soir, écrans réduits, repas léger, régularité des horaires, chambre fraîche et sombre. La *cohérence cardiaque* peut aider à l'endormissement." }
+      ],
+      pointsCles: [
+        'Mélatonine = hormone du soir, freinée par la lumière',
+        'Cycles de ~90 min : ne pas rater son « train »',
+        'Obscurité, régularité, écrans réduits'
+      ],
+      definitions: [
+        { terme: 'Mélatonine', def: 'Hormone du sommeil sécrétée le soir dans l\'obscurité.' },
+        { terme: 'Rythme circadien', def: 'Horloge biologique sur ~24 h réglant veille et sommeil.' }
+      ],
+      questionIds: []
+    },
+
+    {
+      id: 'c-stress',
+      categorie: 'Hygiène de vie',
+      jour: 3,
+      titre: 'Gestion du stress & cohérence cardiaque',
+      resume: 'Calmer le système nerveux par la respiration.',
+      duree: 5,
+      sections: [
+        { titre: 'Stress aigu vs chronique', contenu: "Le stress **aigu** est utile (mobilisation). Le stress **chronique** épuise (sympathique en surrégime, cortisol élevé) et pèse sur la digestion, le sommeil, l'immunité." },
+        { titre: 'La cohérence cardiaque', contenu: "Respirer **6 respirations par minute** (≈ 5 s d'inspiration, 5 s d'expiration) pendant ~5 minutes équilibre le système nerveux autonome (stimule le **nerf vague**). Méthode populaire : **365** (3 fois par jour, 6 respirations/min, 5 min)." },
+        { titre: 'Autres leviers', contenu: "Mouvement, nature, sommeil, lien social, parfois plantes adaptogènes — toujours en complément d'un accompagnement adapté." }
+      ],
+      pointsCles: [
+        'Stress chronique = sympathique en surrégime',
+        'Cohérence cardiaque : 6 respirations/min, 5 min',
+        'Méthode 365 : 3×/jour'
+      ],
+      definitions: [
+        { terme: 'Cohérence cardiaque', def: 'Technique respiratoire (~6/min) qui équilibre le système nerveux autonome.' },
+        { terme: 'Cortisol', def: 'Hormone du stress, élevée en cas de stress chronique.' }
+      ],
+      questionIds: [26]
+    },
+
+    {
+      id: 'c-jeune-monodiete',
+      categorie: 'Nutrition',
+      jour: 6,
+      titre: 'Jeûne & monodiète',
+      resume: 'Mettre la digestion au repos : principes et précautions.',
+      duree: 5,
+      sections: [
+        { titre: 'L\'idée', contenu: "Réduire ou suspendre l'apport alimentaire met le système digestif **au repos** et favorise, selon l'approche naturo, le travail des émonctoires. La **monodiète** = un seul aliment (ex : pommes, riz) sur une courte période." },
+        { titre: 'Formes douces', contenu: "**Jeûne intermittent** (fenêtre alimentaire réduite), **monodiète d'un repas ou d'une journée**. On adapte toujours à la **vitalité** de la personne." },
+        { titre: 'Précautions', contenu: "Déconseillé sans accompagnement chez les personnes fragiles (dénutrition, diabète, grossesse, troubles du comportement alimentaire). Reprise alimentaire **progressive**." }
+      ],
+      pointsCles: [
+        'Jeûne/monodiète = repos digestif',
+        'Formes douces : jeûne intermittent, monodiète courte',
+        'Précautions : terrains fragiles, reprise progressive'
+      ],
+      definitions: [
+        { terme: 'Monodiète', def: 'Alimentation réduite à un seul aliment sur une courte durée.' },
+        { terme: 'Jeûne intermittent', def: 'Alternance de périodes de jeûne et de prise alimentaire.' }
+      ],
+      questionIds: []
     }
   ],
 

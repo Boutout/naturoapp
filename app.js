@@ -1477,6 +1477,7 @@ const State = {
     if (typeof d.lastStudyDay === 'undefined') d.lastStudyDay = null;
     if (typeof d.goalPerDay !== 'number') d.goalPerDay = 20;
     if (!Array.isArray(d.badges)) d.badges = [];
+    if (!d.challenges) d.challenges = {};   // "YYYY-MM-DD" -> { total, correct, pct }
     QUESTIONS.forEach(q => {
       const s = d.questionStats[q.id];
       if (!s) {
@@ -1505,6 +1506,7 @@ const State = {
       lastStudyDay: null,
       goalPerDay: 20,
       badges: [],          // ids des badges débloqués
+      challenges: {},      // "YYYY-MM-DD" -> { total, correct, pct } (défi du jour)
       dailyStats: {},      // "YYYY-MM-DD" -> { questions, correct }
     };
     QUESTIONS.forEach(q => {
@@ -1628,6 +1630,21 @@ const State = {
   },
   setGoal(n) { this.data.goalPerDay = Math.max(5, Math.min(100, n | 0)); this.save(); },
 
+  // ── Défi du jour ────────────────────────────────────────────
+  _today() { return new Date().toISOString().split('T')[0]; },
+  isChallengeDoneToday() { return !!(this.data.challenges && this.data.challenges[this._today()]); },
+  getChallengeToday() { return (this.data.challenges || {})[this._today()] || null; },
+  completeChallenge(total, correct, pct) {
+    const t = this._today();
+    if (!this.data.challenges) this.data.challenges = {};
+    if (this.data.challenges[t]) return 0;                 // déjà fait → pas de bonus en double
+    this.data.challenges[t] = { total, correct, pct, timestamp: Date.now() };
+    const bonus = 30 + (pct >= 90 ? 20 : 0);
+    this.data.xp = (this.data.xp || 0) + bonus;
+    this.save();
+    return bonus;
+  },
+
   // ── Badges ──────────────────────────────────────────────────
   // Débloque les badges nouvellement gagnés ; renvoie la liste des NOUVEAUX.
   refreshBadges() {
@@ -1735,6 +1752,29 @@ function isSelectionCorrect(q, selected) {
   if (selected.length !== key.length) return false;
   const set = new Set(key);
   return selected.every(i => set.has(i));
+}
+
+// PRNG déterministe (mulberry32) pour le « défi du jour » : même set toute la journée.
+function mulberry32(a) {
+  return function () {
+    a |= 0; a = (a + 0x6D2B79F5) | 0;
+    let t = Math.imul(a ^ (a >>> 15), 1 | a);
+    t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+  };
+}
+function getDailyChallenge(n) {
+  n = n || 10;
+  const today = new Date().toISOString().split('T')[0];
+  let seed = 0;
+  for (let i = 0; i < today.length; i++) seed = (seed * 31 + today.charCodeAt(i)) | 0;
+  const rng = mulberry32(seed >>> 0);
+  const arr = QUESTIONS.slice();
+  for (let i = arr.length - 1; i > 0; i--) {
+    const j = Math.floor(rng() * (i + 1));
+    [arr[i], arr[j]] = [arr[j], arr[i]];
+  }
+  return arr.slice(0, Math.min(n, arr.length));
 }
 
 function formatTime(seconds) {
@@ -2345,6 +2385,45 @@ function toggleTheme() {
   try { localStorage.setItem(THEME_KEY, eff === 'dark' ? 'light' : 'dark'); } catch (e) {}
   applyTheme();
 }
+function setTheme(value) {   // 'light' | 'dark' | 'auto'
+  try { localStorage.setItem(THEME_KEY, value); } catch (e) {}
+  applyTheme();
+}
+
+// ═══════════════════════════════════════════════════════════════
+//  SON & VIBRATION  (feedback ludique, réglable)
+//  Sons synthétisés (Web Audio) — aucun fichier audio nécessaire.
+// ═══════════════════════════════════════════════════════════════
+const SOUND_KEY = 'naturoapp_sound';
+let _audioCtx = null;
+function audioCtx() {
+  if (!_audioCtx) { try { _audioCtx = new (window.AudioContext || window.webkitAudioContext)(); } catch (e) { _audioCtx = null; } }
+  return _audioCtx;
+}
+const sfx = {
+  isEnabled() { try { return localStorage.getItem(SOUND_KEY) !== '0'; } catch (e) { return true; } },
+  setEnabled(on) { try { localStorage.setItem(SOUND_KEY, on ? '1' : '0'); } catch (e) {} },
+  vibe(pattern) { if (this.isEnabled() && navigator.vibrate) { try { navigator.vibrate(pattern); } catch (e) {} } },
+  _melody(freqs, dur, type) {
+    if (!this.isEnabled()) return;
+    const ctx = audioCtx(); if (!ctx) return;
+    if (ctx.state === 'suspended') { try { ctx.resume(); } catch (e) {} }
+    const now = ctx.currentTime;
+    freqs.forEach((f, i) => {
+      const o = ctx.createOscillator(), g = ctx.createGain();
+      o.type = type || 'sine'; o.frequency.value = f;
+      const t0 = now + i * 0.085;
+      g.gain.setValueAtTime(0.0001, t0);
+      g.gain.exponentialRampToValueAtTime(0.16, t0 + 0.02);
+      g.gain.exponentialRampToValueAtTime(0.0001, t0 + dur);
+      o.connect(g); g.connect(ctx.destination);
+      o.start(t0); o.stop(t0 + dur + 0.02);
+    });
+  },
+  correct() { this._melody([523.25, 659.25, 783.99], 0.18, 'sine'); this.vibe(18); },     // do-mi-sol
+  wrong()   { this._melody([311.13, 246.94], 0.22, 'sine'); this.vibe([22, 40, 22]); },     // descendant
+  levelup() { this._melody([523.25, 659.25, 783.99, 1046.5], 0.2, 'triangle'); this.vibe([12, 30, 12, 30]); }
+};
 
 // ── onReady : différé jusqu'à ce qu'un profil soit actif ─────────
 let _ready = false;
@@ -2476,10 +2555,10 @@ function celebrate(opts) {
 // Export global
 window.APP = {
   State, QUESTIONS, BADGES, shuffle, getQuestionsByDay, formatTime, getScoreColor, getGrade,
-  answerKey, isMultiAnswer, isSelectionCorrect,
+  answerKey, isMultiAnswer, isSelectionCorrect, getDailyChallenge,
   icon, hydrateIcons, escapeHtml,
   Profiles, onReady, currentProfile,
-  applyTheme, toggleTheme, getThemePref,
+  applyTheme, toggleTheme, setTheme, getThemePref, sfx,
   animateNumber, progressRing, setRing, prefersReducedMotion, celebrate
 };
 

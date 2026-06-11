@@ -7,6 +7,7 @@
   <meta name="theme-color" content="#1A5C45">
   <link rel="manifest" href="manifest.json">
   <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -191,6 +192,7 @@
     <li><a href="examen.html"><span class="nav-ico" data-icon="edit"></span> <span class="nav-label">Examen</span></a></li>
     <li><a href="stats.html"><span class="nav-ico" data-icon="chart"></span> <span class="nav-label">Stats</span></a></li>
   </ul>
+  <a class="nav-lock" id="nav-settings" href="reglages.html" data-icon="settings" title="Réglages" aria-label="Réglages"></a>
   <button class="nav-lock" id="nav-theme" data-icon="moon" title="Thème sombre" aria-label="Changer de thème"></button>
   <button class="nav-lock" id="nav-lock" data-icon="lock" title="Verrouiller l'app" aria-label="Verrouiller"></button>
 </nav>
@@ -353,7 +355,7 @@
 
 <script src="app.js"></script>
 <script>
-const { State, QUESTIONS, shuffle, getQuestionsByDay, formatTime, icon, isMultiAnswer, answerKey, isSelectionCorrect } = window.APP;
+const { State, QUESTIONS, shuffle, getQuestionsByDay, formatTime, icon, isMultiAnswer, answerKey, isSelectionCorrect, getDailyChallenge, sfx } = window.APP;
 
 // ── DRAWER MOBILE (hamburger) ─────────────────────────────────
 const sidebarEl  = document.querySelector('.sidebar');
@@ -441,6 +443,8 @@ function startSession(mode, dayNum) {
     const today = new Date();
     const dayIndex = (today.getDay() + 6) % 7; // Mon=0
     q = getQuestionsByDay((dayIndex % 8) + 1);
+  } else if (mode === 'challenge') {
+    q = getDailyChallenge(10);
   } else if (mode === 'srs') {
     q = State.getDueQuestions(20);
     if (q.length === 0) q = State.getWeakQuestions(15);
@@ -536,6 +540,7 @@ function handleQCMAnswer(selectedArr, q) {
   const selSet = new Set(selectedArr);
   const isCorrect = isSelectionCorrect(q, selectedArr);
   State.recordAnswer(q.id, isCorrect);
+  isCorrect ? sfx.correct() : sfx.wrong();
   sessionTotal++;
   if (isCorrect) sessionCorrect++;
 
@@ -629,14 +634,14 @@ document.getElementById('flip-card').addEventListener('click', () => {
 
 document.getElementById('fc-wrong-btn').addEventListener('click', () => {
   const q = queue[current];
-  State.recordAnswer(q.id, false);
+  State.recordAnswer(q.id, false); sfx.wrong();
   sessionTotal++; current++;
   renderFCQuestion();
 });
 
 document.getElementById('fc-correct-btn').addEventListener('click', () => {
   const q = queue[current];
-  State.recordAnswer(q.id, true);
+  State.recordAnswer(q.id, true); sfx.correct();
   sessionTotal++; sessionCorrect++; current++;
   renderFCQuestion();
 });
@@ -656,15 +661,20 @@ function showCompletion() {
     correct: sessionCorrect, pct
   });
 
+  // Défi du jour : bonus XP (une seule fois par jour)
+  let bonus = 0;
+  if (currentMode === 'challenge') bonus = State.completeChallenge(sessionTotal, sessionCorrect, pct);
+
   const g = window.APP.getGrade(pct);
   const el = document.getElementById('completion');
   el.classList.add('active');
   el.innerHTML = `
     <div class="completion-card">
       <div class="completion-ico">${pct >= 80 ? icon('party') : pct >= 60 ? icon('thumbs-up') : icon('book')}</div>
-      <h2>Session terminée !</h2>
+      <h2>${currentMode === 'challenge' ? 'Défi du jour relevé !' : 'Session terminée !'}</h2>
       <div class="correct-count">${pct}%</div>
       <p>${sessionCorrect} correctes sur ${sessionTotal} questions</p>
+      ${bonus > 0 ? `<p style="margin-top:10px;font-size:16px;font-weight:700;color:#FCEFD8;">+${bonus} XP bonus 🎯</p>` : ''}
       <p style="margin-top:8px;font-size:14px;">${formatTime(dur)} · ${g.label}</p>
       <div style="margin-top:28px;display:flex;gap:12px;justify-content:center;flex-wrap:wrap;">
         <button class="btn" style="background:rgba(255,255,255,0.2);color:#fff" onclick="showPickMode()"><span data-icon="arrow-left"></span> Retour</button>
@@ -674,7 +684,7 @@ function showCompletion() {
     </div>
   `;
   window.APP.hydrateIcons(el);
-  if (pct >= 90 && sessionTotal >= 3) window.APP.celebrate();
+  if (bonus > 0 || (pct >= 90 && sessionTotal >= 3)) { window.APP.celebrate(); sfx.levelup(); }
 }
 
 function showPickMode() {

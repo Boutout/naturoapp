@@ -7,6 +7,7 @@
   <meta name="theme-color" content="#1A5C45">
   <link rel="manifest" href="manifest.json">
   <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -73,6 +74,30 @@
       color: #fff; border: 1.5px solid rgba(255,255,255,0.4);
     }
     .hero-btn--ghost:hover { background: rgba(255,255,255,0.25); }
+
+    /* ── DÉFI DU JOUR ── */
+    .daily-challenge {
+      display: flex; align-items: center; gap: 14px;
+      background: linear-gradient(135deg, var(--c-green) 0%, var(--c-green-deep) 100%);
+      border-radius: var(--r-lg); padding: 16px 18px; margin-bottom: 14px;
+      text-decoration: none; color: #fff; position: relative; overflow: hidden;
+      box-shadow: 0 6px 18px rgba(26,92,69,0.25);
+      transition: transform .2s var(--ease-out), box-shadow .2s var(--ease-out);
+    }
+    .daily-challenge::after {
+      content: ''; position: absolute; right: -10px; top: -20px; width: 120px; height: 120px;
+      background: radial-gradient(circle, rgba(255,255,255,0.12), transparent 70%); pointer-events: none;
+    }
+    .daily-challenge:hover { transform: translateY(-2px); box-shadow: 0 10px 26px rgba(26,92,69,0.32); }
+    .daily-challenge__ico { width: 44px; height: 44px; flex-shrink: 0; border-radius: 14px;
+      background: rgba(255,255,255,0.18); display: flex; align-items: center; justify-content: center; }
+    .daily-challenge__ico .app-icon { width: 24px; height: 24px; color: #fff; }
+    .daily-challenge__txt { flex: 1; display: flex; flex-direction: column; }
+    .daily-challenge__txt b { font-size: 15.5px; }
+    .daily-challenge__sub { font-size: 12.5px; color: rgba(255,255,255,0.82); margin-top: 2px; }
+    .daily-challenge__go { color: rgba(255,255,255,0.85); }
+    .daily-challenge__go .app-icon { width: 20px; height: 20px; }
+    .daily-challenge.done { background: linear-gradient(135deg, #2E9B77, #1A5C45); }
 
     /* ── SRS CTA ── */
     .srs-cta {
@@ -294,6 +319,7 @@
     <li><a href="stats.html"><span class="nav-ico" data-icon="chart"></span> <span class="nav-label">Stats</span></a></li>
   </ul>
   <div class="topnav__score" id="nav-score">Score : —</div>
+  <a class="nav-lock" id="nav-settings" href="reglages.html" data-icon="settings" title="Réglages" aria-label="Réglages"></a>
   <button class="nav-lock" id="nav-theme" data-icon="moon" title="Thème sombre" aria-label="Changer de thème"></button>
   <button class="nav-lock" id="nav-lock" data-icon="lock" title="Verrouiller l'app" aria-label="Verrouiller"></button>
 </nav>
@@ -312,6 +338,16 @@
     </div>
     <div class="hero__ring ring-wrap" id="hero-ring"></div>
   </div>
+
+  <!-- DÉFI DU JOUR -->
+  <a class="daily-challenge" id="daily-challenge" href="revision.html?mode=challenge">
+    <span class="daily-challenge__ico" id="dc-ico" data-icon="zap"></span>
+    <span class="daily-challenge__txt">
+      <b id="dc-title">Défi du jour</b>
+      <span class="daily-challenge__sub" id="dc-sub">10 questions · jusqu'à +50 XP</span>
+    </span>
+    <span class="daily-challenge__go" data-icon="arrow-right"></span>
+  </a>
 
   <!-- SRS : révision du jour (répétition espacée) -->
   <a class="srs-cta" id="srs-cta" href="revision.html?mode=srs">
@@ -474,6 +510,23 @@
       srs.classList.add('is-empty');
       srsCount.textContent = 'Tout est à jour ✓';
       srsSub.textContent = 'Reviens demain pour ta révision du jour.';
+    }
+
+    // Défi du jour
+    const dc = document.getElementById('daily-challenge');
+    if (State.isChallengeDoneToday()) {
+      const r = State.getChallengeToday();
+      dc.classList.add('done');
+      document.getElementById('dc-ico').innerHTML = icon('check-circle');
+      document.getElementById('dc-title').textContent = 'Défi du jour réussi !';
+      document.getElementById('dc-sub').textContent = `${r.correct}/${r.total} · ${r.pct}% — reviens demain`;
+      dc.removeAttribute('href');
+    } else {
+      dc.classList.remove('done');
+      dc.setAttribute('href', 'revision.html?mode=challenge');
+      document.getElementById('dc-ico').innerHTML = icon('zap');
+      document.getElementById('dc-title').textContent = 'Défi du jour';
+      document.getElementById('dc-sub').textContent = '10 questions · jusqu\'à +50 XP';
     }
 
     // Niveau + XP
