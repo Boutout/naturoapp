@@ -1,12 +1,13 @@
 /* NaturoApp — Service Worker (PWA)
    Stratégie : app-shell en cache, fonctionne hors-ligne.
    Pense à incrémenter CACHE_VERSION quand tu modifies les fichiers. */
-const CACHE_VERSION = 'naturoapp-v12';
+const CACHE_VERSION = 'naturoapp-v13';
 const APP_SHELL = [
   'index.html',
   'cours.html',
   'cas.html',
   'bilan.html',
+  'carte.html',
   'reglages.html',
   'revision.html',
   'examen.html',

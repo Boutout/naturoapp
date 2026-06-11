@@ -376,6 +376,7 @@
     <li><a href="stats.html"><span class="nav-ico" data-icon="chart"></span> <span class="nav-label">Stats</span></a></li>
   </ul>
   <div class="topnav__score" id="nav-score">Score : —</div>
+  <button class="nav-lock" id="nav-search" data-icon="search" title="Rechercher (Ctrl/Cmd+K)" aria-label="Rechercher"></button>
   <a class="nav-lock" id="nav-settings" href="reglages.html" data-icon="settings" title="Réglages" aria-label="Réglages"></a>
   <button class="nav-lock" id="nav-theme" data-icon="moon" title="Thème sombre" aria-label="Changer de thème"></button>
   <button class="nav-lock" id="nav-lock" data-icon="lock" title="Verrouiller l'app" aria-label="Verrouiller"></button>
@@ -420,8 +421,8 @@
   <a class="cas-cta" id="cas-cta" href="cas.html">
     <span class="cas-cta__ico" data-icon="clipboard"></span>
     <span class="cas-cta__txt">
-      <b>Cas pratiques <span class="cas-cta__badge" id="cas-cta-badge"></span></b>
-      <span class="cas-cta__sub">Raisonne comme un naturopathe sur des clients fictifs.</span>
+      <b>Cas du jour <span class="cas-cta__badge" id="cas-cta-badge"></span></b>
+      <span class="cas-cta__sub" id="cas-cta-sub">Raisonne comme un naturopathe sur un client fictif.</span>
     </span>
     <span class="cas-cta__go" data-icon="arrow-right"></span>
   </a>
@@ -536,6 +537,16 @@
         <h3>Bilan de vitalité</h3>
         <p class="text-sm text-mid mt-8">Découvre ton terrain en 8 questions</p>
       </a>
+      <a href="revision.html?mode=sprint" class="card card--hover" style="text-decoration:none;color:inherit;padding:22px;">
+        <div class="quick-mode-ico" data-icon="zap"></div>
+        <h3>Sprint chrono</h3>
+        <p class="text-sm text-mid mt-8">10 questions contre la montre</p>
+      </a>
+      <a href="carte.html" class="card card--hover" style="text-decoration:none;color:inherit;padding:22px;">
+        <div class="quick-mode-ico" data-icon="network"></div>
+        <h3>Carte mentale</h3>
+        <p class="text-sm text-mid mt-8">L'arbre des concepts, cliquable</p>
+      </a>
     </div>
   </div>
 
@@ -551,6 +562,7 @@
 
 <div id="toast-container"></div>
 
+<script src="content.js"></script>
 <script src="app.js"></script>
 <script>
   const { State, QUESTIONS, BADGES, getQuestionsByDay, icon, escapeHtml, animateNumber, progressRing, setRing, currentProfile, celebrate, gardenSVG } = window.APP;
@@ -615,7 +627,17 @@
       document.getElementById('dc-sub').textContent = '10 questions · jusqu\'à +50 XP';
     }
 
-    // Cas pratiques résolus
+    // Cas du jour (déterministe) + nombre résolus
+    const CASES = (window.NATURO_CONTENT && window.NATURO_CONTENT.casPratiques) || [];
+    if (CASES.length) {
+      const today = new Date().toISOString().split('T')[0];
+      let seed = 0; for (let i = 0; i < today.length; i++) seed = (seed * 31 + today.charCodeAt(i)) | 0;
+      const cas = CASES[Math.abs(seed) % CASES.length];
+      const sub = document.getElementById('cas-cta-sub');
+      const link = document.getElementById('cas-cta');
+      if (sub) sub.textContent = `« ${cas.titre} » — ${cas.profil.nom}, ${cas.profil.age} ans`;
+      if (link) link.setAttribute('href', 'cas.html?id=' + cas.id);
+    }
     const casDone = Object.keys(State.data.casDone || {}).length;
     const cb = document.getElementById('cas-cta-badge');
     if (cb) cb.textContent = casDone > 0 ? '✓ ' + casDone : '';

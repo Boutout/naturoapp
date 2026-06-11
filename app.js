@@ -1916,7 +1916,9 @@ const ICON_PATHS = {
   moon:        '<path d="M12 3a6.36 6.36 0 0 0 9 9 9 9 0 1 1-9-9Z"/>',
   settings:    '<circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1Z"/>',
   volume:      '<polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07M19.07 4.93a10 10 0 0 1 0 14.14"/>',
-  'volume-x':  '<polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><line x1="22" y1="9" x2="16" y2="15"/><line x1="16" y1="9" x2="22" y2="15"/>'
+  'volume-x':  '<polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><line x1="22" y1="9" x2="16" y2="15"/><line x1="16" y1="9" x2="22" y2="15"/>',
+  search:      '<circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>',
+  network:     '<circle cx="12" cy="5" r="2.5"/><circle cx="5" cy="19" r="2.5"/><circle cx="19" cy="19" r="2.5"/><path d="M12 7.5v4M12 11.5 6.6 16.8M12 11.5l5.4 5.3"/>'
 };
 
 function icon(name, opts) {
@@ -2612,6 +2614,14 @@ function boot() {
   const themeBtn = document.getElementById('nav-theme');
   if (themeBtn) themeBtn.addEventListener('click', () => { toggleTheme(); });
 
+  // Recherche universelle (bouton nav + raccourci Ctrl/Cmd+K)
+  const searchBtn = document.getElementById('nav-search');
+  if (searchBtn) searchBtn.addEventListener('click', openSearch);
+  document.addEventListener('keydown', e => {
+    if ((e.metaKey || e.ctrlKey) && (e.key === 'k' || e.key === 'K')) { e.preventDefault(); openSearch(); }
+    else if (e.key === 'Escape') closeSearch();
+  });
+
   // Bouton de verrouillage / changement de compte (si présent dans la nav)
   const lockBtn = document.getElementById('nav-lock');
   if (lockBtn) lockBtn.addEventListener('click', () => { Profiles.clearActive(); location.reload(); });
@@ -2780,6 +2790,80 @@ function gardenSVG(stage, healthy) {
   return `<svg viewBox="0 0 120 145" class="garden-svg" aria-hidden="true">${parts}</svg>`;
 }
 
+// ═══════════════════════════════════════════════════════════════
+//  RECHERCHE UNIVERSELLE  (questions, cours, cas, glossaire)
+// ═══════════════════════════════════════════════════════════════
+function searchAll(query) {
+  const q = (query || '').trim().toLowerCase();
+  if (q.length < 2) return [];
+  const C = window.NATURO_CONTENT || { cours: [], glossaire: [], casPratiques: [] };
+  const res = [];
+  QUESTIONS.forEach(qq => {
+    const hay = (qq.sujet + ' ' + qq.question + ' ' + qq.categorie + ' ' + (qq.options || []).join(' ') + ' ' + (qq.explication || '') + ' ' + (qq.tags || []).join(' ')).toLowerCase();
+    if (hay.includes(q))
+      res.push({ type: 'Question', icon: 'help-circle', label: 'Q' + qq.id + ' · ' + qq.sujet, sub: qq.categorie, href: 'revision.html?id=' + qq.id });
+  });
+  (C.cours || []).forEach(c => {
+    const hay = (c.titre + ' ' + (c.resume || '') + ' ' + (c.pointsCles || []).join(' ') + ' ' + (c.definitions || []).map(d => d.terme + ' ' + d.def).join(' ')).toLowerCase();
+    if (hay.includes(q)) res.push({ type: 'Cours', icon: 'book', label: c.titre, sub: c.categorie, href: 'cours.html?open=' + c.id });
+  });
+  (C.casPratiques || []).forEach(cas => {
+    if ((cas.titre + ' ' + cas.profil.nom + ' ' + cas.profil.motif).toLowerCase().includes(q))
+      res.push({ type: 'Cas', icon: 'clipboard', label: cas.titre, sub: cas.profil.nom + ', ' + cas.profil.age + ' ans', href: 'cas.html?id=' + cas.id });
+  });
+  const terms = [], seen = new Set();
+  (C.glossaire || []).forEach(g => terms.push({ terme: g.terme, def: g.definition }));
+  (C.cours || []).forEach(c => (c.definitions || []).forEach(d => terms.push({ terme: d.terme, def: d.def })));
+  terms.forEach(t => {
+    const k = t.terme.toLowerCase();
+    if (seen.has(k)) return; seen.add(k);
+    if ((t.terme + ' ' + t.def).toLowerCase().includes(q)) res.push({ type: 'Terme', icon: 'tag', label: t.terme, sub: t.def, href: 'cours.html' });
+  });
+  return res.slice(0, 30);
+}
+
+let _searchEl = null;
+function buildSearch() {
+  _searchEl = document.createElement('div');
+  _searchEl.className = 'search-overlay';
+  _searchEl.innerHTML =
+    '<div class="search-panel">' +
+      '<div class="search-bar2">' +
+        '<span class="search-bar2__ico">' + icon('search') + '</span>' +
+        '<input id="search-input" type="text" autocomplete="off" placeholder="Rechercher une question, un cours, un terme…">' +
+        '<button class="search-close" id="search-close" aria-label="Fermer">' + icon('x') + '</button>' +
+      '</div>' +
+      '<div class="search-results" id="search-results"></div>' +
+    '</div>';
+  document.body.appendChild(_searchEl);
+  const inp = _searchEl.querySelector('#search-input');
+  inp.addEventListener('input', () => renderSearchResults(inp.value));
+  _searchEl.querySelector('#search-close').addEventListener('click', closeSearch);
+  _searchEl.addEventListener('click', e => { if (e.target === _searchEl) closeSearch(); });
+}
+function renderSearchResults(query) {
+  const host = _searchEl.querySelector('#search-results');
+  const q = (query || '').trim();
+  if (q.length < 2) { host.innerHTML = '<div class="search-empty">Tape au moins 2 lettres…</div>'; return; }
+  const results = searchAll(q);
+  if (!results.length) { host.innerHTML = '<div class="search-empty">Aucun résultat pour « ' + escapeHtml(q) + ' ».</div>'; return; }
+  host.innerHTML = results.map(r =>
+    '<a class="search-item" href="' + r.href + '">' +
+      '<span class="search-item__ico">' + icon(r.icon) + '</span>' +
+      '<span class="search-item__txt"><span class="search-item__label">' + escapeHtml(r.label) + '</span><span class="search-item__sub">' + escapeHtml(r.sub || '') + '</span></span>' +
+      '<span class="search-item__tag">' + r.type + '</span>' +
+    '</a>').join('');
+}
+function openSearch() {
+  if (document.body.classList.contains('app-locked')) return;   // pas avant déverrouillage
+  if (!_searchEl) buildSearch();
+  _searchEl.classList.add('open');
+  const inp = _searchEl.querySelector('#search-input');
+  inp.value = ''; renderSearchResults('');
+  setTimeout(() => inp.focus(), 30);
+}
+function closeSearch() { if (_searchEl) _searchEl.classList.remove('open'); }
+
 // Export global
 window.APP = {
   State, QUESTIONS, BADGES, shuffle, getQuestionsByDay, formatTime, getScoreColor, getGrade,
@@ -2787,7 +2871,7 @@ window.APP = {
   icon, hydrateIcons, escapeHtml,
   Profiles, onReady, currentProfile,
   applyTheme, toggleTheme, setTheme, getThemePref, sfx, tts,
-  courseToFlashcards, gardenSVG,
+  courseToFlashcards, gardenSVG, searchAll, openSearch,
   animateNumber, progressRing, setRing, prefersReducedMotion, celebrate
 };
 

@@ -203,6 +203,7 @@
     <li><a href="examen.html"><span class="nav-ico" data-icon="edit"></span> <span class="nav-label">Examen</span></a></li>
     <li><a href="stats.html"><span class="nav-ico" data-icon="chart"></span> <span class="nav-label">Stats</span></a></li>
   </ul>
+  <button class="nav-lock" id="nav-search" data-icon="search" title="Rechercher (Ctrl/Cmd+K)" aria-label="Rechercher"></button>
   <a class="nav-lock" id="nav-settings" href="reglages.html" data-icon="settings" title="Réglages" aria-label="Réglages"></a>
   <button class="nav-lock" id="nav-theme" data-icon="moon" title="Thème sombre" aria-label="Changer de thème"></button>
   <button class="nav-lock" id="nav-lock" data-icon="lock" title="Verrouiller l'app" aria-label="Verrouiller"></button>
@@ -246,6 +247,7 @@
         <button class="mode-chip" data-mode="weak"><span data-icon="alert-triangle"></span> Mes points faibles</button>
         <button class="mode-chip" data-mode="unseen"><span data-icon="eye"></span> Non vues</button>
         <button class="mode-chip" data-mode="important"><span data-icon="star"></span> Questions clés</button>
+        <button class="mode-chip" data-mode="sprint"><span data-icon="zap"></span> Sprint (chrono)</button>
       </div>
 
       <div style="margin-bottom:20px;">
@@ -287,6 +289,7 @@
             <div class="progress-bar__fill" id="qcm-bar" style="width:10%"></div>
           </div>
         </div>
+        <span class="badge badge-ocre" id="sprint-timer" style="display:none;"></span>
         <button class="btn btn-ghost btn-sm" id="qcm-stop"><span data-icon="x"></span> Arrêter</button>
       </div>
 
@@ -365,6 +368,7 @@
 
 <div id="toast-container"></div>
 
+<script src="content.js"></script>
 <script src="app.js"></script>
 <script>
 const { State, QUESTIONS, shuffle, getQuestionsByDay, formatTime, icon, isMultiAnswer, answerKey, isSelectionCorrect, getDailyChallenge, sfx, tts } = window.APP;
@@ -396,6 +400,20 @@ let currentFormat = 'qcm';
 let answered = false;
 let flipped = false;
 let sessionStart = Date.now();
+let sprintTimer = null;
+
+function startSprintTimer() {
+  const el = document.getElementById('sprint-timer');
+  el.style.display = 'inline-flex';
+  clearInterval(sprintTimer);
+  function tick() { el.textContent = '⏱ ' + formatTime(Math.round((Date.now() - sessionStart) / 1000)); }
+  tick();
+  sprintTimer = setInterval(tick, 1000);
+}
+function stopSprintTimer() {
+  clearInterval(sprintTimer); sprintTimer = null;
+  const el = document.getElementById('sprint-timer'); if (el) el.style.display = 'none';
+}
 let qcmSelected = new Set();   // réponses cochées (mode multi)
 let qcmMulti = false;
 
@@ -466,6 +484,8 @@ function startSession(mode, dayNum) {
     q = getQuestionsByDay((dayIndex % 8) + 1);
   } else if (mode === 'challenge') {
     q = getDailyChallenge(10);
+  } else if (mode === 'sprint') {
+    q = shuffle(QUESTIONS).slice(0, 10);
   } else if (mode === 'srs') {
     q = State.getDueQuestions(20);
     if (q.length === 0) q = State.getWeakQuestions(15);
@@ -499,6 +519,7 @@ function startSession(mode, dayNum) {
 function showQCM() {
   document.querySelectorAll('.revision-area').forEach(a => a.classList.remove('active'));
   document.getElementById('qcm-revision').classList.add('active');
+  if (currentMode === 'sprint') startSprintTimer(); else stopSprintTimer();
   renderQCMQuestion();
 }
 
@@ -673,9 +694,11 @@ document.getElementById('fc-stop').addEventListener('click', showPickMode);
 
 // ── COMPLETION ───────────────────────────────────────────────
 function showCompletion() {
+  stopSprintTimer();
   document.querySelectorAll('.revision-area').forEach(a => a.classList.remove('active'));
   const pct = sessionTotal === 0 ? 0 : Math.round((sessionCorrect / sessionTotal) * 100);
   const dur = Math.round((Date.now() - sessionStart) / 1000);
+  const isSprint = currentMode === 'sprint';
 
   State.saveRevisionSession({
     type: 'revision', mode: currentMode,
@@ -687,6 +710,14 @@ function showCompletion() {
   // Défi du jour : bonus XP (une seule fois par jour)
   let bonus = 0;
   if (currentMode === 'challenge') bonus = State.completeChallenge(sessionTotal, sessionCorrect, pct);
+  // Sprint : bonus de vitesse (rapide + juste)
+  let sprintLine = '';
+  if (isSprint && sessionTotal > 0) {
+    const speed = Math.round(sessionTotal / Math.max(1, dur) * 60); // questions/min
+    const sBonus = 10 + (dur < 90 ? 15 : 0) + (pct === 100 ? 15 : 0);
+    State.data.xp = (State.data.xp || 0) + sBonus; State.save();
+    sprintLine = `<p style="margin-top:10px;font-size:16px;font-weight:700;color:#FCEFD8;">⚡ ${formatTime(dur)} · ${speed} Q/min · +${sBonus} XP</p>`;
+  }
 
   const g = window.APP.getGrade(pct);
   const el = document.getElementById('completion');
@@ -694,10 +725,11 @@ function showCompletion() {
   el.innerHTML = `
     <div class="completion-card">
       <div class="completion-ico">${pct >= 80 ? icon('party') : pct >= 60 ? icon('thumbs-up') : icon('book')}</div>
-      <h2>${currentMode === 'challenge' ? 'Défi du jour relevé !' : 'Session terminée !'}</h2>
+      <h2>${currentMode === 'challenge' ? 'Défi du jour relevé !' : isSprint ? 'Sprint terminé !' : 'Session terminée !'}</h2>
       <div class="correct-count">${pct}%</div>
       <p>${sessionCorrect} correctes sur ${sessionTotal} questions</p>
       ${bonus > 0 ? `<p style="margin-top:10px;font-size:16px;font-weight:700;color:#FCEFD8;">+${bonus} XP bonus 🎯</p>` : ''}
+      ${sprintLine}
       <p style="margin-top:8px;font-size:14px;">${formatTime(dur)} · ${g.label}</p>
       <div style="margin-top:28px;display:flex;gap:12px;justify-content:center;flex-wrap:wrap;">
         <button class="btn" style="background:rgba(255,255,255,0.2);color:#fff" onclick="showPickMode()"><span data-icon="arrow-left"></span> Retour</button>
@@ -711,6 +743,7 @@ function showCompletion() {
 }
 
 function showPickMode() {
+  stopSprintTimer();
   document.querySelectorAll('.revision-area').forEach(a => a.classList.remove('active'));
   document.getElementById('pick-mode').style.display = 'block';
 }
