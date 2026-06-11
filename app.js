@@ -485,7 +485,7 @@ const QUESTIONS = [
       "Effet antihistaminique"
     ],
     bonne: 2,
-    explication: "Les furocoumarines (bergaptène dans le bergamote, psoralène dans le céleri, angélicine...) provoquent une PHOTOSENSIBILISATION : réaction cutanée (érythème, brûlures, pigmentation) lors d'exposition au soleil. Danger en été.",
+    explication: "Les furocoumarines (bergaptène dans la bergamote, psoralène dans le céleri, angélicine...) provoquent une PHOTOSENSIBILISATION : réaction cutanée (érythème, brûlures, pigmentation) lors d'exposition au soleil. Danger en été.",
     piege: "Le piège est de chercher un effet thérapeutique. Les furocoumarines sont surtout connues pour leur DANGER (photosensibilisation) plutôt que leur bénéfice.",
     mnemo: "FuroCoumarine + SOLEIL = BRÛLURE. Furocoumarines = Fuyez du Soleil !",
     tags: ["phytochimie", "effets secondaires", "sécurité"]
@@ -587,7 +587,7 @@ const QUESTIONS = [
       "Vine (Vigne)"
     ],
     bonne: 1,
-    explication: "Holly (Houx) = 37e fleur de Bach. Correspond aux émotions négatives intenses dirigées vers autrui : jalousie, haine, envie, désir de vengeance, rancune. C'est la fleur de l'amour conditionnel blessé.",
+    explication: "Holly (Houx) correspond aux émotions négatives intenses dirigées vers autrui : jalousie, haine, envie, désir de vengeance, rancune. C'est la fleur de l'amour conditionnel blessé.",
     piege: "Willow = amertume/ressentiment passif. Chicory = possessivité/amour conditionnel. Vine = domination/autoritarisme. Holly = vengeance/jalousie = le plus intense.",
     mnemo: "HOLLY = le HOUX pique ! Jalousie qui pique, vengeance qui pique = HOLLY.",
     tags: ["fleurs de Bach", "émotions", "psychologie"]
