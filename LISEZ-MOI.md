@@ -6,23 +6,31 @@ Application de révision en naturopathie (QCM, flashcards, examens, stats).
 ## 📱 Mettre l'app en ligne et l'installer sur le téléphone
 
 Pour l'**installer comme une vraie app** (icône sur l'écran d'accueil, plein écran,
-fonctionnement hors-ligne), il faut qu'elle soit servie en **HTTPS**. Ouvrir le
-fichier directement (`file://...`) ne suffit pas : ni l'installation ni le verrou
-sécurisé ne fonctionneront. Choisis **une** des options gratuites ci-dessous.
+hors-ligne), il faut qu'elle soit servie en **HTTPS** (`file://` ne suffit pas).
+Guide complet (GitHub Pages, Netlify, domaine perso) : **`docs/DEPLOIEMENT.md`**.
 
-### Option A — Netlify Drop (le plus simple, sans compte technique)
-1. Va sur https://app.netlify.com/drop
-2. Glisse-dépose **tout le dossier `NaturoApp`** dans la page.
-3. Tu obtiens un lien `https://...netlify.app` → c'est ton app, prête.
+En bref :
+- **Le plus simple** : https://app.netlify.com/drop → glisser-déposer le dossier → lien prêt.
+- **GitHub Pages** : Repo → Settings → Pages → branche `main`, dossier `/root`.
+- **Installer** : iPhone (Safari) Partager → « Sur l'écran d'accueil » ; Android (Chrome) ⋮ → « Installer l'application ».
 
-### Option B — GitHub Pages
-1. Crée un dépôt GitHub et envoie-y tous les fichiers (sans changer la structure).
-2. Repo → **Settings → Pages** → Source : branche `main`, dossier `/root`.
-3. Ton app sera sur `https://<utilisateur>.github.io/<repo>/`.
+## 🔑 Code d'accès (1ʳᵉ ouverture)
+À la toute première ouverture sur un appareil, l'app demande un **code d'accès**
+(connu de Clara) pour réserver l'usage aux personnes autorisées. Une fois validé,
+l'appareil est autorisé et ne le redemande plus. Pour changer ce code : voir
+`docs/SECURITE.md` (régénérer l'empreinte). Le code n'est jamais écrit en clair.
 
-### Installer sur le téléphone (une fois le lien HTTPS ouvert)
-- **iPhone (Safari)** : bouton Partager → « Sur l'écran d'accueil ».
-- **Android (Chrome)** : menu ⋮ → « Installer l'application » / « Ajouter à l'écran d'accueil ».
+## 🤖 Tuteur IA (optionnel)
+Un professeur IA intégré (chat) qui explique, interroge, corrige et **génère des
+quiz jouables**. Pour l'activer : **Réglages → Tuteur IA** → choisir un fournisseur
+et coller **sa clé API personnelle** (elle reste sur l'appareil).
+- **GPT (OpenAI)** et **Claude** marchent directement. Conseillé pour démarrer :
+  **GPT-4o mini** (économique) — clé sur `platform.openai.com`.
+- Options moins chères (Gemini, Mistral, DeepSeek, Qwen, Kimi, GLM) : possibles,
+  mais parfois bloquées par le navigateur (un message le signale).
+- Depuis un **cours** : bouton « Demander au tuteur IA ». Dans le tuteur :
+  « 🎮 Quiz jouable » et « 🎯 Quiz sur mes points faibles » créent des QCM jouables
+  dans la Révision. Mode **vocal** (lecture des réponses) et **impression** dispo.
 
 ## 👥 Plusieurs comptes (multi-utilisateurs)
 - L'app gère **plusieurs comptes sur le même appareil** (comme les profils Netflix).
