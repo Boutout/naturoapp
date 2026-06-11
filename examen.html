@@ -14,7 +14,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Lora:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css">
-  <script>try{if(!sessionStorage.getItem('naturoapp_active'))document.documentElement.classList.add('pre-lock');}catch(e){}</script>
+  <script>try{var t=localStorage.getItem('naturoapp_theme');if(t==='dark'||((!t||t==='auto')&&window.matchMedia('(prefers-color-scheme:dark)').matches)){document.documentElement.setAttribute('data-theme','dark');}else{document.documentElement.setAttribute('data-theme','light');}if(!sessionStorage.getItem('naturoapp_active'))document.documentElement.classList.add('pre-lock');}catch(e){}</script>
   <style>
     /* EXAM SPECIFIC */
     .exam-setup {
@@ -208,6 +208,7 @@
     <li><a href="examen.html" class="active"><span class="nav-ico" data-icon="edit"></span> <span class="nav-label">Examen</span></a></li>
     <li><a href="stats.html"><span class="nav-ico" data-icon="chart"></span> <span class="nav-label">Stats</span></a></li>
   </ul>
+  <button class="nav-lock" id="nav-theme" data-icon="moon" title="Thème sombre" aria-label="Changer de thème"></button>
   <button class="nav-lock" id="nav-lock" data-icon="lock" title="Verrouiller l'app" aria-label="Verrouiller"></button>
 </nav>
 

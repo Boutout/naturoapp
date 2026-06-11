@@ -1813,7 +1813,12 @@ const ICON_PATHS = {
   printer:     '<polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/>',
   bell:        '<path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/>',
   'delete':    '<path d="M21 4H8l-7 8 7 8h13a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2Z"/><line x1="18" y1="9" x2="12" y2="15"/><line x1="12" y1="9" x2="18" y2="15"/>',
-  download:    '<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/>'
+  download:    '<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/>',
+  sun:         '<circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/>',
+  moon:        '<path d="M12 3a6.36 6.36 0 0 0 9 9 9 9 0 1 1-9-9Z"/>',
+  settings:    '<circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1Z"/>',
+  volume:      '<polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07M19.07 4.93a10 10 0 0 1 0 14.14"/>',
+  'volume-x':  '<polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><line x1="22" y1="9" x2="16" y2="15"/><line x1="16" y1="9" x2="22" y2="15"/>'
 };
 
 function icon(name, opts) {
@@ -2320,6 +2325,27 @@ function registerSW() {
   }
 }
 
+// ═══════════════════════════════════════════════════════════════
+//  THÈME (clair / sombre) — préférence d'appareil
+// ═══════════════════════════════════════════════════════════════
+const THEME_KEY = 'naturoapp_theme';   // 'light' | 'dark' | 'auto'
+function getThemePref() { try { return localStorage.getItem(THEME_KEY) || 'auto'; } catch (e) { return 'auto'; } }
+function systemDark() { return window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches; }
+function effectiveTheme() { const t = getThemePref(); return t === 'auto' ? (systemDark() ? 'dark' : 'light') : t; }
+function applyTheme() {
+  const eff = effectiveTheme();
+  document.documentElement.setAttribute('data-theme', eff);
+  const meta = document.querySelector('meta[name="theme-color"]');
+  if (meta) meta.setAttribute('content', eff === 'dark' ? '#0F1A16' : '#1A5C45');
+  const btn = document.getElementById('nav-theme');
+  if (btn) { btn.innerHTML = icon(eff === 'dark' ? 'sun' : 'moon'); btn.setAttribute('aria-label', eff === 'dark' ? 'Thème clair' : 'Thème sombre'); }
+}
+function toggleTheme() {
+  const eff = effectiveTheme();
+  try { localStorage.setItem(THEME_KEY, eff === 'dark' ? 'light' : 'dark'); } catch (e) {}
+  applyTheme();
+}
+
 // ── onReady : différé jusqu'à ce qu'un profil soit actif ─────────
 let _ready = false;
 const _readyCbs = [];
@@ -2336,7 +2362,12 @@ function currentProfile() { return Profiles.active(); }
 function boot() {
   migrateLegacy();
   hydrateIcons();
+  applyTheme();
   registerSW();
+
+  // Bascule de thème (clair/sombre)
+  const themeBtn = document.getElementById('nav-theme');
+  if (themeBtn) themeBtn.addEventListener('click', () => { toggleTheme(); });
 
   // Bouton de verrouillage / changement de compte (si présent dans la nav)
   const lockBtn = document.getElementById('nav-lock');
@@ -2448,6 +2479,7 @@ window.APP = {
   answerKey, isMultiAnswer, isSelectionCorrect,
   icon, hydrateIcons, escapeHtml,
   Profiles, onReady, currentProfile,
+  applyTheme, toggleTheme, getThemePref,
   animateNumber, progressRing, setRing, prefersReducedMotion, celebrate
 };
 
