@@ -146,6 +146,8 @@
     .streak-banner__ico .app-icon { width: 22px; height: 22px; }
     .streak-banner span { font-size: 13.5px; }
     .streak-banner__go { margin-left: auto; color: var(--c-ocre); display: inline-flex; }
+    [data-theme="dark"] .streak-banner { color: #E8C98D; border-color: rgba(196,135,58,.28); }
+    [data-theme="dark"] .streak-banner b { color: #F2DCAE; }
 
     /* ── COACH PRÉDICTIF ── */
     .coach { display: flex; gap: 12px; align-items: center; border-radius: var(--r-lg);
@@ -956,10 +958,13 @@
           <div class="onboard__step"><span class="onboard__ico" style="background:var(--c-green-pale)">${icon('list')}</span><div><b>QCM</b><div class="text-sm text-mid">Réponds, et reçois aussitôt l'explication, le piège et le moyen mnémotechnique.</div></div></div>
           <div class="onboard__step"><span class="onboard__ico" style="background:var(--c-blue-light)">${icon('layers')}</span><div><b>Flashcards</b><div class="text-sm text-mid">Retourne la carte pour t'auto-évaluer. Idéal pour ancrer la mémoire.</div></div></div>
           <div class="onboard__step"><span class="onboard__ico" style="background:var(--c-ocre-light)">${icon('edit')}</span><div><b>Examens blancs</b><div class="text-sm text-mid">Conditions réelles, chrono et bilan détaillé pour te préparer au jour J.</div></div></div>
-          <div class="onboard__step"><span class="onboard__ico" style="background:var(--c-purple-light)">${icon('trending-up')}</span><div><b>Statistiques</b><div class="text-sm text-mid">Tes points faibles sont repérés et reproposés en priorité.</div></div></div>
+          <div class="onboard__step"><span class="onboard__ico" style="background:var(--c-green-pale)">${icon('sparkles')}</span><div><b>Séance intelligente</b><div class="text-sm text-mid">Un clic = la révision la plus utile, calée sur ta mémoire et tes points faibles.</div></div></div>
+          <div class="onboard__step"><span class="onboard__ico" style="background:var(--c-blue-light)">${icon('message')}</span><div><b>Tuteur IA</b><div class="text-sm text-mid">Un prof IA t'explique, t'interroge et crée des quiz (Réglages → ta clé).</div></div></div>
+          <div class="onboard__step"><span class="onboard__ico" style="background:var(--c-purple-light)">${icon('trending-up')}</span><div><b>Stats & coach</b><div class="text-sm text-mid">Tes points faibles repérés, et un coach qui te dit si tu es dans les temps.</div></div></div>
         </div>
-        <div class="modal__footer">
-          <button class="btn btn-primary btn-lg w-full" id="onboard-go"><span data-icon="book-open"></span> C'est parti&nbsp;!</button>
+        <div class="modal__footer" style="display:flex;gap:10px;flex-wrap:wrap;">
+          <a class="btn btn-ghost" id="onboard-exam" href="reglages.html" style="flex:1;min-width:150px;"><span data-icon="calendar"></span> Ma date d'examen</a>
+          <button class="btn btn-primary" id="onboard-go" style="flex:1;min-width:150px;"><span data-icon="book-open"></span> C'est parti&nbsp;!</button>
         </div>
       </div>`;
     document.body.appendChild(ov);
@@ -971,6 +976,7 @@
       setTimeout(() => ov.remove(), 250);
     }
     ov.querySelector('#onboard-go').addEventListener('click', close);
+    ov.querySelector('#onboard-exam').addEventListener('click', () => State.setOnboarded());  // marque vu, puis navigue
     ov.addEventListener('click', e => { if (e.target === ov) close(); });
   }
 

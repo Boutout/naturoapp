@@ -661,6 +661,122 @@ window.NATURO_CONTENT = {
         }
       ],
       synthese: "Pistes : fibres + eau + prébiotiques, magnésium, activité physique, horaires réguliers aux toilettes. Si la constipation est récente ou résistante, consulter."
+    },
+
+    {
+      id: 'cas-acne',
+      titre: 'Acné & peau grasse',
+      icon: 'droplet',
+      profil: { nom: 'Inès', age: 19, motif: "Acné inflammatoire, peau grasse" },
+      contexte: "Inès a une acné qui s'aggrave avec le stress et une alimentation sucrée. Suivi dermato en place.",
+      etapes: [
+        {
+          question: "Quel émonctoire « de secours » est sollicité quand foie et intestins sont surchargés ?",
+          options: ['La peau', 'Les poumons seuls', "L'estomac", 'Le cœur'],
+          bonne: 0,
+          explication: "La peau est un émonctoire de secours : quand les voies hépato-intestinales sont débordées, elle prend le relais (acné, eczéma). Soutenir le foie et l'intestin soulage souvent la peau."
+        },
+        {
+          question: "Quelle erreur alimentaire aggrave le plus l'acné ?",
+          options: ['Excès de sucres rapides et de laitages', 'Manger des légumes', "Boire de l'eau", 'Consommer des oméga 3'],
+          bonne: 0,
+          explication: "Les sucres rapides (pics d'insuline) et les laitages stimulent la production de sébum et l'inflammation. Les réduire améliore souvent le terrain cutané."
+        },
+        {
+          question: "Quel apport soutient une peau plus saine ?",
+          options: ['Zinc + oméga 3', 'Sodium', 'Sucre raffiné', 'Café'],
+          bonne: 0,
+          explication: "Le zinc régule le sébum et a une action anti-inflammatoire ; les oméga 3 apaisent l'inflammation. Un duo cohérent pour la peau."
+        }
+      ],
+      synthese: "Pistes : soutenir foie/intestin, réduire sucres rapides et laitages, zinc + oméga 3, gestion du stress. En complément du suivi dermatologique."
+    },
+
+    {
+      id: 'cas-menopause',
+      titre: 'Ménopause confirmée & os',
+      icon: 'flower',
+      profil: { nom: 'Brigitte', age: 58, motif: "Bouffées de chaleur, sécheresse, inquiétude pour ses os" },
+      contexte: "Brigitte est ménopausée depuis 5 ans. Elle s'inquiète de l'ostéoporose. Suivi gynéco à jour.",
+      etapes: [
+        {
+          question: "Quel risque osseux la chute des œstrogènes favorise-t-elle ?",
+          options: ['La déminéralisation / ostéoporose', "Une prise de masse osseuse", 'Aucun risque', 'Un excès de calcium'],
+          bonne: 0,
+          explication: "Les œstrogènes protègent l'os ; leur chute après la ménopause accélère la perte osseuse (ostéoporose). La prévention nutritionnelle et l'activité physique sont clés."
+        },
+        {
+          question: "Quels apports soutiennent le capital osseux ?",
+          options: ['Calcium + vitamine D + vitamine K2 + magnésium', 'Sodium seul', 'Sucre', 'Café'],
+          bonne: 0,
+          explication: "Vitamine D (absorption du calcium), K2 (fixation du calcium sur l'os), magnésium et calcium forment le quatuor osseux. La marche/le renforcement musculaire complètent."
+        },
+        {
+          question: "Quelle plante du terrain ménopausique (œstrogène-like) ?",
+          options: ['Sauge / trèfle rouge', 'Alchémille seule', 'Valériane', 'Échinacée'],
+          bonne: 0,
+          explication: "La sauge et le trèfle rouge sont œstrogène-like (utiles sur les bouffées). À distinguer de l'alchémille/houblon qui sont progestérone-like."
+        }
+      ],
+      synthese: "Pistes : calcium/D/K2/magnésium, activité physique en charge, sauge/trèfle rouge sur les bouffées, hygiène de vie. Suivi médical de l'os indispensable."
+    },
+
+    {
+      id: 'cas-burnout',
+      titre: 'Épuisement & stress chronique',
+      icon: 'flame',
+      profil: { nom: 'Thomas', age: 38, motif: "Épuisement, irritabilité, sommeil non réparateur" },
+      contexte: "Thomas est en surcharge professionnelle depuis des mois : fatigue profonde, tension permanente. Il a consulté son médecin.",
+      etapes: [
+        {
+          question: "Le stress chronique épuise surtout quel axe hormonal ?",
+          options: ["L'axe surrénalien (cortisol)", 'Le pancréas seul', 'La thyroïde uniquement', 'Aucun'],
+          bonne: 0,
+          explication: "Le stress prolongé sollicite puis épuise les surrénales (cortisol) : c'est le terrain de l'épuisement. Soutenir cet axe et réduire les stresseurs est prioritaire."
+        },
+        {
+          question: "Quelles plantes adaptogènes soutiennent l'organisme face au stress ?",
+          options: ['Rhodiola, ashwagandha, ginseng', 'Pissenlit, artichaut', 'Plantain, cassis', 'Échinacée'],
+          bonne: 0,
+          explication: "Les adaptogènes (rhodiola, ashwagandha, ginseng) aident l'organisme à mieux s'adapter au stress et à récupérer. Pissenlit/artichaut = foie, plantain/cassis = allergie."
+        },
+        {
+          question: "Quel minéral anti-stress prioriser ?",
+          options: ['Magnésium', 'Sodium', 'Calcium seul', 'Fer'],
+          bonne: 0,
+          explication: "Le magnésium est massivement consommé par le stress et participe à la détente nerveuse et musculaire. Sa supplémentation est souvent utile."
+        }
+      ],
+      synthese: "Pistes : magnésium, plantes adaptogènes, sommeil et récupération, réduction des stresseurs, cohérence cardiaque. Le burn-out nécessite un accompagnement médical."
+    },
+
+    {
+      id: 'cas-sportif',
+      titre: 'Récupération du sportif',
+      icon: 'activity',
+      profil: { nom: 'Yannis', age: 25, motif: "Courbatures, fatigue et crampes après des entraînements intenses" },
+      contexte: "Yannis s'entraîne dur et récupère mal (crampes, courbatures persistantes). Pas de souci médical.",
+      etapes: [
+        {
+          question: "Que faut-il reconstituer juste après l'effort (pertes par la sueur) ?",
+          options: ['Le capital hydrique (eau + sel / électrolytes)', 'Rien de particulier', 'Plus de café', 'Du sucre uniquement'],
+          bonne: 0,
+          explication: "La sueur fait perdre eau et sodium : se réhydrater et resaler reconstitue le capital hydrique et limite crampes et fatigue."
+        },
+        {
+          question: "Quel duo de vitamines recycle l'acide lactique et élimine les protéines dégradées ?",
+          options: ['B1 et B6', 'A et D', 'C et K', 'E et B12'],
+          bonne: 0,
+          explication: "La B1 (thiamine) intervient dans le recyclage de l'acide lactique et la B6 dans l'élimination des protéines musculaires endommagées."
+        },
+        {
+          question: "Quels apports pour reconstruire le muscle et les réserves ?",
+          options: ['Protéines + glucides', 'Graisses trans', 'Sel uniquement', 'Jeûne complet'],
+          bonne: 0,
+          explication: "Les protéines réparent les fibres musculaires et les glucides reconstituent le glycogène. Le duo protéines + glucides est la base de la récupération."
+        }
+      ],
+      synthese: "Pistes : réhydratation + électrolytes, magnésium, B1/B6, protéines + glucides après l'effort, sommeil. Adapter les charges d'entraînement."
     }
   ],
 
@@ -716,6 +832,30 @@ window.NATURO_CONTENT = {
     { niveau: 3, theme: 'Phytochimie', recto: "Plantes à dérivés salicylés (aspirine naturelle)", verso: "Saule (salicine) et reine des prés (spiréine) — à l'origine de la synthèse de l'aspirine." },
     { niveau: 3, theme: 'Microbiote', recto: "Vitamines synthétisées par le microbiote", verso: "Vitamine K, vitamine B12 (peu absorbée dans le côlon) et vitamine B9 (folates)." },
     { niveau: 3, theme: 'Chrono-nutrition', recto: "Mélatonine : production", verso: "Produite par la glande pinéale à partir de la sérotonine ; sécrétion dès la baisse de lumière (≈18h), pic vers 2-3h du matin." },
-    { niveau: 3, theme: 'Pédiatrie', recto: "Probiotique de référence : eczéma du nourrisson", verso: "Lactobacillus rhamnosus GG (LGG) — la souche la mieux documentée pour l'eczéma atopique du nouveau-né." }
+    { niveau: 3, theme: 'Pédiatrie', recto: "Probiotique de référence : eczéma du nourrisson", verso: "Lactobacillus rhamnosus GG (LGG) — la souche la mieux documentée pour l'eczéma atopique du nouveau-né." },
+
+    // ── Niveau 1 (compléments) ──────────────────────────────────
+    { niveau: 1, theme: 'Concepts', recto: "La peau comme émonctoire", verso: "Émonctoire « de secours » : élimine par la sueur (glandes sudoripares) et le sébum (glandes sébacées) quand foie/intestins sont surchargés." },
+    { niveau: 1, theme: 'Techniques', recto: "Lithothérapie ?", verso: "Le soin par les cristaux et les pierres, utilisés comme support énergétique." },
+    { niveau: 1, theme: 'Techniques', recto: "Hydrothérapie ?", verso: "Le soin par l'eau : douches, bains, applications chaud/froid, jet écossais." },
+    { niveau: 1, theme: 'Biochimie', recto: "Un antioxydant ?", verso: "Une molécule qui neutralise les radicaux libres (vitamines C et E, sélénium, polyphénols)." },
+    { niveau: 1, theme: 'Digestion', recto: "Pourquoi mastiquer ?", verso: "La mastication est la 1ʳᵉ étape de la digestion (broyage + amylase salivaire) ; bien mâcher allège le travail de l'estomac." },
+    { niveau: 1, theme: 'Cures', recto: "Le drainage ?", verso: "Stimuler les émonctoires pour aider l'organisme à éliminer ses déchets et surcharges." },
+
+    // ── Niveau 2 (compléments) ──────────────────────────────────
+    { niveau: 2, theme: 'Hydrologie', recto: "Effet du froid sur la peau", verso: "Vasoconstriction immédiate puis vasodilatation réactionnelle au retrait : effet tonifiant (douches froides, jet écossais)." },
+    { niveau: 2, theme: 'Cures', recto: "La cure de désintoxication", verso: "Draine les émonctoires pour éliminer les surcharges. Elle précède la revitalisation (on nettoie avant de recharger)." },
+    { niveau: 2, theme: 'Phytothérapie', recto: "Plantes diurétiques / drainantes", verso: "Pissenlit, orthosiphon (thé de Java), chiendent — augmentent l'élimination rénale. (La passiflore, elle, est calmante.)" },
+    { niveau: 2, theme: 'Nutrition', recto: "Ratio oméga 6 / oméga 3", verso: "Idéal proche de 4/1. Le régime occidental tourne autour de 15-20/1 : trop d'oméga 6 → terrain pro-inflammatoire." },
+    { niveau: 2, theme: 'Micronutrition', recto: "Vitamine B9 (folates) : intérêt clé", verso: "Indispensable avant la conception et en début de grossesse pour prévenir les malformations du tube neural (spina bifida)." },
+    { niveau: 2, theme: 'Micronutrition', recto: "Magnésium : à retenir", verso: "Intervient dans plus de 300 réactions enzymatiques ; AJR ≈ 300-400 mg/j ; déficit très fréquent (stress, sport)." },
+
+    // ── Niveau 3 (compléments) ──────────────────────────────────
+    { niveau: 3, theme: 'Aromathérapie', recto: "Propriétés des cétones", verso: "Cicatrisantes, mucolytiques (stimulent la respiration), anti-hématomes, cholérétiques/cholagogues. Mais neurotoxiques à dose élevée." },
+    { niveau: 3, theme: 'Endocrinologie', recto: "Hyperœstrogénie relative : que faire ?", verso: "Soutenir la progestérone (alchémille, houblon) pour rééquilibrer le rapport œstrogènes/progestérone." },
+    { niveau: 3, theme: 'Biochimie', recto: "Acide aminé libre le plus abondant", verso: "La glutamine (≈ 60 % du pool d'acides aminés musculaires) ; conditionnellement essentielle (stress, effort, maladie)." },
+    { niveau: 3, theme: 'Régimes', recto: "Régime Atkins", verso: "Cétogène / low-carb : favorise protéines et graisses, supprime les féculents → cétose pour brûler les graisses." },
+    { niveau: 3, theme: 'Pathologies', recto: "La candidose", verso: "Mycose (infection fongique) à Candida albicans, une levure. Favorisée par les antibiotiques et une alimentation riche en sucres." },
+    { niveau: 3, theme: 'Nutrition', recto: "Acides gras essentiels (cuisson)", verso: "Éviter l'huile d'arachide en friture > 170°C (acides gras trans toxiques) ; apporter EPA/DHA (poissons gras)." }
   ]
 };
