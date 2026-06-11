@@ -112,6 +112,7 @@
     <div style="margin-top:6px;">
       <label class="text-sm" style="font-weight:600;display:block;margin-bottom:6px;">Fournisseur d'IA</label>
       <select id="ai-provider" style="width:100%;padding:11px 13px;border:1.5px solid var(--c-border);border-radius:var(--r-sm);font-family:var(--font-body);font-size:14px;background:var(--c-white);color:var(--c-dark);"></select>
+      <p class="text-sm" id="ai-compat" style="margin-top:6px;"></p>
     </div>
     <div style="margin-top:14px;">
       <label class="text-sm" style="font-weight:600;display:block;margin-bottom:6px;">Clé API</label>
@@ -193,11 +194,15 @@ soundToggle.addEventListener('change', () => {
     stateEl.innerHTML = A.getAIKey(pid) ? '<b style="color:var(--c-green);">✓ clé enregistrée</b>' : '';
   }
 
+  const compatEl = document.getElementById('ai-compat');
   function loadProvider(pid) {
     const cfg = A.getAIProviderConfig(pid);
     keyInput.value = A.getAIKey(pid);
     keyInput.placeholder = cfg.hint;
     whereEl.textContent = cfg.where;
+    compatEl.innerHTML = cfg.browserOk
+      ? '<b style="color:var(--c-green);">✓ Fonctionne directement dans le navigateur.</b>'
+      : '<b style="color:var(--c-ocre);">⚠ Moins cher, mais peut être bloqué par le navigateur (CORS). Si ça ne répond pas, choisis GPT ou Claude.</b>';
     modelSel.innerHTML = '';
     cfg.models.forEach(m => {
       const o = document.createElement('option');

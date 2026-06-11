@@ -2875,37 +2875,51 @@ function closeSearch() { if (_searchEl) _searchEl.classList.remove('open'); }
 //   'anthropic'  → /v1/messages (Claude)
 //   'openai'     → /chat/completions (OpenAI ET compatibles chinois)
 // ═══════════════════════════════════════════════════════════════
+// `browserOk:true` = appel direct navigateur garanti (CORS autorisé).
+// Les autres peuvent nécessiter un proxy selon le fournisseur.
 const AI_PROVIDERS = [
-  { id: 'anthropic', nom: 'Claude (Anthropic)', shape: 'anthropic',
-    url: 'https://api.anthropic.com/v1/messages', hint: 'sk-ant-…', where: 'console.anthropic.com',
-    models: [
-      { id: 'claude-opus-4-8',   nom: 'Opus 4.8 — le top' },
-      { id: 'claude-sonnet-4-6', nom: 'Sonnet 4.6 — équilibré' },
-      { id: 'claude-haiku-4-5',  nom: 'Haiku 4.5 — rapide & éco' } ] },
-  { id: 'openai', nom: 'GPT (OpenAI)', shape: 'openai',
+  { id: 'openai', nom: 'GPT (OpenAI) ✓', shape: 'openai', browserOk: true,
     url: 'https://api.openai.com/v1/chat/completions', hint: 'sk-…', where: 'platform.openai.com',
     models: [
-      { id: 'gpt-4o-mini', nom: 'GPT-4o mini — éco' },
+      { id: 'gpt-4o-mini', nom: 'GPT-4o mini — éco (conseillé)' },
       { id: 'gpt-4o',      nom: 'GPT-4o' },
       { id: 'gpt-4.1-mini', nom: 'GPT-4.1 mini' },
       { id: 'gpt-4.1',     nom: 'GPT-4.1' } ] },
-  { id: 'deepseek', nom: 'DeepSeek (très économique)', shape: 'openai',
+  { id: 'anthropic', nom: 'Claude (Anthropic) ✓', shape: 'anthropic', browserOk: true,
+    url: 'https://api.anthropic.com/v1/messages', hint: 'sk-ant-…', where: 'console.anthropic.com',
+    models: [
+      { id: 'claude-haiku-4-5',  nom: 'Haiku 4.5 — rapide & éco' },
+      { id: 'claude-sonnet-4-6', nom: 'Sonnet 4.6 — équilibré' },
+      { id: 'claude-opus-4-8',   nom: 'Opus 4.8 — le top' } ] },
+  { id: 'gemini', nom: 'Gemini (Google) — palier gratuit', shape: 'openai', browserOk: false,
+    url: 'https://generativelanguage.googleapis.com/v1beta/openai/chat/completions', hint: 'AIza…', where: 'aistudio.google.com',
+    models: [
+      { id: 'gemini-2.0-flash', nom: 'Gemini 2.0 Flash — éco' },
+      { id: 'gemini-2.5-flash', nom: 'Gemini 2.5 Flash' },
+      { id: 'gemini-1.5-flash', nom: 'Gemini 1.5 Flash' } ] },
+  { id: 'mistral', nom: 'Mistral (français)', shape: 'openai', browserOk: false,
+    url: 'https://api.mistral.ai/v1/chat/completions', hint: '…', where: 'console.mistral.ai',
+    models: [
+      { id: 'mistral-small-latest', nom: 'Mistral Small — éco' },
+      { id: 'open-mistral-nemo',    nom: 'Mistral Nemo — éco' },
+      { id: 'mistral-large-latest', nom: 'Mistral Large' } ] },
+  { id: 'deepseek', nom: 'DeepSeek (très économique)', shape: 'openai', browserOk: false,
     url: 'https://api.deepseek.com/v1/chat/completions', hint: 'sk-…', where: 'platform.deepseek.com',
     models: [
       { id: 'deepseek-chat',     nom: 'DeepSeek V3 — très éco' },
       { id: 'deepseek-reasoner', nom: 'DeepSeek R1 — raisonnement' } ] },
-  { id: 'qwen', nom: 'Qwen (Alibaba)', shape: 'openai',
+  { id: 'qwen', nom: 'Qwen (Alibaba)', shape: 'openai', browserOk: false,
     url: 'https://dashscope-intl.aliyuncs.com/compatible-mode/v1/chat/completions', hint: 'sk-…', where: 'dashscope (Alibaba Cloud)',
     models: [
       { id: 'qwen-turbo', nom: 'Qwen Turbo — éco' },
       { id: 'qwen-plus',  nom: 'Qwen Plus' },
       { id: 'qwen-max',   nom: 'Qwen Max' } ] },
-  { id: 'moonshot', nom: 'Kimi (Moonshot)', shape: 'openai',
+  { id: 'moonshot', nom: 'Kimi (Moonshot)', shape: 'openai', browserOk: false,
     url: 'https://api.moonshot.ai/v1/chat/completions', hint: 'sk-…', where: 'platform.moonshot.ai',
     models: [
       { id: 'moonshot-v1-8k',  nom: 'Moonshot v1 8k' },
       { id: 'moonshot-v1-32k', nom: 'Moonshot v1 32k' } ] },
-  { id: 'zhipu', nom: 'GLM (Zhipu)', shape: 'openai',
+  { id: 'zhipu', nom: 'GLM (Zhipu)', shape: 'openai', browserOk: false,
     url: 'https://open.bigmodel.cn/api/paas/v4/chat/completions', hint: 'votre clé', where: 'bigmodel.cn',
     models: [
       { id: 'glm-4-flash', nom: 'GLM-4 Flash — gratuit/éco' },
@@ -2928,7 +2942,15 @@ try {
 } catch (e) {}
 
 function _aiKeys() { try { return JSON.parse(localStorage.getItem(AI_KEYS_LS) || '{}'); } catch (e) { return {}; } }
-function getAIProvider() { try { return localStorage.getItem(AI_PROV_LS) || 'anthropic'; } catch (e) { return 'anthropic'; } }
+function getAIProvider() {
+  try {
+    const saved = localStorage.getItem(AI_PROV_LS);
+    if (saved) return saved;
+    const keys = _aiKeys();                        // sinon : 1er fournisseur déjà configuré…
+    const withKey = AI_PROVIDERS.find(p => keys[p.id]);
+    return withKey ? withKey.id : 'openai';        // …ou GPT-4o mini par défaut (éco + fiable)
+  } catch (e) { return 'openai'; }
+}
 function setAIProvider(p) { try { localStorage.setItem(AI_PROV_LS, p); } catch (e) {} }
 function getAIProviderConfig(id) { return AI_PROVIDERS.find(p => p.id === (id || getAIProvider())) || AI_PROVIDERS[0]; }
 function getAIKey(provider) { return _aiKeys()[provider || getAIProvider()] || ''; }
