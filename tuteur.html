@@ -44,6 +44,11 @@
     .tut-send:disabled { opacity:.45; cursor:not-allowed; }
     .tut-send .app-icon { width:20px; height:20px; }
 
+    .tut-actions { display:flex; gap:8px; margin-top:8px; }
+    .tut-mini { display:inline-flex; align-items:center; gap:5px; background:transparent; border:1px solid var(--c-border); border-radius:14px; padding:4px 10px; font-size:11.5px; color:var(--c-mid); cursor:pointer; font-family:var(--font-body); }
+    .tut-mini:hover { background:var(--c-green-pale); color:var(--c-green-deep); border-color:var(--c-green-light); }
+    .tut-mini .app-icon { width:13px; height:13px; }
+    #tut-tts.active { background:var(--c-green-pale); border-color:var(--c-green); color:var(--c-green-deep); }
     .tut-disclaimer { font-size:11px; color:var(--c-mid); text-align:center; margin-top:6px; }
     .tut-setup { text-align:center; background:var(--c-white); border:1px solid var(--c-border); border-radius:var(--r-lg); padding:30px 24px; box-shadow:var(--shadow-sm); }
     .tut-setup .app-icon { width:34px; height:34px; color:var(--c-green); }
@@ -79,6 +84,7 @@
       <h1>Tuteur IA</h1>
       <p>Ton professeur de naturopathie, disponible 24/7</p>
     </div>
+    <button class="btn btn-ghost btn-sm" id="tut-tts" style="display:none;" title="Lecture vocale auto"></button>
     <button class="btn btn-ghost btn-sm" id="tut-new" style="display:none;"><span data-icon="rotate"></span> Nouvelle</button>
   </div>
 
@@ -98,7 +104,7 @@
 <script src="content.js"></script>
 <script src="app.js"></script>
 <script>
-const { icon, escapeHtml, getAIKey, getAIModel, getAIProviderConfig } = window.APP;
+const { icon, escapeHtml, getAIKey, getAIModel, getAIProviderConfig, tts, State } = window.APP;
 function curModel() { const p = getAIProviderConfig(); return getAIModel() || (p.models[0] && p.models[0].id) || ''; }
 
 function fmt(t) {
@@ -154,6 +160,7 @@ function renderChat() {
           <button class="tut-chip" data-q="Interroge-moi : pose-moi une question d'examen de naturopathie et attends ma réponse pour la corriger.">Interroge-moi</button>
           <button class="tut-chip" data-q="Fais-moi une fiche de révision synthétique sur les tempéraments hippocratiques.">Crée une fiche</button>
           <button class="tut-chip" id="chip-quiz">🎮 Quiz jouable</button>
+          <button class="tut-chip" id="chip-weak">🎯 Quiz sur mes points faibles</button>
         </div>
       </div>
     </div>
@@ -172,17 +179,54 @@ function renderChat() {
   sendBtn.addEventListener('click', send);
   body.querySelectorAll('.tut-chip[data-q]').forEach(c => c.addEventListener('click', () => { input.value = c.dataset.q; send(); }));
   const quizChip = document.getElementById('chip-quiz');
-  if (quizChip) quizChip.addEventListener('click', generateQuiz);
+  if (quizChip) quizChip.addEventListener('click', () => generateQuiz());
+  const weakChip = document.getElementById('chip-weak');
+  if (weakChip) weakChip.addEventListener('click', generateWeakQuiz);
 
-  // restaure l'historique sauvegardé
-  conversation.forEach(m => addBubble(m.role, fmt(m.content)));
-  updateNewBtn();
+  // restaure l'historique sauvegardé (+ actions sur les réponses IA)
+  conversation.forEach(m => { const d = addBubble(m.role, fmt(m.content)); if (m.role === 'assistant') aiActions(d, m.content); });
+  updateNewBtn(); updateTtsBtn();
   input.focus();
 }
 
 function updateNewBtn() {
   const b = document.getElementById('tut-new');
   if (b) b.style.display = (getAIKey() && conversation.length) ? 'inline-flex' : 'none';
+}
+
+// ── Lecture vocale + impression / fiche ─────────────────────────
+let ttsOn = false;
+try { ttsOn = localStorage.getItem('naturoapp_tutor_tts') === '1'; } catch (e) {}
+
+function updateTtsBtn() {
+  const b = document.getElementById('tut-tts');
+  if (!b) return;
+  b.style.display = getAIKey() ? 'inline-flex' : 'none';
+  b.innerHTML = (ttsOn ? icon('volume') : icon('volume-x')) + (ttsOn ? ' Voix' : ' Voix');
+  b.classList.toggle('active', ttsOn);
+}
+function readAloud(text) { if (tts && tts.supported()) { tts.cancel(); tts.speak(String(text).replace(/\*\*/g, '')); } }
+function printFiche(text) {
+  const html = '<!doctype html><html lang="fr"><head><meta charset="utf-8"><title>Fiche — NaturoApp</title>' +
+    '<style>body{font-family:Georgia,serif;max-width:720px;margin:32px auto;padding:0 22px;line-height:1.65;color:#1C2833}h1{font-size:20px;color:#1A5C45}strong{font-weight:700}</style>' +
+    '</head><body><h1>NaturoApp — Fiche du tuteur</h1><div>' + fmt(text) + '</div></body></html>';
+  const w = window.open('', '_blank');
+  if (!w) { alert("Autorise les fenêtres pop-up pour imprimer."); return; }
+  w.document.write(html); w.document.close();
+  setTimeout(() => { try { w.print(); } catch (e) {} }, 350);
+}
+function aiActions(div, text) {
+  const row = document.createElement('div');
+  row.className = 'tut-actions';
+  const s = document.createElement('button');
+  s.className = 'tut-mini'; s.innerHTML = icon('volume') + ' Écouter';
+  s.addEventListener('click', () => readAloud(text));
+  const p = document.createElement('button');
+  p.className = 'tut-mini'; p.innerHTML = icon('printer') + ' Imprimer';
+  p.addEventListener('click', () => printFiche(text));
+  if (tts && tts.supported()) row.appendChild(s);
+  row.appendChild(p);
+  div.appendChild(row);
 }
 
 function addBubble(role, html) {
@@ -221,6 +265,7 @@ async function send() {
     aiDiv.innerHTML = fmt(full) || '<em>(réponse vide)</em>';
     conversation.push({ role: 'assistant', content: full });
     saveChat();
+    if (full) { aiActions(aiDiv, full); if (ttsOn) readAloud(full); }
   } catch (err) {
     aiDiv.classList.remove('bubble--ai');
     aiDiv.innerHTML = `<div class="tut-err">${escapeHtml(err.message || "Erreur lors de l'appel à l'IA.")}</div>`;
@@ -257,10 +302,27 @@ function parseQuiz(text, topic) {
   return out;
 }
 
-async function generateQuiz() {
+function generateWeakQuiz() {
   if (busy) return;
-  const topic = (window.prompt('Sur quel thème veux-tu un quiz ?', 'naturopathie générale') || '').trim();
-  if (!topic) return;
+  let weak = [];
+  try { weak = State.getWeakQuestions(15) || []; } catch (e) {}
+  if (!weak.length) {
+    addBubble('ai', fmt("Tu n'as pas encore de points faibles repérés — fais d'abord quelques QCM, ou utilise « Quiz jouable » pour choisir un thème."));
+    updateNewBtn();
+    return;
+  }
+  const cats = [];
+  weak.forEach(q => { const c = (q.categorie || '').split('/')[0].trim(); if (c && !cats.includes(c)) cats.push(c); });
+  generateQuiz('mes points faibles (' + cats.slice(0, 5).join(', ') + ')');
+}
+
+async function generateQuiz(topicArg) {
+  if (busy) return;
+  let topic = topicArg;
+  if (!topic) {
+    topic = (window.prompt('Sur quel thème veux-tu un quiz ?', 'naturopathie générale') || '').trim();
+    if (!topic) return;
+  }
   busy = true; document.getElementById('tut-send').disabled = true;
   addBubble('user', fmt('🎮 Génère un quiz sur : ' + topic));
   const aiDiv = addBubble('ai', 'Je prépare ton quiz… <span class="tut-cursor"></span>');
@@ -356,10 +418,18 @@ async function streamAI(messages, onDelta) {
 }
 
 document.getElementById('tut-new').addEventListener('click', () => {
+  if (tts) tts.cancel();
   conversation = []; saveChat(); renderChat();
+});
+document.getElementById('tut-tts').addEventListener('click', () => {
+  ttsOn = !ttsOn;
+  try { localStorage.setItem('naturoapp_tutor_tts', ttsOn ? '1' : '0'); } catch (e) {}
+  updateTtsBtn();
+  if (!ttsOn && tts) tts.cancel();
 });
 
 window.APP.onReady(() => {
+  try { State.init(); } catch (e) {}   // pour les « points faibles »
   loadChat();
   if (!getAIKey()) { renderSetup(); return; }
   renderChat();
