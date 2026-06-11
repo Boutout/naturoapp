@@ -390,6 +390,8 @@ window.APP.onReady(() => {
   renderProgress();
   renderList();
   renderGlossary();
+  const openId = new URLSearchParams(location.search).get('open');
+  if (openId) openReader(openId);
 });
 </script>
 </body>

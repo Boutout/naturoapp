@@ -41,3 +41,24 @@ un **verrou local « best effort »**, honnête sur ses limites.
 Il faut un backend (comptes serveur, mots de passe hashés côté serveur type
 bcrypt/argon2, sessions/JWT, HTTPS). Cela sort du périmètre « 100 % local » actuel
 et change l'architecture.
+
+## Code d'accès global (gate d'entrée)
+Avant toute création de compte, l'app demande un **code d'accès** (la première
+fois sur l'appareil) pour réserver l'usage aux personnes autorisées.
+- Le code n'est **jamais stocké en clair** : seule son empreinte **SHA-256 salée**
+  est présente dans `app.js` (`ACCESS_HASH`). On compare l'empreinte de la saisie
+  à cette valeur.
+- **Anti-bruteforce** : blocage temporaire (15 s) après 5 essais erronés.
+- Une fois validé, l'appareil reçoit un **jeton local** (`naturoapp_access`) et ne
+  redemande plus le code.
+- Pour **changer le code d'accès** : régénérer le hash
+  (`sha256("naturoapp-access-v1:" + nouveau_code)`) et remplacer `ACCESS_HASH`
+  dans `app.js` (puis incrémenter `CACHE_VERSION`).
+
+### Limite honnête
+Comme tout est côté client, une personne **techniquement avertie** peut lire le
+hash dans le code et tenter un bruteforce hors-ligne, ou forcer le jeton local.
+Le code d'accès est donc un **filtre dissuasif** efficace contre le tout-venant,
+pas une barrière infranchissable. Pour une vraie protection d'accès, il faudrait
+valider le code **côté serveur** (backend) et délivrer un jeton signé — ce qui
+sort du périmètre « 100 % local » actuel.

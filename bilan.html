@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>NaturoApp — Bilan de vitalité</title>
+  <meta name="theme-color" content="#1A5C45">
+  <link rel="manifest" href="manifest.json">
+  <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="NaturoApp">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Lora:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+  <script>try{var t=localStorage.getItem('naturoapp_theme');if(t==='dark'||((!t||t==='auto')&&window.matchMedia('(prefers-color-scheme:dark)').matches)){document.documentElement.setAttribute('data-theme','dark');}else{document.documentElement.setAttribute('data-theme','light');}if(!sessionStorage.getItem('naturoapp_active'))document.documentElement.classList.add('pre-lock');}catch(e){}</script>
+  <style>
+    .bilan-hero { background: radial-gradient(120% 140% at 0% 0%, #1F6B50 0, rgba(31,107,80,0) 55%), linear-gradient(135deg, var(--c-green-deep), var(--c-green));
+      color:#fff; border-radius:var(--r-xl); padding:30px 32px; margin-bottom:24px; box-shadow:var(--shadow-lg); }
+    .bilan-hero h1 { color:#fff; font-size:28px; }
+    .bilan-hero p { color:rgba(255,255,255,.85); font-size:14px; margin-top:6px; max-width:560px; }
+    .disclaimer { font-size:12px; color:var(--c-mid); text-align:center; margin-top:14px; }
+
+    .bilan-card { background:var(--c-white); border:1px solid var(--c-border); border-radius:var(--r-xl); box-shadow:var(--shadow-md); padding:28px 30px; }
+    @media (max-width:600px){ .bilan-card { padding:22px 18px; } }
+    .bilan-progress { display:flex; align-items:center; gap:12px; margin-bottom:16px; }
+    .bilan-progress .progress-bar { flex:1; }
+    .bilan-q { font-size:18px; font-weight:600; line-height:1.4; margin-bottom:18px; }
+    .bilan-opts { display:flex; flex-direction:column; gap:10px; }
+    .bilan-opt { text-align:left; width:100%; padding:15px 18px; border:2px solid var(--c-border); border-radius:var(--r-md);
+      background:var(--c-white); color:var(--c-dark); font-family:var(--font-body); font-size:14.5px; cursor:pointer; transition:all .15s; }
+    .bilan-opt:hover { border-color:var(--c-green-light); background:var(--c-green-pale); }
+
+    /* résultat */
+    .res-top { background:linear-gradient(135deg,var(--c-green-deep),var(--c-green)); color:#fff; border-radius:var(--r-xl); padding:28px 30px; text-align:center; margin-bottom:18px; }
+    .res-top h2 { color:#fff; font-size:24px; }
+    .res-terrain { font-size:15px; color:rgba(255,255,255,.9); margin-top:6px; }
+    .axis { background:var(--c-white); border:1px solid var(--c-border); border-radius:var(--r-md); box-shadow:var(--shadow-sm); padding:16px 18px; margin-bottom:12px; }
+    .axis__head { display:flex; align-items:center; gap:10px; margin-bottom:6px; }
+    .axis__ico { width:38px; height:38px; flex-shrink:0; border-radius:11px; background:var(--c-green-pale); color:var(--c-green); display:flex; align-items:center; justify-content:center; }
+    .axis__ico .app-icon { width:20px; height:20px; }
+    .axis__title { font-weight:700; font-size:15px; }
+    .axis__advice { font-size:13.5px; color:var(--c-mid); line-height:1.55; }
+    .axis__course { margin-top:8px; font-size:12.5px; }
+    .axis__course a { color:var(--c-green); font-weight:600; text-decoration:none; }
+  </style>
+</head>
+<body>
+
+<nav class="topnav">
+  <a href="index.html" class="topnav__logo">
+    <div class="topnav__logo-icon" data-icon="leaf"></div>
+    <div><div class="topnav__logo-text">NaturoApp</div><span class="topnav__logo-sub">Révision Naturopathie</span></div>
+  </a>
+  <ul class="topnav__nav">
+    <li><a href="index.html"><span class="nav-ico" data-icon="home"></span> <span class="nav-label">Accueil</span></a></li>
+    <li><a href="cours.html"><span class="nav-ico" data-icon="book"></span> <span class="nav-label">Cours</span></a></li>
+    <li><a href="revision.html"><span class="nav-ico" data-icon="book-open"></span> <span class="nav-label">Révision</span></a></li>
+    <li><a href="examen.html"><span class="nav-ico" data-icon="edit"></span> <span class="nav-label">Examen</span></a></li>
+    <li><a href="stats.html"><span class="nav-ico" data-icon="chart"></span> <span class="nav-label">Stats</span></a></li>
+  </ul>
+  <a class="nav-lock" id="nav-settings" href="reglages.html" data-icon="settings" title="Réglages" aria-label="Réglages"></a>
+  <button class="nav-lock" id="nav-theme" data-icon="moon" title="Thème sombre" aria-label="Changer de thème"></button>
+  <button class="nav-lock" id="nav-lock" data-icon="lock" title="Verrouiller l'app" aria-label="Verrouiller"></button>
+</nav>
+
+<div class="page" style="max-width:680px;">
+  <div id="bilan-intro">
+    <div class="bilan-hero">
+      <h1>Bilan de vitalité</h1>
+      <p>Réponds à 8 questions sur toi : l'app dégage ton terrain dominant et les axes à soutenir, avec des cours conseillés. Une façon ludique d'apprendre la logique naturopathique.</p>
+    </div>
+    <button class="btn btn-primary btn-lg w-full" id="bilan-start"><span data-icon="sprout"></span> Commencer mon bilan</button>
+    <p class="disclaimer">Outil éducatif et ludique — il ne remplace pas une consultation ni un avis médical.</p>
+  </div>
+
+  <div id="bilan-quiz" style="display:none;">
+    <div class="bilan-progress">
+      <span style="font-size:12px;color:var(--c-mid);white-space:nowrap;" id="bilan-step">1 / 8</span>
+      <div class="progress-bar"><div class="progress-bar__fill" id="bilan-bar" style="width:12%"></div></div>
+    </div>
+    <div class="bilan-card">
+      <div class="bilan-q" id="bilan-question"></div>
+      <div class="bilan-opts" id="bilan-options"></div>
+    </div>
+  </div>
+
+  <div id="bilan-result" style="display:none;"></div>
+</div>
+
+<nav class="bottomnav">
+  <a href="index.html"><span class="bn-ico" data-icon="home"></span> Accueil</a>
+  <a href="cours.html"><span class="bn-ico" data-icon="book"></span> Cours</a>
+  <a href="revision.html"><span class="bn-ico" data-icon="book-open"></span> Révision</a>
+  <a href="examen.html"><span class="bn-ico" data-icon="edit"></span> Examen</a>
+  <a href="stats.html"><span class="bn-ico" data-icon="chart"></span> Stats</a>
+</nav>
+
+<div id="toast-container"></div>
+
+<script src="app.js"></script>
+<script>
+const { icon, escapeHtml } = window.APP;
+
+// Questionnaire : chaque option ajoute des points aux axes (+ = à soutenir).
+// terrain : -1 = vagotonique, +1 = sympathicotonique.
+const Q = [
+  { q: "Au réveil, tu te sens plutôt…", o: [
+    { t: "En pleine forme", a: {} },
+    { t: "Ça dépend des jours", a: { vitalite: 1 } },
+    { t: "Souvent fatigué·e", a: { vitalite: 2 } } ] },
+  { q: "Après les repas, ta digestion est…", o: [
+    { t: "Légère, sans gêne", a: {} },
+    { t: "Parfois lourde", a: { digestion: 1 } },
+    { t: "Ballonnements / inconfort fréquents", a: { digestion: 2 } } ] },
+  { q: "Ton sommeil est…", o: [
+    { t: "Réparateur", a: {} },
+    { t: "Léger / quelques réveils", a: { sommeil: 1 } },
+    { t: "Difficile à trouver ou agité", a: { sommeil: 2 } } ] },
+  { q: "Face au stress, tu es…", o: [
+    { t: "Plutôt zen", a: { terrain: -1 } },
+    { t: "Ça reste gérable", a: { stress: 1 } },
+    { t: "Vite débordé·e", a: { stress: 2, terrain: 1 } } ] },
+  { q: "Côté petites infections (rhumes, etc.)…", o: [
+    { t: "Rarement malade", a: {} },
+    { t: "Quelques fois par an", a: { immunite: 1 } },
+    { t: "Souvent", a: { immunite: 2 } } ] },
+  { q: "Ton transit intestinal est…", o: [
+    { t: "Régulier", a: {} },
+    { t: "Irrégulier", a: { digestion: 1 } },
+    { t: "Constipation / diarrhée fréquentes", a: { digestion: 2 } } ] },
+  { q: "Spontanément, tu te décrirais comme…", o: [
+    { t: "Calme, intériorisé·e, créatif·ve", a: { terrain: -2 } },
+    { t: "Entre les deux", a: {} },
+    { t: "Actif·ve, rapide, parfois tendu·e", a: { terrain: 2 } } ] },
+  { q: "Ta peau et tes cheveux sont…", o: [
+    { t: "Plutôt en bon état", a: {} },
+    { t: "Tendance sèche", a: { vitalite: 1, immunite: 1 } },
+    { t: "Problèmes récurrents", a: { immunite: 1 } } ] }
+];
+
+const AXES = {
+  digestion: { titre: "Digestion & intestin", icon: "droplet",
+    advice: "Mastique, ralentis, évite le café au lait. Soutiens la digestion (fenouil, basilic) et le microbiote (fibres, pré/probiotiques).",
+    course: { id: "c-emonctoires", nom: "Émonctoires & drainage" } },
+  sommeil: { titre: "Sommeil", icon: "clock",
+    advice: "Baisse la lumière le soir, réduis les écrans, vise la régularité. La cohérence cardiaque aide à l'endormissement.",
+    course: { id: "c-sommeil", nom: "Le sommeil" } },
+  stress: { titre: "Stress & système nerveux", icon: "flame",
+    advice: "Pratique la cohérence cardiaque (6 respirations/min, 5 min), bouge, dors. Le stress chronique pèse sur tout le terrain.",
+    course: { id: "c-stress", nom: "Gestion du stress & cohérence cardiaque" } },
+  immunite: { titre: "Immunité & peau", icon: "sprout",
+    advice: "Soigne le microbiote et les apports clés (vitamine D, zinc, oméga 3). La peau reflète souvent le terrain.",
+    course: { id: "c-micronutrition", nom: "Micronutrition : vitamines & minéraux" } },
+  vitalite: { titre: "Vitalité & énergie", icon: "leaf",
+    advice: "Une cure de revitalisation (micronutriments) + sommeil + mouvement. On recharge avant de drainer.",
+    course: { id: "c-piliers", nom: "Les piliers de la naturopathie" } }
+};
+
+let step = 0;
+const scores = { digestion: 0, sommeil: 0, stress: 0, immunite: 0, vitalite: 0, terrain: 0 };
+
+function start() {
+  step = 0;
+  Object.keys(scores).forEach(k => scores[k] = 0);
+  document.getElementById('bilan-intro').style.display = 'none';
+  document.getElementById('bilan-result').style.display = 'none';
+  document.getElementById('bilan-quiz').style.display = 'block';
+  renderQ();
+}
+
+function renderQ() {
+  const item = Q[step];
+  document.getElementById('bilan-step').textContent = `${step + 1} / ${Q.length}`;
+  document.getElementById('bilan-bar').style.width = `${Math.round((step + 1) / Q.length * 100)}%`;
+  document.getElementById('bilan-question').textContent = item.q;
+  const host = document.getElementById('bilan-options');
+  host.innerHTML = '';
+  item.o.forEach(opt => {
+    const b = document.createElement('button');
+    b.className = 'bilan-opt';
+    b.textContent = opt.t;
+    b.addEventListener('click', () => choose(opt));
+    host.appendChild(b);
+  });
+  window.scrollTo(0, 0);
+}
+
+function choose(opt) {
+  for (const k in opt.a) scores[k] += opt.a[k];
+  if (step < Q.length - 1) { step++; renderQ(); }
+  else showResult();
+}
+
+function showResult() {
+  document.getElementById('bilan-quiz').style.display = 'none';
+  // Terrain
+  let terrain, terrainTxt;
+  if (scores.terrain <= -2) { terrain = 'Vagotonique'; terrainTxt = "tendance « vague » : calme, intuitif·ve, digestion réactive. Ton allié : un rythme régulier et tonifiant."; }
+  else if (scores.terrain >= 2) { terrain = 'Sympathicotonique'; terrainTxt = "tendance « action » : tonique, rapide, sujet·te au stress. Ton allié : la détente et la récupération."; }
+  else { terrain = 'Équilibré'; terrainTxt = "ni trop « vague » ni trop « action » : continue d'écouter tes signaux."; }
+
+  // Axes à soutenir : top 2 (score > 0)
+  const ranked = Object.keys(AXES).map(k => ({ k, v: scores[k] })).filter(x => x.v > 0).sort((a, b) => b.v - a.v).slice(0, 2);
+
+  const res = document.getElementById('bilan-result');
+  res.style.display = 'block';
+  res.innerHTML = `
+    <div class="res-top">
+      <div style="display:flex;justify-content:center;">${icon('leaf')}</div>
+      <h2>Ton terrain : ${terrain}</h2>
+      <div class="res-terrain">${terrainTxt}</div>
+    </div>
+    ${ranked.length ? `<h3 style="margin:18px 0 12px;">À soutenir en priorité</h3>` : `<div class="axis"><div class="axis__advice">Beau terrain équilibré ! Continue ton hygiène de vie et tes révisions.</div></div>`}
+    ${ranked.map(({ k }) => {
+      const a = AXES[k];
+      return `<div class="axis">
+        <div class="axis__head"><span class="axis__ico">${icon(a.icon)}</span><span class="axis__title">${a.titre}</span></div>
+        <div class="axis__advice">${escapeHtml(a.advice)}</div>
+        <div class="axis__course">${icon('book')} Cours conseillé : <a href="cours.html?open=${a.course.id}">${escapeHtml(a.course.nom)}</a></div>
+      </div>`;
+    }).join('')}
+    <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:18px;">
+      <button class="btn btn-ghost" id="bilan-restart"><span data-icon="rotate"></span> Refaire</button>
+      <a class="btn btn-primary" href="cours.html"><span data-icon="book"></span> Voir les cours</a>
+    </div>
+    <p class="disclaimer">Rappel : outil éducatif, il ne remplace pas un professionnel de santé.</p>`;
+  window.APP.hydrateIcons(res);
+  res.querySelector('#bilan-restart').addEventListener('click', start);
+  window.scrollTo(0, 0);
+}
+
+document.getElementById('bilan-start').addEventListener('click', start);
+window.APP.onReady(() => { /* gated : page prête après déverrouillage */ });
+</script>
+</body>
+</html>

@@ -2132,6 +2132,88 @@ function migrateLegacy() {
 }
 
 // ═══════════════════════════════════════════════════════════════
+//  CODE D'ACCÈS GLOBAL  (avant toute création de compte)
+//  Le mot de passe d'accès n'est JAMAIS en clair : seule son empreinte
+//  SHA-256 salée est présente ici. Vérification par comparaison + anti-
+//  bruteforce (blocage temporaire). Une fois validé, l'appareil est
+//  autorisé (jeton local). Voir docs/SECURITE.md.
+// ═══════════════════════════════════════════════════════════════
+const ACCESS_KEY   = 'naturoapp_access';
+const ACCESS_SALT  = 'naturoapp-access-v1';
+const ACCESS_HASH  = '4a26b74c85a379bb9f2f22039ca4142741e5208b0f633c01806011a3479bcdee';
+const ACCESS_TOKEN = '139a58d60403d1a6d5c6d27450c10e74f62883da29476203778ad9af6799ad2e';
+
+function isAccessGranted() {
+  try { return localStorage.getItem(ACCESS_KEY) === ACCESS_TOKEN; } catch (e) { return false; }
+}
+async function verifyAccess(input) {
+  const h = await sha256Hex(ACCESS_SALT + ':' + input);
+  if (h === ACCESS_HASH) { try { localStorage.setItem(ACCESS_KEY, ACCESS_TOKEN); } catch (e) {} return true; }
+  return false;
+}
+
+function gateAccess(onDone) {
+  document.body.classList.add('app-locked');
+  const screen = document.createElement('div');
+  screen.id = 'lock-screen';
+  screen.className = 'lock-screen';
+  document.body.appendChild(screen);
+
+  let fails = 0, lockedUntil = 0;
+
+  screen.innerHTML = `
+    <div class="lock-card">
+      <div class="lock-logo">${icon('lock')}</div>
+      <h1 class="lock-title">Accès réservé</h1>
+      <p class="lock-sub">Cette application est privée. Entre le code d'accès pour continuer.</p>
+      <form class="lock-form" id="acc-form">
+        <div class="pw-field">
+          <input type="password" id="acc-input" autocomplete="off" autocapitalize="off" placeholder="Code d'accès" />
+          <button type="button" class="pw-toggle" id="acc-toggle" aria-label="Afficher">${icon('eye')}</button>
+        </div>
+        <div class="lock-error" id="acc-error"></div>
+        <button class="btn btn-primary btn-lg w-full" type="submit" id="acc-submit">Entrer</button>
+      </form>
+    </div>`;
+  hydrateIcons(screen);
+
+  const input = screen.querySelector('#acc-input');
+  const err = screen.querySelector('#acc-error');
+  const submit = screen.querySelector('#acc-submit');
+
+  screen.querySelector('#acc-toggle').addEventListener('click', () => {
+    input.type = input.type === 'password' ? 'text' : 'password'; input.focus();
+  });
+
+  function throttle() {
+    submit.disabled = true;
+    (function tick() {
+      const left = Math.ceil((lockedUntil - Date.now()) / 1000);
+      if (left <= 0) { fails = 0; submit.disabled = false; err.textContent = ''; return; }
+      err.textContent = `Trop d'essais. Réessaie dans ${left} s.`;
+      setTimeout(tick, 500);
+    })();
+  }
+
+  screen.querySelector('#acc-form').addEventListener('submit', async e => {
+    e.preventDefault();
+    if (Date.now() < lockedUntil) return;
+    const ok = await verifyAccess(input.value);
+    if (ok) {
+      screen.classList.add('unlocking');
+      setTimeout(() => { screen.remove(); document.body.classList.remove('app-locked'); onDone(); }, 300);
+    } else {
+      fails++; input.value = '';
+      const card = screen.querySelector('.lock-card');
+      card.classList.add('shake'); setTimeout(() => card.classList.remove('shake'), 450);
+      if (fails >= 5) { lockedUntil = Date.now() + 15000; throttle(); }
+      else { err.textContent = 'Code incorrect.'; input.focus(); }
+    }
+  });
+  setTimeout(() => input.focus(), 60);
+}
+
+// ═══════════════════════════════════════════════════════════════
 //  PORTAIL D'ACCÈS  (sélection de profil + création + saisie du code)
 //  Injecté par-dessus tout le contenu tant que rien n'est déverrouillé.
 // ═══════════════════════════════════════════════════════════════
@@ -2534,6 +2616,15 @@ function boot() {
   const lockBtn = document.getElementById('nav-lock');
   if (lockBtn) lockBtn.addEventListener('click', () => { Profiles.clearActive(); location.reload(); });
 
+  // 1) Code d'accès global (1re fois sur l'appareil), 2) puis comptes
+  if (isAccessGranted()) {
+    afterAccess();
+  } else {
+    gateAccess(afterAccess);
+  }
+}
+
+function afterAccess() {
   const active = Profiles.activeId() && Profiles.get(Profiles.activeId());
   if (active) {
     document.documentElement.classList.remove('pre-lock');
