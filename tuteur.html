@@ -97,7 +97,8 @@
 <script src="content.js"></script>
 <script src="app.js"></script>
 <script>
-const { icon, escapeHtml, getAIKey, getAIModel } = window.APP;
+const { icon, escapeHtml, getAIKey, getAIModel, getAIProviderConfig } = window.APP;
+function curModel() { const p = getAIProviderConfig(); return getAIModel() || (p.models[0] && p.models[0].id) || ''; }
 
 function fmt(t) {
   return escapeHtml(t)
@@ -154,7 +155,7 @@ function renderChat() {
       <textarea id="tut-input" rows="1" placeholder="Écris ta question…" autocomplete="off"></textarea>
       <button class="tut-send" id="tut-send" aria-label="Envoyer"><span data-icon="send"></span></button>
     </div>
-    <p class="tut-disclaimer">Outil pédagogique — ne remplace pas un avis médical. Modèle : ${escapeHtml(getAIModel())}.</p>`;
+    <p class="tut-disclaimer">Outil pédagogique — ne remplace pas un avis médical. ${escapeHtml(getAIProviderConfig().nom)} · ${escapeHtml(curModel())}.</p>`;
   window.APP.hydrateIcons(body);
 
   const input = document.getElementById('tut-input');
@@ -195,7 +196,7 @@ async function send() {
   let full = '';
 
   try {
-    await streamClaude(conversation, delta => {
+    await streamAI(conversation, delta => {
       full += delta;
       aiDiv.innerHTML = fmt(full) + '<span class="tut-cursor"></span>';
       aiDiv.scrollIntoView({ behavior: 'smooth', block: 'end' });
@@ -212,33 +213,46 @@ async function send() {
   }
 }
 
-// Appel direct au navigateur de l'API Anthropic (clé locale), en streaming SSE.
-async function streamClaude(messages, onDelta) {
+// Appel direct (navigateur) au fournisseur choisi, en streaming SSE.
+// Deux formats : 'anthropic' (Claude) et 'openai' (GPT + compatibles chinois).
+async function streamAI(messages, onDelta) {
+  const prov = getAIProviderConfig();
   const key = getAIKey();
-  if (!key) throw new Error("Aucune clé API. Configure-la dans les Réglages.");
+  if (!key) throw new Error("Aucune clé pour " + prov.nom + ". Configure-la dans les Réglages.");
+  const model = curModel();
 
-  const resp = await fetch('https://api.anthropic.com/v1/messages', {
-    method: 'POST',
-    headers: {
+  let headers, bodyObj;
+  if (prov.shape === 'anthropic') {
+    headers = {
       'content-type': 'application/json',
       'x-api-key': key,
       'anthropic-version': '2023-06-01',
       'anthropic-dangerous-direct-browser-access': 'true'
-    },
-    body: JSON.stringify({
-      model: getAIModel(),
-      max_tokens: 2048,
-      system: SYSTEM,
-      stream: true,
+    };
+    bodyObj = {
+      model, max_tokens: 2048, system: SYSTEM, stream: true,
       messages: messages.map(m => ({ role: m.role, content: m.content }))
-    })
-  });
+    };
+  } else {   // openai-compatible (OpenAI, DeepSeek, Qwen, Moonshot, Zhipu…)
+    headers = { 'content-type': 'application/json', 'authorization': 'Bearer ' + key };
+    bodyObj = {
+      model, max_tokens: 2048, stream: true,
+      messages: [{ role: 'system', content: SYSTEM }, ...messages.map(m => ({ role: m.role, content: m.content }))]
+    };
+  }
+
+  let resp;
+  try {
+    resp = await fetch(prov.url, { method: 'POST', headers, body: JSON.stringify(bodyObj) });
+  } catch (e) {
+    throw new Error("Connexion impossible à " + prov.nom + ". Ce fournisseur bloque peut-être les appels directs depuis le navigateur (CORS). Essaie Claude ou GPT, qui les autorisent.");
+  }
 
   if (!resp.ok) {
     let msg = 'Erreur ' + resp.status;
     try { const j = await resp.json(); if (j.error && j.error.message) msg = j.error.message; } catch (e) {}
-    if (resp.status === 401) msg = "Clé API invalide. Vérifie-la dans les Réglages.";
-    if (resp.status === 429) msg = "Trop de requêtes (ou crédit épuisé). Réessaie plus tard.";
+    if (resp.status === 401) msg = "Clé invalide pour " + prov.nom + ". Vérifie-la dans les Réglages.";
+    if (resp.status === 429) msg = "Trop de requêtes ou crédit épuisé (" + prov.nom + "). Réessaie plus tard.";
     throw new Error(msg);
   }
 
@@ -256,14 +270,15 @@ async function streamClaude(messages, onDelta) {
       if (!l.startsWith('data:')) continue;
       const data = l.slice(5).trim();
       if (!data || data === '[DONE]') continue;
-      try {
-        const evt = JSON.parse(data);
-        if (evt.type === 'content_block_delta' && evt.delta && evt.delta.type === 'text_delta') {
-          onDelta(evt.delta.text);
-        } else if (evt.type === 'error') {
-          throw new Error((evt.error && evt.error.message) || 'Erreur du flux IA.');
-        }
-      } catch (e) { if (e instanceof SyntaxError) continue; throw e; }
+      let evt;
+      try { evt = JSON.parse(data); } catch (e) { continue; }
+      if (prov.shape === 'anthropic') {
+        if (evt.type === 'content_block_delta' && evt.delta && evt.delta.type === 'text_delta') onDelta(evt.delta.text);
+        else if (evt.type === 'error') throw new Error((evt.error && evt.error.message) || 'Erreur du flux IA.');
+      } else {
+        const d = evt.choices && evt.choices[0] && evt.choices[0].delta;
+        if (d && d.content) onDelta(d.content);
+      }
     }
   }
 }

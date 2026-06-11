@@ -110,18 +110,23 @@
       </div>
     </div>
     <div style="margin-top:6px;">
-      <label class="text-sm" style="font-weight:600;display:block;margin-bottom:6px;">Clé API Anthropic</label>
+      <label class="text-sm" style="font-weight:600;display:block;margin-bottom:6px;">Fournisseur d'IA</label>
+      <select id="ai-provider" style="width:100%;padding:11px 13px;border:1.5px solid var(--c-border);border-radius:var(--r-sm);font-family:var(--font-body);font-size:14px;background:var(--c-white);color:var(--c-dark);"></select>
+    </div>
+    <div style="margin-top:14px;">
+      <label class="text-sm" style="font-weight:600;display:block;margin-bottom:6px;">Clé API</label>
       <div style="display:flex;gap:8px;">
-        <input type="password" id="ai-key" placeholder="sk-ant-…" autocomplete="off" autocapitalize="off" spellcheck="false"
+        <input type="password" id="ai-key" placeholder="sk-…" autocomplete="off" autocapitalize="off" spellcheck="false"
                style="flex:1;padding:11px 13px;border:1.5px solid var(--c-border);border-radius:var(--r-sm);font-family:var(--font-mono);font-size:13px;background:var(--c-white);color:var(--c-dark);">
         <button class="btn btn-ghost btn-sm" id="ai-key-show" type="button" aria-label="Afficher"><span data-icon="eye"></span></button>
       </div>
-      <p class="text-sm text-mid" style="margin-top:6px;">Pas de clé ? Crée-en une sur <b>console.anthropic.com → API Keys</b>. <span id="ai-key-state"></span></p>
+      <p class="text-sm text-mid" style="margin-top:6px;">Crée une clé sur <b id="ai-where">console.anthropic.com</b>. <span id="ai-key-state"></span></p>
     </div>
     <div style="margin-top:14px;">
       <label class="text-sm" style="font-weight:600;display:block;margin-bottom:6px;">Modèle</label>
       <select id="ai-model" style="width:100%;padding:11px 13px;border:1.5px solid var(--c-border);border-radius:var(--r-sm);font-family:var(--font-body);font-size:14px;background:var(--c-white);color:var(--c-dark);"></select>
     </div>
+    <p class="text-sm text-mid" style="margin-top:10px;">💡 <b>GPT et Claude</b> marchent directement. Les IA chinoises (DeepSeek, Qwen, Kimi, GLM) sont <b>moins chères</b> mais peuvent être bloquées par le navigateur (CORS) selon le fournisseur — si ça ne répond pas, essaie-en une autre.</p>
     <div style="display:flex;gap:10px;margin-top:16px;flex-wrap:wrap;">
       <button class="btn btn-primary" id="ai-save"><span data-icon="check"></span> Enregistrer</button>
       <button class="btn btn-ghost" id="ai-clear"><span data-icon="trash"></span> Effacer la clé</button>
@@ -167,26 +172,44 @@ soundToggle.addEventListener('change', () => {
   if (soundToggle.checked) sfx.correct();   // petit aperçu
 });
 
-// ── Tuteur IA : clé API + modèle (niveau appareil, pas besoin du profil) ──
+// ── Tuteur IA : fournisseur + clé + modèle (niveau appareil) ──
 (function () {
+  const A = window.APP;
+  const provSel  = document.getElementById('ai-provider');
   const keyInput = document.getElementById('ai-key');
   const modelSel = document.getElementById('ai-model');
   const stateEl  = document.getElementById('ai-key-state');
-  if (!keyInput) return;
+  const whereEl  = document.getElementById('ai-where');
+  if (!provSel) return;
 
-  keyInput.value = window.APP.getAIKey();
-  window.APP.AI_MODELS.forEach(m => {
+  A.AI_PROVIDERS.forEach(p => {
     const o = document.createElement('option');
-    o.value = m.id; o.textContent = m.nom;
-    modelSel.appendChild(o);
+    o.value = p.id; o.textContent = p.nom;
+    provSel.appendChild(o);
   });
-  modelSel.value = window.APP.getAIModel();
+  provSel.value = A.getAIProvider();
 
-  function refreshState() {
-    const has = !!window.APP.getAIKey();
-    stateEl.innerHTML = has ? '<b style="color:var(--c-green);">✓ clé enregistrée</b>' : '';
+  function refreshState(pid) {
+    stateEl.innerHTML = A.getAIKey(pid) ? '<b style="color:var(--c-green);">✓ clé enregistrée</b>' : '';
   }
-  refreshState();
+
+  function loadProvider(pid) {
+    const cfg = A.getAIProviderConfig(pid);
+    keyInput.value = A.getAIKey(pid);
+    keyInput.placeholder = cfg.hint;
+    whereEl.textContent = cfg.where;
+    modelSel.innerHTML = '';
+    cfg.models.forEach(m => {
+      const o = document.createElement('option');
+      o.value = m.id; o.textContent = m.nom;
+      modelSel.appendChild(o);
+    });
+    const saved = A.getAIModel();
+    modelSel.value = cfg.models.some(m => m.id === saved) ? saved : cfg.models[0].id;
+    refreshState(pid);
+  }
+  loadProvider(provSel.value);
+  provSel.addEventListener('change', () => loadProvider(provSel.value));
 
   function toast(msg) {
     const t = document.createElement('div');
@@ -200,12 +223,17 @@ soundToggle.addEventListener('change', () => {
     keyInput.type = keyInput.type === 'password' ? 'text' : 'password'; keyInput.focus();
   });
   document.getElementById('ai-save').addEventListener('click', () => {
-    window.APP.setAIKey(keyInput.value.trim());
-    window.APP.setAIModel(modelSel.value);
-    refreshState(); toast('Tuteur IA enregistré');
+    const pid = provSel.value;
+    A.setAIProvider(pid);
+    A.setAIModel(modelSel.value);
+    A.setAIKey(pid, keyInput.value.trim());
+    refreshState(pid);
+    toast('Tuteur IA enregistré');
   });
   document.getElementById('ai-clear').addEventListener('click', () => {
-    window.APP.setAIKey(''); keyInput.value = ''; refreshState(); toast('Clé effacée');
+    const pid = provSel.value;
+    A.setAIKey(pid, ''); keyInput.value = ''; refreshState(pid);
+    toast('Clé effacée');
   });
 })();
 

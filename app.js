@@ -2868,20 +2868,76 @@ function openSearch() {
 function closeSearch() { if (_searchEl) _searchEl.classList.remove('open'); }
 
 // ═══════════════════════════════════════════════════════════════
-//  TUTEUR IA — configuration (clé API + modèle, stockés en local)
-//  La clé n'est JAMAIS dans le code : l'utilisateur colle la sienne
-//  dans les Réglages ; les appels partent du navigateur vers Anthropic.
+//  TUTEUR IA — multi-fournisseurs (Claude, GPT, DeepSeek, Qwen…)
+//  Les clés ne sont JAMAIS dans le code : l'utilisateur colle les
+//  siennes dans les Réglages ; les appels partent du navigateur vers
+//  le fournisseur choisi. `shape` = format de l'API :
+//   'anthropic'  → /v1/messages (Claude)
+//   'openai'     → /chat/completions (OpenAI ET compatibles chinois)
 // ═══════════════════════════════════════════════════════════════
-const AI_KEY_LS = 'naturoapp_ai_key';
-const AI_MODEL_LS = 'naturoapp_ai_model';
-const AI_MODELS = [
-  { id: 'claude-opus-4-8',   nom: 'Claude Opus 4.8 — le plus intelligent' },
-  { id: 'claude-sonnet-4-6', nom: 'Claude Sonnet 4.6 — équilibré' },
-  { id: 'claude-haiku-4-5',  nom: 'Claude Haiku 4.5 — rapide & économique' }
+const AI_PROVIDERS = [
+  { id: 'anthropic', nom: 'Claude (Anthropic)', shape: 'anthropic',
+    url: 'https://api.anthropic.com/v1/messages', hint: 'sk-ant-…', where: 'console.anthropic.com',
+    models: [
+      { id: 'claude-opus-4-8',   nom: 'Opus 4.8 — le top' },
+      { id: 'claude-sonnet-4-6', nom: 'Sonnet 4.6 — équilibré' },
+      { id: 'claude-haiku-4-5',  nom: 'Haiku 4.5 — rapide & éco' } ] },
+  { id: 'openai', nom: 'GPT (OpenAI)', shape: 'openai',
+    url: 'https://api.openai.com/v1/chat/completions', hint: 'sk-…', where: 'platform.openai.com',
+    models: [
+      { id: 'gpt-4o-mini', nom: 'GPT-4o mini — éco' },
+      { id: 'gpt-4o',      nom: 'GPT-4o' },
+      { id: 'gpt-4.1-mini', nom: 'GPT-4.1 mini' },
+      { id: 'gpt-4.1',     nom: 'GPT-4.1' } ] },
+  { id: 'deepseek', nom: 'DeepSeek (très économique)', shape: 'openai',
+    url: 'https://api.deepseek.com/v1/chat/completions', hint: 'sk-…', where: 'platform.deepseek.com',
+    models: [
+      { id: 'deepseek-chat',     nom: 'DeepSeek V3 — très éco' },
+      { id: 'deepseek-reasoner', nom: 'DeepSeek R1 — raisonnement' } ] },
+  { id: 'qwen', nom: 'Qwen (Alibaba)', shape: 'openai',
+    url: 'https://dashscope-intl.aliyuncs.com/compatible-mode/v1/chat/completions', hint: 'sk-…', where: 'dashscope (Alibaba Cloud)',
+    models: [
+      { id: 'qwen-turbo', nom: 'Qwen Turbo — éco' },
+      { id: 'qwen-plus',  nom: 'Qwen Plus' },
+      { id: 'qwen-max',   nom: 'Qwen Max' } ] },
+  { id: 'moonshot', nom: 'Kimi (Moonshot)', shape: 'openai',
+    url: 'https://api.moonshot.ai/v1/chat/completions', hint: 'sk-…', where: 'platform.moonshot.ai',
+    models: [
+      { id: 'moonshot-v1-8k',  nom: 'Moonshot v1 8k' },
+      { id: 'moonshot-v1-32k', nom: 'Moonshot v1 32k' } ] },
+  { id: 'zhipu', nom: 'GLM (Zhipu)', shape: 'openai',
+    url: 'https://open.bigmodel.cn/api/paas/v4/chat/completions', hint: 'votre clé', where: 'bigmodel.cn',
+    models: [
+      { id: 'glm-4-flash', nom: 'GLM-4 Flash — gratuit/éco' },
+      { id: 'glm-4-air',   nom: 'GLM-4 Air' },
+      { id: 'glm-4-plus',  nom: 'GLM-4 Plus' } ] }
 ];
-function getAIKey()    { try { return localStorage.getItem(AI_KEY_LS) || ''; } catch (e) { return ''; } }
-function setAIKey(k)   { try { k ? localStorage.setItem(AI_KEY_LS, k) : localStorage.removeItem(AI_KEY_LS); } catch (e) {} }
-function getAIModel()  { try { return localStorage.getItem(AI_MODEL_LS) || 'claude-opus-4-8'; } catch (e) { return 'claude-opus-4-8'; } }
+
+const AI_PROV_LS = 'naturoapp_ai_provider';
+const AI_MODEL_LS = 'naturoapp_ai_model';
+const AI_KEYS_LS = 'naturoapp_ai_keys';   // { providerId: key }
+
+// Migration de l'ancienne clé Anthropic unique → nouveau format
+try {
+  const old = localStorage.getItem('naturoapp_ai_key');
+  if (old) {
+    const o = JSON.parse(localStorage.getItem(AI_KEYS_LS) || '{}');
+    if (!o.anthropic) { o.anthropic = old; localStorage.setItem(AI_KEYS_LS, JSON.stringify(o)); }
+    localStorage.removeItem('naturoapp_ai_key');
+  }
+} catch (e) {}
+
+function _aiKeys() { try { return JSON.parse(localStorage.getItem(AI_KEYS_LS) || '{}'); } catch (e) { return {}; } }
+function getAIProvider() { try { return localStorage.getItem(AI_PROV_LS) || 'anthropic'; } catch (e) { return 'anthropic'; } }
+function setAIProvider(p) { try { localStorage.setItem(AI_PROV_LS, p); } catch (e) {} }
+function getAIProviderConfig(id) { return AI_PROVIDERS.find(p => p.id === (id || getAIProvider())) || AI_PROVIDERS[0]; }
+function getAIKey(provider) { return _aiKeys()[provider || getAIProvider()] || ''; }
+function setAIKey(provider, key) {
+  const o = _aiKeys();
+  if (key) o[provider] = key; else delete o[provider];
+  try { localStorage.setItem(AI_KEYS_LS, JSON.stringify(o)); } catch (e) {}
+}
+function getAIModel() { try { return localStorage.getItem(AI_MODEL_LS) || ''; } catch (e) { return ''; } }
 function setAIModel(m) { try { localStorage.setItem(AI_MODEL_LS, m); } catch (e) {} }
 
 // Export global
@@ -2892,7 +2948,8 @@ window.APP = {
   Profiles, onReady, currentProfile,
   applyTheme, toggleTheme, setTheme, getThemePref, sfx, tts,
   courseToFlashcards, gardenSVG, searchAll, openSearch,
-  getAIKey, setAIKey, getAIModel, setAIModel, AI_MODELS,
+  AI_PROVIDERS, getAIProvider, setAIProvider, getAIProviderConfig,
+  getAIKey, setAIKey, getAIModel, setAIModel,
   animateNumber, progressRing, setRing, prefersReducedMotion, celebrate
 };
 
