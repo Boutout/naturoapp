@@ -138,6 +138,18 @@
     .smart-cta__go { color: #fff; }
     .smart-cta__go .app-icon { width: 22px; height: 22px; }
 
+    /* ── COACH PRÉDICTIF ── */
+    .coach { display: flex; gap: 12px; align-items: center; border-radius: var(--r-lg);
+      padding: 14px 16px; margin-bottom: 16px; border: 1px solid var(--c-border);
+      background: var(--c-white); box-shadow: var(--shadow-sm); }
+    .coach__ico { width: 42px; height: 42px; flex-shrink: 0; border-radius: 13px;
+      display: flex; align-items: center; justify-content: center; }
+    .coach__ico .app-icon { width: 22px; height: 22px; }
+    .coach--ok .coach__ico { background: var(--c-green-pale); color: var(--c-green); }
+    .coach--late .coach__ico { background: var(--c-ocre-light); color: var(--c-ocre); }
+    .coach__body b { font-size: 14.5px; }
+    .coach__body .text-sm { color: var(--c-mid); margin-top: 2px; }
+
     /* ── CAS PRATIQUES ── */
     .cas-cta {
       display: flex; align-items: center; gap: 14px;
@@ -456,6 +468,7 @@
 
   <!-- PRÉPARATION EXAMEN -->
   <div class="exam-prep" id="exam-prep"></div>
+  <div id="coach-card" style="display:none;"></div>
 
   <!-- JARDIN + GAMIFICATION -->
   <div class="dash-cols">
@@ -711,6 +724,27 @@
           <div class="exam-prep__body"><b>Quand est ton examen ?</b><div class="text-sm text-mid">Définis ta date pour un plan de révision adapté.</div></div>
           <span style="color:var(--c-ocre);display:inline-flex;">${icon('arrow-right')}</span>
         </a>`;
+    }
+
+    // Coach prédictif : projection « prêt·e le … » selon le rythme récent
+    const coach = document.getElementById('coach-card');
+    const pj = State.getProjection();
+    if (pj.hasExam && pj.daysToReady != null) {
+      const d = new Date(pj.readyDateISO + 'T00:00:00');
+      const dateStr = d.toLocaleDateString('fr-FR', { day: 'numeric', month: 'long' });
+      const ok = pj.onTrack;
+      coach.style.display = 'block';
+      coach.innerHTML = `
+        <div class="coach ${ok ? 'coach--ok' : 'coach--late'}">
+          <div class="coach__ico">${icon(ok ? 'trending-up' : 'alert-triangle')}</div>
+          <div class="coach__body">
+            <b>${ok ? 'Tu es dans les temps 👏' : 'Accélère un peu ⏳'}</b>
+            <div class="text-sm">À ce rythme (${pj.pace}/jour), prêt·e vers le <b>${dateStr}</b>${pj.neededPerDay ? ` · vise ~${pj.neededPerDay}/jour d'ici l'examen` : ''}.</div>
+          </div>
+        </div>`;
+      window.APP.hydrateIcons(coach);
+    } else {
+      coach.style.display = 'none';
     }
 
     // Jardin

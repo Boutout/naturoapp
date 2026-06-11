@@ -161,6 +161,7 @@ function renderChat() {
           <button class="tut-chip" data-q="Fais-moi une fiche de révision synthétique sur les tempéraments hippocratiques.">Crée une fiche</button>
           <button class="tut-chip" id="chip-quiz">🎮 Quiz jouable</button>
           <button class="tut-chip" id="chip-weak">🎯 Quiz sur mes points faibles</button>
+          <button class="tut-chip" id="chip-explain">💡 Explique mes points faibles</button>
         </div>
       </div>
     </div>
@@ -182,6 +183,8 @@ function renderChat() {
   if (quizChip) quizChip.addEventListener('click', () => generateQuiz());
   const weakChip = document.getElementById('chip-weak');
   if (weakChip) weakChip.addEventListener('click', generateWeakQuiz);
+  const explainChip = document.getElementById('chip-explain');
+  if (explainChip) explainChip.addEventListener('click', explainWeak);
 
   // restaure l'historique sauvegardé (+ actions sur les réponses IA)
   conversation.forEach(m => { const d = addBubble(m.role, fmt(m.content)); if (m.role === 'assistant') aiActions(d, m.content); });
@@ -300,6 +303,18 @@ function parseQuiz(text, topic) {
     });
   });
   return out;
+}
+
+function explainWeak() {
+  if (busy) return;
+  let themes = [];
+  try { themes = State.weakThemes(3) || []; } catch (e) {}
+  if (!themes.length) themes = ['les bases de la naturopathie'];
+  const input = document.getElementById('tut-input');
+  if (!input) return;
+  input.value = "Voici mes points faibles d'après mes statistiques : " + themes.join(', ') +
+    ". Explique-moi les notions clés de chacun simplement, avec un exemple et un moyen mnémotechnique, puis donne-moi un mini-plan pour progresser.";
+  send();
 }
 
 function generateWeakQuiz() {

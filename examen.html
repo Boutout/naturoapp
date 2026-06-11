@@ -263,6 +263,13 @@
         <div class="exam-option__desc">Tes questions avec le plus d'erreurs · 30 minutes</div>
       </div>
     </div>
+    <div class="exam-option" data-exam="adaptive">
+      <div class="exam-option__icon" data-icon="sparkles"></div>
+      <div>
+        <div class="exam-option__title">Examen adaptatif — 40 questions ✨</div>
+        <div class="exam-option__desc">Pondéré vers tes faiblesses + couverture complète · 40 minutes</div>
+      </div>
+    </div>
   </div>
 
   <div style="display:flex;align-items:center;gap:12px;margin-bottom:24px;flex-wrap:wrap;">
@@ -359,7 +366,7 @@ document.querySelectorAll('.exam-option').forEach(el => {
     document.querySelectorAll('.exam-option').forEach(e => e.classList.remove('selected'));
     el.classList.add('selected');
     examType = el.dataset.exam;
-    const timeMap = { full: 80, half: 40, mini: 20, weak: 30 };
+    const timeMap = { full: 80, half: 40, mini: 20, weak: 30, adaptive: 40 };
     document.getElementById('time-select').value = timeMap[examType] || 40;
   });
 });
@@ -372,6 +379,7 @@ function buildQueue() {
     case 'half': return shuffle([...QUESTIONS]).slice(0, 40);
     case 'mini': return shuffle([...QUESTIONS]).slice(0, 20);
     case 'weak': return State.getWeakQuestions(30);
+    case 'adaptive': return State.getAdaptiveExam(40);
     default: return shuffle([...QUESTIONS]).slice(0, 20);
   }
 }

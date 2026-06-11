@@ -1643,6 +1643,33 @@ const State = {
       .slice(0, k)
       .map(t => t.theme);
   },
+  // Examen blanc ADAPTATIF : pondéré vers les faiblesses (~60 %) + couverture.
+  getAdaptiveExam(n = 40) {
+    const seen = new Set(), out = [];
+    const add = arr => arr.forEach(q => { if (!seen.has(q.id) && out.length < n) { seen.add(q.id); out.push(q); } });
+    add(this.getWeakQuestions(Math.round(n * 0.6)));   // priorité aux faiblesses
+    add(shuffle(QUESTIONS));                            // complète pour la couverture
+    return shuffle(out.slice(0, n));
+  },
+  // Coach prédictif : rythme récent → date de « prêt·e » + comparaison à l'examen.
+  getProjection() {
+    const rd = this.getReadiness();                    // { mastered, total, pct }
+    const remaining = Math.max(0, rd.total - rd.mastered);
+    let q7 = 0;                                         // questions vues sur 7 jours glissants
+    for (let i = 0; i < 7; i++) {
+      const d = new Date(Date.now() - i * 86400000).toISOString().split('T')[0];
+      q7 += (this.data.dailyStats[d] || {}).questions || 0;
+    }
+    const pace = q7 / 7;
+    const cd = this.examCountdown();
+    const hasExam = !!cd, daysLeft = cd ? cd.days : null;
+    const effort = remaining * 1.5;                    // ~1,5 question vue pour en maîtriser 1
+    const daysToReady = pace > 0 ? Math.ceil(effort / pace) : null;
+    const readyDateISO = daysToReady != null ? new Date(Date.now() + daysToReady * 86400000).toISOString().split('T')[0] : null;
+    const neededPerDay = (hasExam && daysLeft > 0) ? Math.ceil(effort / daysLeft) : null;
+    const onTrack = (hasExam && daysToReady != null) ? daysToReady <= daysLeft : null;
+    return { masteredPct: rd.pct, remaining, pace: Math.round(pace * 10) / 10, daysToReady, readyDateISO, hasExam, daysLeft, neededPerDay, onTrack };
+  },
 
   // ── Gamification : XP / niveaux ─────────────────────────────
   getXP() { return this.data.xp || 0; },
