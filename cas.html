@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>NaturoApp — Cas pratiques</title>
+  <meta name="theme-color" content="#1A5C45">
+  <link rel="manifest" href="manifest.json">
+  <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="NaturoApp">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Lora:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+  <script>try{var t=localStorage.getItem('naturoapp_theme');if(t==='dark'||((!t||t==='auto')&&window.matchMedia('(prefers-color-scheme:dark)').matches)){document.documentElement.setAttribute('data-theme','dark');}else{document.documentElement.setAttribute('data-theme','light');}if(!sessionStorage.getItem('naturoapp_active'))document.documentElement.classList.add('pre-lock');}catch(e){}</script>
+  <style>
+    .cas-hero {
+      background:
+        radial-gradient(120% 140% at 0% 0%, #1F6B50 0%, rgba(31,107,80,0) 55%),
+        linear-gradient(135deg, var(--c-green-deep), var(--c-green));
+      color:#fff; border-radius:var(--r-xl); padding:30px 32px; margin-bottom:24px; box-shadow:var(--shadow-lg);
+    }
+    .cas-hero h1 { color:#fff; font-size:28px; }
+    .cas-hero p { color:rgba(255,255,255,.85); font-size:14px; margin-top:6px; max-width:560px; }
+
+    .cas-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(260px,1fr)); gap:14px; }
+    .cas-card { display:flex; align-items:center; gap:14px; padding:16px 18px; cursor:pointer; }
+    .cas-card__ico { width:50px; height:50px; flex-shrink:0; border-radius:16px; background:var(--c-green-pale);
+      color:var(--c-green); display:flex; align-items:center; justify-content:center; }
+    .cas-card__ico .app-icon { width:26px; height:26px; }
+    .cas-card__body { flex:1; min-width:0; }
+    .cas-card h3 { font-size:15.5px; line-height:1.3; }
+    .cas-card__meta { font-size:12px; color:var(--c-mid); margin-top:3px; }
+    .cas-card__go { color:var(--c-green); display:inline-flex; }
+
+    /* fiche patient */
+    .patient {
+      background: var(--c-white); border:1px solid var(--c-border); border-radius:var(--r-lg);
+      box-shadow:var(--shadow-sm); padding:22px 24px; margin:16px 0 20px;
+    }
+    .patient__head { display:flex; align-items:center; gap:14px; margin-bottom:14px; }
+    .patient__avatar { width:54px; height:54px; border-radius:50%; flex-shrink:0;
+      background:radial-gradient(circle at 30% 25%, #6FD7AE, var(--c-green-light));
+      color:var(--c-green-deep); font-weight:700; font-size:20px;
+      display:flex; align-items:center; justify-content:center; }
+    .patient__name { font-family:var(--font-display); font-size:20px; font-weight:700; }
+    .patient__motif { font-size:13px; color:var(--c-mid); }
+    .patient__ctx { font-size:14.5px; line-height:1.6; border-top:1px solid var(--c-border); padding-top:14px; }
+    .patient__ctx b { color:var(--c-green-deep); }
+
+    .cas-step-card { background:var(--c-white); border:1px solid var(--c-border); border-radius:var(--r-xl);
+      box-shadow:var(--shadow-md); padding:28px 30px; }
+    @media (max-width:600px){ .cas-step-card { padding:22px 18px; } }
+    .cas-step-card .options-grid { display:flex; flex-direction:column; gap:10px; margin:20px 0 0; }
+    .cas-q { font-size:17px; font-weight:600; line-height:1.45; }
+    .cas-progress { display:flex; align-items:center; gap:12px; margin-bottom:14px; }
+    .cas-progress .progress-bar { flex:1; }
+
+    .cas-result { background:linear-gradient(135deg,var(--c-green-deep),var(--c-green)); color:#fff;
+      border-radius:var(--r-xl); padding:30px; text-align:center; }
+    .cas-result h2 { color:#fff; font-size:24px; margin-bottom:6px; }
+    .cas-result__score { font-family:var(--font-display); font-size:46px; font-weight:700; margin:10px 0; }
+    .cas-synthese { background:rgba(255,255,255,.14); border-radius:var(--r-md); padding:16px 18px; text-align:left;
+      font-size:14px; line-height:1.6; margin-top:18px; }
+    .cas-synthese b { display:flex; align-items:center; gap:7px; margin-bottom:6px; }
+  </style>
+</head>
+<body>
+
+<nav class="topnav">
+  <a href="index.html" class="topnav__logo">
+    <div class="topnav__logo-icon" data-icon="leaf"></div>
+    <div>
+      <div class="topnav__logo-text">NaturoApp</div>
+      <span class="topnav__logo-sub">Révision Naturopathie</span>
+    </div>
+  </a>
+  <ul class="topnav__nav">
+    <li><a href="index.html"><span class="nav-ico" data-icon="home"></span> <span class="nav-label">Accueil</span></a></li>
+    <li><a href="cours.html"><span class="nav-ico" data-icon="book"></span> <span class="nav-label">Cours</span></a></li>
+    <li><a href="revision.html"><span class="nav-ico" data-icon="book-open"></span> <span class="nav-label">Révision</span></a></li>
+    <li><a href="examen.html"><span class="nav-ico" data-icon="edit"></span> <span class="nav-label">Examen</span></a></li>
+    <li><a href="stats.html"><span class="nav-ico" data-icon="chart"></span> <span class="nav-label">Stats</span></a></li>
+  </ul>
+  <a class="nav-lock" id="nav-settings" href="reglages.html" data-icon="settings" title="Réglages" aria-label="Réglages"></a>
+  <button class="nav-lock" id="nav-theme" data-icon="moon" title="Thème sombre" aria-label="Changer de thème"></button>
+  <button class="nav-lock" id="nav-lock" data-icon="lock" title="Verrouiller l'app" aria-label="Verrouiller"></button>
+</nav>
+
+<!-- LISTE -->
+<div class="page" id="cas-list-view">
+  <div class="cas-hero">
+    <h1>Cas pratiques</h1>
+    <p>Mets-toi dans la peau du naturopathe : un client te consulte, mène l'anamnèse et propose des pistes. Le raisonnement par le terrain, pas le par-cœur.</p>
+  </div>
+  <div class="cas-grid" id="cas-list"></div>
+</div>
+
+<!-- LECTEUR -->
+<div class="page" id="cas-player-view" style="display:none;">
+  <button class="btn btn-ghost btn-sm" id="cas-back" style="margin-bottom:8px;"><span data-icon="arrow-left"></span> Tous les cas</button>
+
+  <div id="cas-intro"></div>
+
+  <div id="cas-step" style="display:none;">
+    <div class="cas-progress">
+      <span style="font-size:12px;color:var(--c-mid);white-space:nowrap;" id="cas-step-label">Étape 1 / 3</span>
+      <div class="progress-bar"><div class="progress-bar__fill" id="cas-step-bar" style="width:33%"></div></div>
+    </div>
+    <div class="cas-step-card">
+      <div class="cas-q" id="cas-question"></div>
+      <div class="options-grid" id="cas-options"></div>
+      <div id="cas-explain"></div>
+    </div>
+    <div style="display:flex;justify-content:flex-end;margin-top:18px;">
+      <button class="btn btn-primary" id="cas-next" disabled>Suivant →</button>
+    </div>
+  </div>
+
+  <div id="cas-result" style="display:none;"></div>
+</div>
+
+<nav class="bottomnav">
+  <a href="index.html"><span class="bn-ico" data-icon="home"></span> Accueil</a>
+  <a href="cours.html"><span class="bn-ico" data-icon="book"></span> Cours</a>
+  <a href="revision.html"><span class="bn-ico" data-icon="book-open"></span> Révision</a>
+  <a href="examen.html"><span class="bn-ico" data-icon="edit"></span> Examen</a>
+  <a href="stats.html"><span class="bn-ico" data-icon="chart"></span> Stats</a>
+</nav>
+
+<div id="toast-container"></div>
+
+<script src="content.js"></script>
+<script src="app.js"></script>
+<script>
+const { State, icon, escapeHtml, shuffle, sfx, celebrate } = window.APP;
+const CASES = (window.NATURO_CONTENT && window.NATURO_CONTENT.casPratiques) || [];
+
+function initials(name){ return (name||'?').trim()[0] ? (name.trim()[0]).toUpperCase() : '?'; }
+
+let cur = null, stepIdx = 0, correctCount = 0, answered = false;
+
+function showView(which) {
+  document.getElementById('cas-list-view').style.display = which === 'list' ? 'block' : 'none';
+  document.getElementById('cas-player-view').style.display = which === 'player' ? 'block' : 'none';
+}
+
+function renderList() {
+  const host = document.getElementById('cas-list');
+  if (!CASES.length) {
+    host.innerHTML = `<div class="empty-state"><span data-icon="clipboard"></span><div class="empty-state__text">Aucun cas pour l'instant. Ajoute-en dans <code>content.js</code>.</div></div>`;
+    window.APP.hydrateIcons(host); return;
+  }
+  host.innerHTML = CASES.map(c => {
+    const done = State.isCaseDone(c.id);
+    return `
+      <div class="card card--hover cas-card" data-id="${c.id}">
+        <div class="cas-card__ico">${icon(c.icon || 'clipboard')}</div>
+        <div class="cas-card__body">
+          <h3>${escapeHtml(c.titre)}</h3>
+          <div class="cas-card__meta">${escapeHtml(c.profil.nom)}, ${c.profil.age} ans ${done ? '· ✓ résolu' : ''}</div>
+        </div>
+        <span class="cas-card__go">${icon('arrow-right')}</span>
+      </div>`;
+  }).join('');
+  host.querySelectorAll('.cas-card').forEach(el => el.addEventListener('click', () => openCase(el.dataset.id)));
+}
+
+function openCase(id) {
+  cur = CASES.find(c => c.id === id);
+  if (!cur) return;
+  stepIdx = 0; correctCount = 0; answered = false;
+  showView('player');
+  document.getElementById('cas-step').style.display = 'none';
+  document.getElementById('cas-result').style.display = 'none';
+  const intro = document.getElementById('cas-intro');
+  intro.style.display = 'block';
+  intro.innerHTML = `
+    <div class="patient">
+      <div class="patient__head">
+        <div class="patient__avatar">${escapeHtml(initials(cur.profil.nom))}</div>
+        <div>
+          <div class="patient__name">${escapeHtml(cur.profil.nom)}, ${cur.profil.age} ans</div>
+          <div class="patient__motif">${escapeHtml(cur.profil.motif)}</div>
+        </div>
+      </div>
+      <div class="patient__ctx"><b>Contexte :</b> ${escapeHtml(cur.contexte)}</div>
+    </div>
+    <button class="btn btn-primary btn-lg w-full" id="cas-start">${icon('clipboard')} Commencer l'anamnèse</button>`;
+  window.APP.hydrateIcons(intro);
+  document.getElementById('cas-start').addEventListener('click', startSteps);
+  window.scrollTo(0, 0);
+}
+
+function startSteps() {
+  document.getElementById('cas-intro').style.display = 'none';
+  document.getElementById('cas-step').style.display = 'block';
+  renderStep();
+}
+
+function renderStep() {
+  answered = false;
+  const total = cur.etapes.length;
+  const step = cur.etapes[stepIdx];
+  document.getElementById('cas-step-label').textContent = `Étape ${stepIdx + 1} / ${total}`;
+  document.getElementById('cas-step-bar').style.width = `${Math.round((stepIdx + 1) / total * 100)}%`;
+  document.getElementById('cas-question').textContent = step.question;
+  document.getElementById('cas-explain').innerHTML = '';
+  document.getElementById('cas-next').disabled = true;
+
+  const grid = document.getElementById('cas-options');
+  grid.innerHTML = '';
+  const letters = ['A', 'B', 'C', 'D'];
+  const order = shuffle(step.options.map((_, i) => i));
+  order.forEach((optIdx, pos) => {
+    const btn = document.createElement('button');
+    btn.className = 'option-btn';
+    btn.dataset.idx = optIdx;
+    btn.innerHTML = `<span class="option-letter">${letters[pos]}</span><span>${escapeHtml(step.options[optIdx])}</span>`;
+    btn.addEventListener('click', () => answerStep(optIdx, step));
+    grid.appendChild(btn);
+  });
+  window.scrollTo(0, 0);
+}
+
+function answerStep(idx, step) {
+  if (answered) return;
+  answered = true;
+  const correct = idx === step.bonne;
+  if (correct) correctCount++;
+  correct ? sfx.correct() : sfx.wrong();
+
+  document.querySelectorAll('#cas-options .option-btn').forEach(b => {
+    b.disabled = true;
+    const i = parseInt(b.dataset.idx);
+    if (i === step.bonne) b.classList.add('correct');
+    else if (i === idx) b.classList.add('wrong');
+  });
+
+  document.getElementById('cas-explain').innerHTML = `
+    <div class="explain-box explain-box--${correct ? 'correct' : 'wrong'}">
+      <div class="explain-box__title">${correct ? icon('check-circle') + ' Bon raisonnement !' : icon('x-circle') + ' À revoir'}</div>
+      <div class="explain-section"><b>${icon('lightbulb')} Pourquoi :</b><br>${escapeHtml(step.explication)}</div>
+    </div>`;
+  document.getElementById('cas-next').disabled = false;
+}
+
+document.getElementById('cas-next').addEventListener('click', () => {
+  if (stepIdx < cur.etapes.length - 1) { stepIdx++; renderStep(); }
+  else showResult();
+});
+
+function showResult() {
+  const total = cur.etapes.length;
+  const pct = Math.round(correctCount / total * 100);
+  const isNew = State.markCaseDone(cur.id, total, correctCount);
+  const fresh = State.refreshBadges();
+
+  document.getElementById('cas-step').style.display = 'none';
+  const res = document.getElementById('cas-result');
+  res.style.display = 'block';
+  res.innerHTML = `
+    <div class="cas-result">
+      <div style="display:flex;justify-content:center;">${icon(pct === 100 ? 'party' : pct >= 60 ? 'thumbs-up' : 'book')}</div>
+      <h2>Cas terminé !</h2>
+      <div class="cas-result__score">${correctCount}/${total}</div>
+      ${isNew ? `<p style="font-weight:700;color:#FCEFD8;">+25 XP</p>` : ''}
+      <div class="cas-synthese">
+        <b>${icon('lightbulb')} Synthèse & conseils</b>
+        ${escapeHtml(cur.synthese)}
+      </div>
+      <div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-top:22px;">
+        <button class="btn" style="background:rgba(255,255,255,.2);color:#fff" id="cas-again"><span data-icon="rotate"></span> Refaire</button>
+        <button class="btn" style="background:#fff;color:var(--c-green-deep)" id="cas-list-btn"><span data-icon="arrow-left"></span> Tous les cas</button>
+      </div>
+    </div>`;
+  window.APP.hydrateIcons(res);
+  res.querySelector('#cas-again').addEventListener('click', () => openCase(cur.id));
+  res.querySelector('#cas-list-btn').addEventListener('click', backToList);
+  if (pct === 100) { celebrate(); sfx.levelup(); }
+  fresh.forEach(b => { const t = document.createElement('div'); t.className = 'toast toast-success'; t.innerHTML = `${icon('award')} Badge : <b>${escapeHtml(b.nom)}</b>`; document.getElementById('toast-container').appendChild(t); setTimeout(() => t.remove(), 4000); });
+  window.scrollTo(0, 0);
+}
+
+function backToList() { showView('list'); renderList(); window.scrollTo(0, 0); }
+document.getElementById('cas-back').addEventListener('click', backToList);
+
+window.APP.onReady(() => {
+  State.init();
+  renderList();
+  const params = new URLSearchParams(location.search);
+  if (params.get('id')) openCase(params.get('id'));
+});
+</script>
+</body>
+</html>

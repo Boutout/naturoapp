@@ -393,5 +393,129 @@ window.NATURO_CONTENT = {
     { terme: 'Probiotique', categorie: 'Microbiote', definition: 'Micro-organisme vivant bénéfique pour la flore intestinale.' },
     { terme: 'MUFA', categorie: 'Nutrition', definition: "Acide gras mono-insaturé (une seule double liaison), ex : oméga 9 / acide oléique." },
     { terme: 'Revitalisation', categorie: 'Naturopathie', definition: "Cure visant à recharger l'organisme en nutriments et vitalité." }
+  ],
+
+  // ═══════════════════════════════════════════════════════════════
+  //  CAS PRATIQUES — patients fictifs, raisonnement naturopathique.
+  //  Schéma : { id, titre, icon, profil:{nom,age,motif}, contexte,
+  //            etapes:[{ question, options[], bonne, explication }],
+  //            synthese }  — purement pédagogique, jamais un avis médical.
+  // ═══════════════════════════════════════════════════════════════
+  casPratiques: [
+    {
+      id: 'cas-ballonnements',
+      titre: 'Ballonnements & digestion difficile',
+      icon: 'droplet',
+      profil: { nom: 'Sophie', age: 38, motif: 'Ballonnements après les repas, transit irrégulier' },
+      contexte: "Sophie mange vite, souvent stressée au travail. Elle prend un café au lait le matin avec du pain, et dort mal depuis quelques mois. Aucun signe d'alarme médical.",
+      etapes: [
+        {
+          question: "Quelle habitude aggrave le plus sa digestion ?",
+          options: ['Le café au lait du matin', 'Manger des légumes', "Boire de l'eau", 'Marcher après le repas'],
+          bonne: 0,
+          explication: "Le café précipite les caséines du lait → un coagulum difficile à digérer. Associé au manque de mastication, c'est une cause classique de ballonnements."
+        },
+        {
+          question: "Quelle plante proposer pour les spasmes et les gaz ?",
+          options: ['Fenouil', 'Valériane', 'Échinacée', 'Pissenlit'],
+          bonne: 0,
+          explication: "Le fenouil (anéthole) est antispasmodique et carminatif : il détend l'intestin et aide à expulser les gaz. Valériane = sommeil, échinacée = immunité, pissenlit = foie."
+        },
+        {
+          question: "Quel pilier d'hygiène de vie travailler en priorité ?",
+          options: ['Gestion du stress (cohérence cardiaque) + mastication', 'Augmenter le café', 'Sauter le petit-déjeuner', 'Faire un jeûne de 5 jours'],
+          bonne: 0,
+          explication: "Le stress freine la digestion (sympathique). Ralentir, mastiquer et pratiquer la cohérence cardiaque relancent le parasympathique (« repos-digestion »). Le jeûne long serait inadapté ici."
+        }
+      ],
+      synthese: "Pistes : ralentir et mastiquer, supprimer le café au lait, soutenir la digestion (fenouil, basilic) et apaiser le stress (cohérence cardiaque, sommeil). Orienter vers un médecin si les troubles persistent."
+    },
+
+    {
+      id: 'cas-fatigue',
+      titre: 'Fatigue chronique & terrain fragilisé',
+      icon: 'sprout',
+      profil: { nom: 'Marc', age: 45, motif: 'Fatigue persistante, infections à répétition, peau sèche' },
+      contexte: "Marc enchaîne les petites infections cet hiver, se sent vidé et a la peau sèche. Bilan médical sans gravité. Terrain plutôt dévitalisé.",
+      etapes: [
+        {
+          question: "Cette association (immunité basse + peau sèche) évoque une carence en…",
+          options: ['Acides gras essentiels (« vitamine F »)', 'Sodium', 'Calcium', 'Vitamine K'],
+          bonne: 0,
+          explication: "La « vitamine F » = acides gras essentiels. Leur carence touche l'immunité (précurseurs de prostaglandines), la peau (membranes cellulaires) et la sphère respiratoire."
+        },
+        {
+          question: "Quelle cure naturopathique est prioritaire ?",
+          options: ['Revitalisation', 'Détoxication intensive', 'Jeûne long', 'Monodiète stricte prolongée'],
+          bonne: 0,
+          explication: "Sur un terrain dévitalisé, on RECHARGE avant tout (revitalisation). Un drainage intensif épuiserait encore plus la vitalité : on adapte toujours à l'énergie de la personne."
+        },
+        {
+          question: "Quel apport soutient l'immunité et la peau ?",
+          options: ['Oméga 3 + zinc + vitamine D', 'Beaucoup de sucre rapide', 'Régime sans aucun gras', 'Café et sel'],
+          bonne: 0,
+          explication: "Oméga 3 (anti-inflammatoires), zinc (immunité/peau) et vitamine D (immunité) forment un trio cohérent pour ce terrain."
+        }
+      ],
+      synthese: "Pistes : revitaliser (oméga 3, zinc, vitamine D, magnésium), améliorer le sommeil et réduire le stress, drainage doux seulement. Toujours en complément d'un suivi médical."
+    },
+
+    {
+      id: 'cas-premenopause',
+      titre: 'Préménopause & déséquilibre hormonal',
+      icon: 'flower',
+      profil: { nom: 'Hélène', age: 49, motif: 'Cycles irréguliers, irritabilité, bouffées de chaleur' },
+      contexte: "Hélène a 49 ans, des cycles devenus irréguliers, de l'irritabilité avant les règles et quelques bouffées de chaleur. Suivi gynécologique à jour.",
+      etapes: [
+        {
+          question: "Ce tableau évoque quel déséquilibre ?",
+          options: ['Hyperœstrogénie relative (manque de progestérone)', 'Carence en testostérone', 'Excès de progestérone', 'Hypothyroïdie isolée'],
+          bonne: 0,
+          explication: "En préménopause, la progestérone baisse avant les œstrogènes : ces derniers sont en excès RELATIF. D'où le syndrome prémenstruel accentué."
+        },
+        {
+          question: "Quelle plante « progestérone-like » proposer ?",
+          options: ['Alchémille', 'Sauge (œstrogène-like)', 'Valériane', 'Artichaut'],
+          bonne: 0,
+          explication: "L'alchémille (et le houblon) sont progestérone-like. La sauge et le trèfle rouge sont au contraire œstrogène-like — à ne pas confondre."
+        },
+        {
+          question: "Quel signe serait ATYPIQUE et devrait faire consulter ?",
+          options: ['Une perte de poids importante et inexpliquée', 'Bouffées de chaleur', 'Troubles du sommeil', 'Irritabilité prémenstruelle'],
+          bonne: 0,
+          explication: "La ménopause s'accompagne plutôt d'une PRISE de poids. Une perte de poids marquée et inexpliquée est atypique → orienter vers le médecin."
+        }
+      ],
+      synthese: "Pistes : soutenir la progestérone (alchémille, houblon), magnésium et plantes du stress, hygiène de vie. Tout symptôme atypique (perte de poids, saignements anormaux) impose un avis médical."
+    },
+
+    {
+      id: 'cas-allergie',
+      titre: 'Terrain allergique saisonnier',
+      icon: 'leaf',
+      profil: { nom: 'Léa', age: 28, motif: 'Rhinite au printemps, petit eczéma' },
+      contexte: "Léa a une rhinite allergique chaque printemps et un eczéma léger. Elle aimerait travailler son terrain de fond.",
+      etapes: [
+        {
+          question: "Quelles plantes pour le terrain allergique ?",
+          options: ['Plantain et cassis', 'Valériane et passiflore', 'Thym et eucalyptus', 'Artichaut et radis noir'],
+          bonne: 0,
+          explication: "Le plantain (antihistaminique naturel) et le cassis (anti-inflammatoire, « cortison-like ») sont les plantes de fond du terrain allergique."
+        },
+        {
+          question: "Quel axe de fond renforcer ?",
+          options: ["Le microbiote intestinal (pré/probiotiques)", 'Plus de sucre raffiné', 'Supprimer tous les légumes', 'Augmenter la charcuterie'],
+          bonne: 0,
+          explication: "70 % de l'immunité se joue dans l'intestin. Soigner le microbiote (pré/probiotiques, fibres) module le terrain allergique."
+        },
+        {
+          question: "Quel acide gras privilégier pour son effet anti-inflammatoire ?",
+          options: ['Oméga 3 (EPA/DHA)', 'Oméga 6 en excès', 'Graisses trans', 'Aucun gras'],
+          bonne: 0,
+          explication: "Les oméga 3 sont anti-inflammatoires (prostaglandines de série 3). À l'inverse, un excès d'oméga 6 est pro-inflammatoire : c'est le ratio qui compte."
+        }
+      ],
+      synthese: "Pistes : plantes de terrain (plantain, cassis), soin du microbiote, rééquilibrage oméga 3/oméga 6, réduction des sucres raffinés. En complément du suivi allergologique."
+    }
   ]
 };

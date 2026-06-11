@@ -121,6 +121,27 @@
     .srs-cta.is-empty .srs-cta__txt b { color: var(--c-green-deep); }
     .srs-cta.is-empty .srs-cta__go { color: var(--c-green); }
 
+    /* ── CAS PRATIQUES ── */
+    .cas-cta {
+      display: flex; align-items: center; gap: 14px;
+      background: linear-gradient(135deg, #2C5F8A, #1F4763);
+      border-radius: var(--r-lg); padding: 16px 18px; margin-bottom: 14px;
+      text-decoration: none; color: #fff; position: relative; overflow: hidden;
+      box-shadow: 0 6px 18px rgba(26,60,92,.25);
+      transition: transform .2s var(--ease-out), box-shadow .2s var(--ease-out);
+    }
+    .cas-cta:hover { transform: translateY(-2px); box-shadow: 0 10px 26px rgba(26,60,92,.32); }
+    .cas-cta__ico { width: 44px; height: 44px; flex-shrink: 0; border-radius: 14px;
+      background: rgba(255,255,255,.18); display: flex; align-items: center; justify-content: center; }
+    .cas-cta__ico .app-icon { width: 24px; height: 24px; color: #fff; }
+    .cas-cta__txt { flex: 1; display: flex; flex-direction: column; }
+    .cas-cta__txt b { font-size: 15.5px; display: flex; align-items: center; gap: 8px; }
+    .cas-cta__sub { font-size: 12.5px; color: rgba(255,255,255,.82); margin-top: 2px; }
+    .cas-cta__go { color: rgba(255,255,255,.85); }
+    .cas-cta__go .app-icon { width: 20px; height: 20px; }
+    .cas-cta__badge { font-size: 11px; font-weight: 600; background: rgba(255,255,255,.22); border-radius: 20px; padding: 1px 8px; }
+    .cas-cta__badge:empty { display: none; }
+
     /* ── GAMIFICATION ── */
     .gami { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; margin-bottom: 28px; }
     @media (max-width: 620px) { .gami { grid-template-columns: 1fr; } }
@@ -395,6 +416,16 @@
     <span class="srs-cta__go" data-icon="arrow-right"></span>
   </a>
 
+  <!-- CAS PRATIQUES -->
+  <a class="cas-cta" id="cas-cta" href="cas.html">
+    <span class="cas-cta__ico" data-icon="clipboard"></span>
+    <span class="cas-cta__txt">
+      <b>Cas pratiques <span class="cas-cta__badge" id="cas-cta-badge"></span></b>
+      <span class="cas-cta__sub">Raisonne comme un naturopathe sur des clients fictifs.</span>
+    </span>
+    <span class="cas-cta__go" data-icon="arrow-right"></span>
+  </a>
+
   <!-- PRÉPARATION EXAMEN -->
   <div class="exam-prep" id="exam-prep"></div>
 
@@ -578,6 +609,11 @@
       document.getElementById('dc-title').textContent = 'Défi du jour';
       document.getElementById('dc-sub').textContent = '10 questions · jusqu\'à +50 XP';
     }
+
+    // Cas pratiques résolus
+    const casDone = Object.keys(State.data.casDone || {}).length;
+    const cb = document.getElementById('cas-cta-badge');
+    if (cb) cb.textContent = casDone > 0 ? '✓ ' + casDone : '';
 
     // Préparation examen
     const ep = document.getElementById('exam-prep');

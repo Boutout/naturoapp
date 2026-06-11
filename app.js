@@ -1478,6 +1478,7 @@ const State = {
     if (typeof d.goalPerDay !== 'number') d.goalPerDay = 20;
     if (!Array.isArray(d.badges)) d.badges = [];
     if (!d.challenges) d.challenges = {};   // "YYYY-MM-DD" -> { total, correct, pct }
+    if (!d.casDone) d.casDone = {};         // idCas -> { total, correct, pct }
     if (typeof d.examDate === 'undefined') d.examDate = null;   // 'YYYY-MM-DD' ou null
     QUESTIONS.forEach(q => {
       const s = d.questionStats[q.id];
@@ -1508,6 +1509,7 @@ const State = {
       goalPerDay: 20,
       badges: [],          // ids des badges débloqués
       challenges: {},      // "YYYY-MM-DD" -> { total, correct, pct } (défi du jour)
+      casDone: {},         // idCas -> { total, correct, pct } (cas pratiques résolus)
       examDate: null,      // date d'examen visée ('YYYY-MM-DD')
       dailyStats: {},      // "YYYY-MM-DD" -> { questions, correct }
     };
@@ -1647,6 +1649,17 @@ const State = {
     return bonus;
   },
 
+  // ── Cas pratiques ───────────────────────────────────────────
+  isCaseDone(id) { return !!(this.data.casDone && this.data.casDone[id]); },
+  markCaseDone(id, total, correct) {
+    if (!this.data.casDone) this.data.casDone = {};
+    const isNew = !this.data.casDone[id];
+    this.data.casDone[id] = { total, correct, pct: Math.round(correct / total * 100), timestamp: Date.now() };
+    if (isNew) this.data.xp = (this.data.xp || 0) + 25;   // bonus 1re résolution
+    this.save();
+    return isNew;
+  },
+
   // ── Examen : date cible + préparation ───────────────────────
   setExamDate(iso) { this.data.examDate = iso || null; this.save(); },
   examCountdown() {
@@ -1765,7 +1778,9 @@ const BADGES = [
   { id: 'niveau-5',    nom: 'Niveau 5',     desc: 'Atteindre le niveau 5', icon: 'star',
     earned: s => s.levelInfo().level >= 5 },
   { id: 'maitrise',    nom: 'Maîtrise',     desc: '80 % de réussite (50 Q+)', icon: 'trending-up',
-    earned: s => { let t = 0, c = 0; Object.values(s.data.questionStats).forEach(q => { t += q.seen; c += q.correct; }); return t >= 50 && c / t >= 0.8; } }
+    earned: s => { let t = 0, c = 0; Object.values(s.data.questionStats).forEach(q => { t += q.seen; c += q.correct; }); return t >= 50 && c / t >= 0.8; } },
+  { id: 'clinicien',   nom: 'Clinicien',    desc: 'Résoudre 3 cas pratiques', icon: 'clipboard',
+    earned: s => Object.keys(s.data.casDone || {}).length >= 3 }
 ];
 
 // ─── UTILITAIRES ────────────────────────────────────────────────
