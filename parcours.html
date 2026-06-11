@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>NaturoApp — Mon parcours</title>
+  <meta name="theme-color" content="#1A5C45">
+  <link rel="manifest" href="manifest.json">
+  <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="NaturoApp">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Lora:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+  <script>try{var t=localStorage.getItem('naturoapp_theme');if(t==='dark'||((!t||t==='auto')&&window.matchMedia('(prefers-color-scheme:dark)').matches)){document.documentElement.setAttribute('data-theme','dark');}else{document.documentElement.setAttribute('data-theme','light');}if(!sessionStorage.getItem('naturoapp_active'))document.documentElement.classList.add('pre-lock');}catch(e){}</script>
+  <style>
+    .pc-hero { display:flex; align-items:center; gap:18px;
+      background: radial-gradient(120% 140% at 0% 0%, #1F6B50 0, rgba(31,107,80,0) 55%), linear-gradient(135deg, var(--c-green-deep), var(--c-green));
+      color:#fff; border-radius:var(--r-xl); padding:24px 26px; margin-bottom:18px; box-shadow:var(--shadow-lg); }
+    .pc-hero h1 { color:#fff; font-size:24px; }
+    .pc-hero p { color:rgba(255,255,255,.85); font-size:13px; margin-top:2px; }
+    .pc-lvl { width:74px; height:74px; flex-shrink:0; border-radius:50%; background:rgba(255,255,255,.18);
+      border:2px solid rgba(255,255,255,.5); display:flex; flex-direction:column; align-items:center; justify-content:center; line-height:1; }
+    .pc-lvl span { font-size:10px; text-transform:uppercase; letter-spacing:.5px; color:rgba(255,255,255,.85); }
+    .pc-lvl b { font-family:var(--font-display); font-size:30px; font-weight:700; color:#fff; }
+    .pc-hero__xp { margin-top:8px; height:7px; border-radius:4px; background:rgba(255,255,255,.25); overflow:hidden; max-width:280px; }
+    .pc-hero__xp i { display:block; height:100%; background:#fff; border-radius:4px; }
+
+    .pc-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(140px,1fr)); gap:12px; }
+    .pc-tile { background:var(--c-white); border:1px solid var(--c-border); border-radius:var(--r-md); box-shadow:var(--shadow-sm); padding:16px; text-align:center; }
+    .pc-tile__n { font-family:var(--font-display); font-size:26px; font-weight:700; color:var(--c-green-deep); }
+    .pc-tile__l { font-size:12px; color:var(--c-mid); margin-top:2px; }
+
+    .badge-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(150px,1fr)); gap:12px; }
+    .bdg { display:flex; gap:10px; align-items:center; background:var(--c-white); border:1px solid var(--c-border); border-radius:var(--r-md); padding:12px; }
+    .bdg__ico { width:40px;height:40px;flex-shrink:0;border-radius:12px;display:flex;align-items:center;justify-content:center; background:var(--c-green-pale); color:var(--c-green); }
+    .bdg__ico .app-icon { width:22px;height:22px; }
+    .bdg__n { font-weight:700; font-size:13.5px; }
+    .bdg__d { font-size:11.5px; color:var(--c-mid); }
+    .bdg.locked { opacity:.5; }
+    .bdg.locked .bdg__ico { background:var(--c-border); color:var(--c-mid); }
+    .bdg.earned .bdg__ico { background:linear-gradient(135deg,#E9C46A,#C4873A); color:#fff; }
+
+    .next-card { background:linear-gradient(135deg,#14503B,#27896A); color:#fff; border-radius:var(--r-lg); padding:20px 22px; }
+    .next-card h3 { color:#fff; font-size:17px; }
+    .next-card p { color:rgba(255,255,255,.88); font-size:13.5px; margin:6px 0 14px; }
+    .next-card .btn { background:#fff; color:var(--c-green-deep); }
+    .prep-row { display:flex; align-items:center; gap:10px; font-size:13px; color:var(--c-mid); margin-top:8px; }
+  </style>
+</head>
+<body>
+
+<nav class="topnav">
+  <a href="index.html" class="topnav__logo">
+    <div class="topnav__logo-icon" data-icon="leaf"></div>
+    <div><div class="topnav__logo-text">NaturoApp</div><span class="topnav__logo-sub">Révision Naturopathie</span></div>
+  </a>
+  <ul class="topnav__nav">
+    <li><a href="index.html"><span class="nav-ico" data-icon="home"></span> <span class="nav-label">Accueil</span></a></li>
+    <li><a href="cours.html"><span class="nav-ico" data-icon="book"></span> <span class="nav-label">Cours</span></a></li>
+    <li><a href="revision.html"><span class="nav-ico" data-icon="book-open"></span> <span class="nav-label">Révision</span></a></li>
+    <li><a href="examen.html"><span class="nav-ico" data-icon="edit"></span> <span class="nav-label">Examen</span></a></li>
+    <li><a href="stats.html"><span class="nav-ico" data-icon="chart"></span> <span class="nav-label">Stats</span></a></li>
+  </ul>
+  <button class="nav-lock" id="nav-search" data-icon="search" title="Rechercher (Ctrl/Cmd+K)" aria-label="Rechercher"></button>
+  <a class="nav-lock" id="nav-settings" href="reglages.html" data-icon="settings" title="Réglages" aria-label="Réglages"></a>
+  <button class="nav-lock" id="nav-theme" data-icon="moon" title="Thème sombre" aria-label="Changer de thème"></button>
+  <button class="nav-lock" id="nav-lock" data-icon="lock" title="Verrouiller l'app" aria-label="Verrouiller"></button>
+</nav>
+
+<div class="page" style="max-width:760px;">
+  <div id="pc-hero" class="pc-hero"></div>
+
+  <div class="section">
+    <h2 class="mb-16"><span data-icon="target"></span> Ma préparation</h2>
+    <div class="card"><div class="card__body" id="pc-prep"></div></div>
+  </div>
+
+  <div class="section">
+    <h2 class="mb-16"><span data-icon="activity"></span> En chiffres</h2>
+    <div class="pc-grid" id="pc-stats"></div>
+  </div>
+
+  <div class="section">
+    <h2 class="mb-16"><span data-icon="award"></span> Mes badges <span id="pc-badge-count" class="text-sm text-mid"></span></h2>
+    <div class="badge-grid" id="pc-badges"></div>
+  </div>
+
+  <div class="section">
+    <div class="next-card" id="pc-next"></div>
+  </div>
+</div>
+
+<nav class="bottomnav">
+  <a href="index.html"><span class="bn-ico" data-icon="home"></span> Accueil</a>
+  <a href="cours.html"><span class="bn-ico" data-icon="book"></span> Cours</a>
+  <a href="revision.html"><span class="bn-ico" data-icon="book-open"></span> Révision</a>
+  <a href="examen.html"><span class="bn-ico" data-icon="edit"></span> Examen</a>
+  <a href="stats.html"><span class="bn-ico" data-icon="chart"></span> Stats</a>
+</nav>
+
+<div id="toast-container"></div>
+
+<script src="content.js"></script>
+<script src="app.js"></script>
+<script>
+const { State, BADGES, icon, escapeHtml, progressRing } = window.APP;
+
+function render() {
+  const li = State.levelInfo();
+  const rd = State.getReadiness();
+  const seen = Object.values(State.data.questionStats).reduce((a, s) => a + s.seen, 0);
+  const score = State.getOverallScore();
+  const streak = State.data.dailyStreak || 0;
+  const cas = Object.keys(State.data.casDone || {}).length;
+  const fiches = State.data.fichesSeries || 0;
+
+  // Hero
+  document.getElementById('pc-hero').innerHTML = `
+    <div class="pc-lvl"><span>Niv</span><b>${li.level}</b></div>
+    <div style="flex:1;">
+      <h1>${escapeHtml(li.title)}</h1>
+      <p>${li.xp} XP · plus que ${li.perLevel - li.inLevel} XP pour le niveau ${li.level + 1}</p>
+      <div class="pc-hero__xp"><i style="width:${li.pct}%"></i></div>
+    </div>`;
+
+  // Préparation
+  const cd = State.examCountdown();
+  const pj = State.getProjection();
+  let prepHtml = `
+    <b>Préparation : ${rd.pct}% maîtrisé</b>
+    <div class="text-sm text-mid" style="margin:4px 0 8px;">${rd.mastered}/${rd.total} questions solides</div>
+    <div class="progress-bar"><div class="progress-bar__fill" style="width:${rd.pct}%"></div></div>`;
+  if (cd) {
+    prepHtml += `<div class="prep-row">${icon('calendar')} Examen ${cd.days < 0 ? 'passé' : (cd.days === 0 ? "aujourd'hui" : 'dans ' + cd.days + ' jours')}`;
+    if (pj.daysToReady != null && pj.readyDateISO) {
+      const d = new Date(pj.readyDateISO + 'T00:00:00').toLocaleDateString('fr-FR', { day: 'numeric', month: 'long' });
+      prepHtml += ` · ${pj.onTrack ? 'dans les temps 👏' : 'accélère ⏳'} (prêt·e ~${d})`;
+    }
+    prepHtml += `</div>`;
+  } else {
+    prepHtml += `<div class="prep-row">${icon('calendar')} <a href="reglages.html" style="color:var(--c-green);font-weight:600;">Définir ma date d'examen</a> pour activer le coach.</div>`;
+  }
+  document.getElementById('pc-prep').innerHTML = prepHtml;
+  window.APP.hydrateIcons(document.getElementById('pc-prep'));
+
+  // Chiffres
+  const tiles = [
+    { n: seen, l: 'questions vues' },
+    { n: score + '%', l: 'réussite globale' },
+    { n: streak, l: 'jours de série' },
+    { n: cas, l: 'cas résolus' },
+    { n: fiches, l: 'séries de fiches' },
+    { n: li.level, l: 'niveau' }
+  ];
+  document.getElementById('pc-stats').innerHTML = tiles.map(t => `<div class="pc-tile"><div class="pc-tile__n">${t.n}</div><div class="pc-tile__l">${t.l}</div></div>`).join('');
+
+  // Badges
+  State.refreshBadges();
+  const ownedN = BADGES.filter(b => State.hasBadge(b.id)).length;
+  document.getElementById('pc-badge-count').textContent = `(${ownedN}/${BADGES.length})`;
+  document.getElementById('pc-badges').innerHTML = BADGES.map(b => {
+    const got = State.hasBadge(b.id);
+    return `<div class="bdg ${got ? 'earned' : 'locked'}">
+      <span class="bdg__ico">${icon(got ? b.icon : 'lock')}</span>
+      <div><div class="bdg__n">${escapeHtml(b.nom)}</div><div class="bdg__d">${escapeHtml(b.desc)}</div></div>
+    </div>`;
+  }).join('');
+
+  // Prochaine étape
+  const wt = State.weakThemes(3);
+  const next = document.getElementById('pc-next');
+  next.innerHTML = `
+    <h3>${icon('sparkles')} Ta prochaine étape</h3>
+    <p>${wt.length ? 'Concentre-toi sur : <b>' + wt.map(escapeHtml).join(', ') + '</b>.' : 'Continue sur ta lancée !'} Une séance intelligente cible automatiquement ces points.</p>
+    <div style="display:flex;gap:10px;flex-wrap:wrap;">
+      <a class="btn" href="revision.html?mode=smart">${icon('play')} Séance intelligente</a>
+      <a class="btn" style="background:rgba(255,255,255,.2);color:#fff" href="tuteur.html">${icon('message')} Demander au tuteur</a>
+    </div>`;
+  window.APP.hydrateIcons(next);
+}
+
+window.APP.onReady(() => { State.init(); render(); });
+</script>
+</body>
+</html>

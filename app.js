@@ -2006,7 +2006,8 @@ const ICON_PATHS = {
   sparkles:    '<path d="M12 3l1.9 4.6L18.5 9.5l-4.6 1.9L12 16l-1.9-4.6L5.5 9.5l4.6-1.9z"/><path d="M19 14l.7 1.8 1.8.7-1.8.7-.7 1.8-.7-1.8-1.8-.7 1.8-.7z"/>',
   send:        '<line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/>',
   message:     '<path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/>',
-  play:        '<polygon points="5 3 19 12 5 21 5 3"/>'
+  play:        '<polygon points="5 3 19 12 5 21 5 3"/>',
+  mic:         '<path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/>'
 };
 
 function icon(name, opts) {
@@ -2679,6 +2680,35 @@ const tts = {
   }
 };
 
+// ── Reconnaissance vocale (dictée / réponses orales) ────────────
+const stt = {
+  supported() { return 'SpeechRecognition' in window || 'webkitSpeechRecognition' in window; },
+  _rec: null,
+  // onResult(texteCourant) à chaque mise à jour ; onEnd(texteFinal) à la fin.
+  start(onResult, onEnd) {
+    if (!this.supported()) return false;
+    const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+    const r = new SR();
+    r.lang = 'fr-FR'; r.interimResults = true; r.continuous = false; r.maxAlternatives = 1;
+    let finalT = '';
+    r.onresult = e => {
+      let interim = '';
+      for (let i = e.resultIndex; i < e.results.length; i++) {
+        const t = e.results[i][0].transcript;
+        if (e.results[i].isFinal) finalT += t; else interim += t;
+      }
+      if (onResult) onResult((finalT + ' ' + interim).trim());
+    };
+    r.onerror = () => {};
+    r.onend = () => { this._rec = null; if (onEnd) onEnd(finalT.trim()); };
+    this._rec = r;
+    try { r.start(); } catch (e) { this._rec = null; return false; }
+    return true;
+  },
+  stop() { if (this._rec) { try { this._rec.stop(); } catch (e) {} } },
+  listening() { return !!this._rec; }
+};
+
 // ── onReady : différé jusqu'à ce qu'un profil soit actif ─────────
 let _ready = false;
 const _readyCbs = [];
@@ -3053,7 +3083,7 @@ window.APP = {
   answerKey, isMultiAnswer, isSelectionCorrect, getDailyChallenge,
   icon, hydrateIcons, escapeHtml,
   Profiles, onReady, currentProfile,
-  applyTheme, toggleTheme, setTheme, getThemePref, sfx, tts,
+  applyTheme, toggleTheme, setTheme, getThemePref, sfx, tts, stt,
   courseToFlashcards, gardenSVG, searchAll, openSearch,
   AI_PROVIDERS, getAIProvider, setAIProvider, getAIProviderConfig,
   getAIKey, setAIKey, getAIModel, setAIModel,

@@ -153,16 +153,24 @@ window.NATURO_CONTENT = {
       resume: 'Les 4 humeurs et leurs tempéraments, base de la typologie.',
       duree: 6,
       sections: [
-        { titre: 'Les 4 humeurs', contenu: "Hippocrate associe 4 humeurs à 4 tempéraments :\n- **Sang** → *sanguin*\n- **Lymphe** → *lymphatique* (flegmatique)\n- **Bile jaune** → *bilieux* (colérique)\n- **Bile noire** → *nerveux* (mélancolique)" },
-        { titre: 'À quoi ça sert ?', contenu: "Repérer le **tempérament dominant** aide à **individualiser** les conseils (alimentation, rythme, plantes). C'est un outil d'observation, pas une étiquette figée." }
+        { titre: 'Les 4 humeurs', contenu: "Hippocrate associe 4 humeurs à 4 tempéraments, eux-mêmes liés à 4 qualités (chaud/froid, sec/humide) :\n- **Sang** (chaud-humide) → *sanguin*\n- **Lymphe** (froid-humide) → *lymphatique* (flegmatique)\n- **Bile jaune** (chaud-sec) → *bilieux* (colérique)\n- **Bile noire** (froid-sec) → *nerveux* (mélancolique)" },
+        { titre: 'Le sanguin', contenu: "Chaud et humide. **Extraverti, jovial, sociable**, bon vivant, plein d'énergie et d'appétit.\n- *Terrain* : sang et circulation ; tendance aux **excès** (table, plaisirs), à la pléthore.\n- *Conseils* : modération alimentaire, mouvement régulier, surveiller la circulation." },
+        { titre: 'Le lymphatique (flegmatique)', contenu: "Froid et humide. **Calme, posé, endurant**, mais lent à démarrer.\n- *Terrain* : système lymphatique ; tendance à la **lenteur, la prise de poids, la rétention** et la congestion.\n- *Conseils* : stimulation, activité physique, drainage, alimentation peu mucogène." },
+        { titre: 'Le bilieux (colérique)', contenu: "Chaud et sec. **Volontaire, ardent, meneur**, mais impatient et irritable.\n- *Terrain* : foie et vésicule ; tendance **inflammatoire** et à la colère.\n- *Conseils* : détente, soutien hépatique (artichaut, radis noir), gestion des émotions." },
+        { titre: 'Le nerveux (mélancolique)', contenu: "Froid et sec. **Sensible, cérébral, introspectif et créatif**, mais anxieux.\n- *Terrain* : système nerveux ; tendance à l'**anxiété**, aux troubles du **sommeil** et de la **digestion**.\n- *Conseils* : reminéralisation (magnésium), ancrage, sommeil, plantes calmantes." },
+        { titre: 'À quoi ça sert ?', contenu: "Repérer le **tempérament dominant** (souvent un mélange) aide à **individualiser** les conseils : alimentation, rythme de vie, plantes, gestion émotionnelle. C'est un **outil d'observation**, pas une étiquette figée." }
       ],
       pointsCles: [
         '4 humeurs : sang, lymphe, bile jaune, bile noire',
         '4 tempéraments : sanguin, lymphatique, bilieux, nerveux',
-        'Sert à individualiser les conseils'
+        'Sanguin = chaud-humide · lymphatique = froid-humide · bilieux = chaud-sec · nerveux = froid-sec',
+        'Sanguin → excès/circulation · lymphatique → lenteur/rétention · bilieux → foie/colère · nerveux → système nerveux/anxiété',
+        'Sert à individualiser les conseils (souvent un tempérament mixte)'
       ],
       definitions: [
-        { terme: 'Tempérament', def: 'Profil de constitution selon l\'humeur dominante (Hippocrate).' }
+        { terme: 'Tempérament', def: 'Profil de constitution selon l\'humeur dominante (Hippocrate).' },
+        { terme: 'Pléthore', def: 'Excès, surcharge — tendance du sanguin (trop de sang, de richesse alimentaire).' },
+        { terme: 'Atrabile', def: 'Autre nom de la bile noire, associée au tempérament nerveux/mélancolique.' }
       ],
       questionIds: [83]
     },
