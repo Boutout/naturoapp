@@ -100,6 +100,37 @@
 
     .account-row { display: flex; align-items: center; justify-content: space-between; gap: 14px; flex-wrap: wrap; }
 
+    /* Grille « Par thème » — compacte */
+    .cat-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+      gap: 10px;
+    }
+    .cat-tile {
+      background: var(--c-white); border: 1px solid var(--c-border);
+      border-radius: var(--r-sm); padding: 11px 13px;
+      display: flex; flex-direction: column; gap: 7px;
+    }
+    .cat-tile__top { display: flex; align-items: baseline; justify-content: space-between; gap: 8px; }
+    .cat-tile__name { font-weight: 600; font-size: 13px; line-height: 1.25; }
+    .cat-tile__pct { font-weight: 700; font-size: 13.5px; flex-shrink: 0; }
+    .cat-tile__meta { font-size: 11px; color: var(--c-mid); }
+
+    /* En-tête repliable */
+    .collapse-head {
+      width: 100%; display: flex; align-items: center; justify-content: space-between;
+      background: none; border: none; cursor: pointer; padding: 6px 0;
+      font-family: var(--font-body); color: var(--c-dark);
+    }
+    .collapse-head__title { display: inline-flex; align-items: center; gap: 10px;
+      font-family: var(--font-display); font-size: 22px; font-weight: 600; }
+    .collapse-head__title [data-icon] .app-icon { width: 20px; height: 20px; color: var(--c-green); }
+    .collapse-head__count { font-family: var(--font-body); font-size: 13px; font-weight: 600;
+      color: var(--c-green-deep); background: var(--c-green-pale); border-radius: 20px; padding: 2px 10px; }
+    .collapse-chevron { color: var(--c-mid); transition: transform .25s var(--ease-out); display: inline-flex; }
+    .collapse-chevron .app-icon { width: 20px; height: 20px; }
+    .collapse-head[aria-expanded="true"] .collapse-chevron { transform: rotate(90deg); color: var(--c-green); }
+
     /* Reset zone */
     .danger-zone {
       background: var(--c-red-light);
@@ -184,7 +215,7 @@
   <!-- PROGRESSION PAR JOUR -->
   <div class="section">
     <div class="section-header" style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;">
-      <h2><span data-icon="trending-up"></span> Progression par thème</h2>
+      <h2><span data-icon="trending-up"></span> Progression par jour</h2>
       <a href="revision.html" class="btn btn-ghost btn-sm">Réviser →</a>
     </div>
     <div class="card">
@@ -192,53 +223,46 @@
     </div>
   </div>
 
-  <div style="display:grid;grid-template-columns:1fr 1fr;gap:24px;margin-bottom:36px;" class="two-col-stats">
+  <!-- PAR THÈME -->
+  <div class="section">
+    <h2 class="mb-16"><span data-icon="tag"></span> Par thème</h2>
+    <div class="cat-grid" id="cat-progress"><!-- JS --></div>
+  </div>
 
-    <!-- PAR CATÉGORIE -->
-    <div>
-      <h2 class="mb-16"><span data-icon="tag"></span> Par catégorie</h2>
-      <div class="card">
-        <div class="card__body" id="cat-progress"><!-- JS --></div>
-      </div>
-    </div>
-
-    <!-- HISTORIQUE EXAMENS -->
-    <div>
-      <h2 class="mb-16"><span data-icon="edit"></span> Historique examens</h2>
-      <div class="card">
-        <div class="card__body" style="padding:0;overflow:hidden;">
-          <div id="exam-history" style="overflow-x:auto;">
-            <table class="history-table">
-              <thead>
-                <tr>
-                  <th>Date</th>
-                  <th>Format</th>
-                  <th>Score</th>
-                  <th>Note</th>
-                </tr>
-              </thead>
-              <tbody id="exam-history-body">
-                <tr><td colspan="4" style="text-align:center;color:var(--c-mid);padding:24px;">Aucun examen passé</td></tr>
-              </tbody>
-            </table>
-          </div>
+  <!-- HISTORIQUE EXAMENS -->
+  <div class="section">
+    <h2 class="mb-16"><span data-icon="edit"></span> Historique examens</h2>
+    <div class="card">
+      <div class="card__body" style="padding:0;overflow:hidden;">
+        <div id="exam-history" style="overflow-x:auto;">
+          <table class="history-table">
+            <thead>
+              <tr><th>Date</th><th>Format</th><th>Score</th><th>Note</th></tr>
+            </thead>
+            <tbody id="exam-history-body">
+              <tr><td colspan="4" style="text-align:center;color:var(--c-mid);padding:24px;">Aucun examen passé</td></tr>
+            </tbody>
+          </table>
         </div>
       </div>
     </div>
   </div>
 
-  <!-- TOUTES LES QUESTIONS -->
+  <!-- TOUTES LES QUESTIONS (repliable) -->
   <div class="section">
-    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;flex-wrap:wrap;gap:12px;">
-      <h2><span data-icon="clipboard"></span> Toutes les questions</h2>
-      <div style="display:flex;gap:8px;flex-wrap:wrap;">
+    <button class="collapse-head" id="q-toggle" aria-expanded="false">
+      <span class="collapse-head__title"><span data-icon="clipboard"></span> Toutes les questions <span class="collapse-head__count" id="q-count">84</span></span>
+      <span class="collapse-chevron" id="q-chevron" data-icon="arrow-right"></span>
+    </button>
+    <div id="q-collapse" hidden>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;margin:14px 0 16px;">
         <button class="btn btn-ghost btn-sm" id="filter-all"    onclick="setFilter('all')">Toutes</button>
         <button class="btn btn-ghost btn-sm" id="filter-bad"    onclick="setFilter('bad')"><span data-icon="x-circle"></span> Difficiles</button>
         <button class="btn btn-ghost btn-sm" id="filter-unseen" onclick="setFilter('unseen')"><span data-icon="eye"></span> Non vues</button>
         <button class="btn btn-ghost btn-sm" id="filter-good"   onclick="setFilter('good')"><span data-icon="check-circle"></span> Maîtrisées</button>
       </div>
+      <div class="q-grid" id="q-grid"><!-- JS --></div>
     </div>
-    <div class="q-grid" id="q-grid"><!-- JS --></div>
   </div>
 
   <!-- COMPTE & SAUVEGARDE -->
@@ -426,34 +450,39 @@ function renderDayProgress() {
   }
 }
 
+// Thème principal = avant le « / » (ex : "Nutrition / Lipides" → "Nutrition")
+function mainCategory(cat) { return cat.split('/')[0].trim(); }
+
 function renderCatProgress() {
   const el = document.getElementById('cat-progress');
-  el.innerHTML = '';
   const qs = State.data.questionStats;
 
-  CATEGORIES.forEach(cat => {
-    const catQs = QUESTIONS.filter(q => q.categorie === cat);
-    let correct = 0, total = 0;
-    catQs.forEach(q => {
-      const s = qs[q.id];
-      total += s.seen;
-      correct += s.correct;
-    });
-    const pct = total > 0 ? Math.round((correct / total) * 100) : 0;
-
-    const row = document.createElement('div');
-    row.className = 'cat-row';
-    row.innerHTML = `
-      <div class="cat-name">${cat}</div>
-      <div class="cat-bar">
-        <div class="progress-bar progress-bar--sm">
-          <div class="progress-bar__fill" style="width:${pct}%;background:${getScoreColor(pct)}"></div>
-        </div>
-      </div>
-      <div class="cat-pct" style="color:${getScoreColor(pct)}">${total > 0 ? pct + '%' : '—'}</div>
-    `;
-    el.appendChild(row);
+  // Regroupe les 45 sous-catégories en ~15 thèmes principaux
+  const groups = {};
+  QUESTIONS.forEach(q => {
+    const k = mainCategory(q.categorie);
+    if (!groups[k]) groups[k] = { count: 0, seen: 0, total: 0, correct: 0 };
+    const s = qs[q.id];
+    groups[k].count++;
+    if (s.seen > 0) groups[k].seen++;
+    groups[k].total += s.seen;
+    groups[k].correct += s.correct;
   });
+
+  const entries = Object.entries(groups).sort((a, b) => b[1].count - a[1].count);
+  el.innerHTML = entries.map(([name, g]) => {
+    const pct = g.total > 0 ? Math.round(g.correct / g.total * 100) : null;
+    const color = pct === null ? 'var(--c-mid)' : getScoreColor(pct);
+    return `
+      <div class="cat-tile">
+        <div class="cat-tile__top">
+          <span class="cat-tile__name">${name}</span>
+          <span class="cat-tile__pct" style="color:${color}">${pct === null ? '—' : pct + '%'}</span>
+        </div>
+        <div class="progress-bar progress-bar--sm"><div class="progress-bar__fill" style="width:${pct || 0}%;background:${color}"></div></div>
+        <div class="cat-tile__meta">${g.seen}/${g.count} ${g.count > 1 ? 'questions vues' : 'question vue'}</div>
+      </div>`;
+  }).join('');
 }
 
 function renderExamHistory() {
@@ -484,6 +513,7 @@ function renderQGrid() {
   const grid = document.getElementById('q-grid');
   grid.innerHTML = '';
   const qs = State.data.questionStats;
+  const qc = document.getElementById('q-count'); if (qc) qc.textContent = QUESTIONS.length;
 
   let filtered = QUESTIONS;
   if (currentFilter === 'bad')    filtered = QUESTIONS.filter(q => { const s = qs[q.id]; return s.seen > 0 && (s.correct / s.seen) < 0.6; });
@@ -540,13 +570,14 @@ function showToast(msg, type = 'info') {
   setTimeout(() => el.remove(), 3000);
 }
 
-// Responsive 2-col
-const mq = window.matchMedia('(max-width: 800px)');
-function applyLayout(mq) {
-  document.querySelector('.two-col-stats').style.gridTemplateColumns = mq.matches ? '1fr' : '1fr 1fr';
-}
-mq.addEventListener('change', applyLayout);
-applyLayout(mq);
+// Section « Toutes les questions » repliable
+const qToggle = document.getElementById('q-toggle');
+qToggle.addEventListener('click', () => {
+  const body = document.getElementById('q-collapse');
+  const open = body.hidden;
+  body.hidden = !open;
+  qToggle.setAttribute('aria-expanded', String(open));
+});
 
 // ── COMPTE & SAUVEGARDE ───────────────────────────────────────
 function wireAccount() {
