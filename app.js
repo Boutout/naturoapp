@@ -1479,6 +1479,7 @@ const State = {
     if (!Array.isArray(d.badges)) d.badges = [];
     if (!d.challenges) d.challenges = {};   // "YYYY-MM-DD" -> { total, correct, pct }
     if (!d.casDone) d.casDone = {};         // idCas -> { total, correct, pct }
+    if (typeof d.fichesSeries !== 'number') d.fichesSeries = 0;  // séries de fiches terminées
     if (typeof d.examDate === 'undefined') d.examDate = null;   // 'YYYY-MM-DD' ou null
     QUESTIONS.forEach(q => {
       const s = d.questionStats[q.id];
@@ -1510,6 +1511,7 @@ const State = {
       badges: [],          // ids des badges débloqués
       challenges: {},      // "YYYY-MM-DD" -> { total, correct, pct } (défi du jour)
       casDone: {},         // idCas -> { total, correct, pct } (cas pratiques résolus)
+      fichesSeries: 0,     // nb de séries de fiches de révision terminées
       examDate: null,      // date d'examen visée ('YYYY-MM-DD')
       dailyStats: {},      // "YYYY-MM-DD" -> { questions, correct }
     };
@@ -1721,6 +1723,13 @@ const State = {
     return isNew;
   },
 
+  // ── Fiches de révision ──────────────────────────────────────
+  recordFichesSeries(acquis) {
+    this.data.fichesSeries = (this.data.fichesSeries || 0) + 1;
+    this.data.xp = (this.data.xp || 0) + Math.min(20, (acquis || 0) * 2);
+    this.save();
+  },
+
   // ── Examen : date cible + préparation ───────────────────────
   setExamDate(iso) { this.data.examDate = iso || null; this.save(); },
   examCountdown() {
@@ -1841,7 +1850,21 @@ const BADGES = [
   { id: 'maitrise',    nom: 'Maîtrise',     desc: '80 % de réussite (50 Q+)', icon: 'trending-up',
     earned: s => { let t = 0, c = 0; Object.values(s.data.questionStats).forEach(q => { t += q.seen; c += q.correct; }); return t >= 50 && c / t >= 0.8; } },
   { id: 'clinicien',   nom: 'Clinicien',    desc: 'Résoudre 3 cas pratiques', icon: 'clipboard',
-    earned: s => Object.keys(s.data.casDone || {}).length >= 3 }
+    earned: s => Object.keys(s.data.casDone || {}).length >= 3 },
+  { id: 'praticien',   nom: 'Praticien',    desc: 'Résoudre 6 cas pratiques', icon: 'clipboard',
+    earned: s => Object.keys(s.data.casDone || {}).length >= 6 },
+  { id: 'assidu-14',   nom: 'Inarrêtable',  desc: '14 jours d\'affilée', icon: 'flame',
+    earned: s => (s.data.dailyStreak || 0) >= 14 || (s.data.bestDailyStreak || 0) >= 14 },
+  { id: 'examinateur', nom: 'Examinateur',  desc: 'Passer 3 examens blancs', icon: 'edit',
+    earned: s => (s.data.examSessions || []).length >= 3 },
+  { id: 'defi-7',      nom: 'Relève-défi',  desc: 'Relever 7 défis du jour', icon: 'zap',
+    earned: s => Object.keys(s.data.challenges || {}).length >= 7 },
+  { id: 'studieux',    nom: 'Studieux',     desc: 'Terminer une série de fiches', icon: 'layers',
+    earned: s => (s.data.fichesSeries || 0) >= 1 },
+  { id: 'fiche-pro',   nom: 'Fiche pro',    desc: 'Terminer 5 séries de fiches', icon: 'layers',
+    earned: s => (s.data.fichesSeries || 0) >= 5 },
+  { id: 'niveau-10',   nom: 'Niveau 10',    desc: 'Atteindre le niveau 10', icon: 'star',
+    earned: s => s.levelInfo().level >= 10 }
 ];
 
 // ─── UTILITAIRES ────────────────────────────────────────────────

@@ -100,6 +100,14 @@
         <span class="switch__track"></span>
       </label>
     </div>
+
+    <div class="setting-row">
+      <div class="setting-row__label"><b>Rappel quotidien</b><p>Une notification par jour pour ne pas oublier de réviser <span id="notif-note" style="color:var(--c-mid);"></span></p></div>
+      <label class="switch">
+        <input type="checkbox" id="notif-toggle">
+        <span class="switch__track"></span>
+      </label>
+    </div>
   </div></div>
 
   <div class="card" id="tuteur" style="margin-top:18px;"><div class="card__body">
@@ -240,6 +248,36 @@ soundToggle.addEventListener('change', () => {
     A.setAIKey(pid, ''); keyInput.value = ''; refreshState(pid);
     toast('Clé effacée');
   });
+})();
+
+// ── Rappel quotidien (notification, best-effort) ──
+(function () {
+  const toggle = document.getElementById('notif-toggle');
+  const note = document.getElementById('notif-note');
+  if (!toggle) return;
+  if (!('Notification' in window)) { note.textContent = '— non supporté ici.'; toggle.disabled = true; return; }
+  toggle.checked = localStorage.getItem('naturoapp_notif') === '1' && Notification.permission === 'granted';
+
+  async function enable() {
+    let perm = Notification.permission;
+    if (perm !== 'granted') perm = await Notification.requestPermission();
+    if (perm !== 'granted') { toggle.checked = false; note.textContent = '— autorisation refusée.'; return; }
+    localStorage.setItem('naturoapp_notif', '1');
+    note.textContent = '— activé.';
+    try {
+      const reg = await navigator.serviceWorker.ready;
+      if (reg.periodicSync) {
+        const st = await navigator.permissions.query({ name: 'periodic-background-sync' });
+        if (st.state === 'granted') await reg.periodicSync.register('daily-reminder', { minInterval: 24 * 60 * 60 * 1000 });
+      }
+    } catch (e) {}
+  }
+  function disable() {
+    localStorage.setItem('naturoapp_notif', '0');
+    note.textContent = '';
+    navigator.serviceWorker.ready.then(reg => { if (reg.periodicSync) reg.periodicSync.unregister('daily-reminder').catch(() => {}); }).catch(() => {});
+  }
+  toggle.addEventListener('change', () => { toggle.checked ? enable() : disable(); });
 })();
 
 // ── Objectif quotidien (nécessite le profil → onReady) ──

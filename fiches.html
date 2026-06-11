@@ -95,7 +95,7 @@
 <script src="content.js"></script>
 <script src="app.js"></script>
 <script>
-const { icon, escapeHtml, shuffle, sfx } = window.APP;
+const { icon, escapeHtml, shuffle, sfx, State } = window.APP;
 const ALL = (window.NATURO_CONTENT && window.NATURO_CONTENT.fiches) || [];
 const LEVELS = [
   { lvl: 1, nom: 'Niveau 1 — Bases', desc: 'Définitions et concepts essentiels', color: '#4EBF93' },
@@ -187,6 +187,8 @@ function next(ok) {
 function renderDone() {
   const total = cards.length;
   const pct = total ? Math.round(acquis / total * 100) : 0;
+  let fresh = [];
+  try { State.recordFichesSeries(acquis); fresh = State.refreshBadges(); } catch (e) {}
   studyEl.innerHTML = `
     <div class="fi-done">
       <div style="display:flex;justify-content:center;">${icon(pct >= 80 ? 'party' : 'thumbs-up')}</div>
@@ -203,10 +205,17 @@ function renderDone() {
   if (redo) redo.addEventListener('click', () => { cards = shuffle(retry); idx = 0; acquis = 0; retry = []; renderCard(); });
   document.getElementById('fi-menu').addEventListener('click', renderPicker);
   if (pct >= 80 && total >= 3) { window.APP.celebrate(); if (sfx) sfx.levelup(); }
+  fresh.forEach(b => {
+    const t = document.createElement('div');
+    t.className = 'toast toast-success';
+    t.innerHTML = icon('award') + ' Badge : <b>' + escapeHtml(b.nom) + '</b>';
+    document.getElementById('toast-container').appendChild(t);
+    setTimeout(() => t.remove(), 4000);
+  });
   window.scrollTo(0, 0);
 }
 
-window.APP.onReady(renderPicker);
+window.APP.onReady(() => { try { State.init(); } catch (e) {} renderPicker(); });
 </script>
 </body>
 </html>

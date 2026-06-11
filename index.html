@@ -138,6 +138,15 @@
     .smart-cta__go { color: #fff; }
     .smart-cta__go .app-icon { width: 22px; height: 22px; }
 
+    /* ── BANNIÈRE SÉRIE / RAPPEL ── */
+    .streak-banner { display: flex; align-items: center; gap: 12px; text-decoration: none;
+      background: var(--c-ocre-light); border: 1px solid #EBD3AE; border-radius: var(--r-lg);
+      padding: 12px 16px; margin-bottom: 14px; color: #7A4E1A; }
+    .streak-banner__ico { display: inline-flex; color: var(--c-ocre); }
+    .streak-banner__ico .app-icon { width: 22px; height: 22px; }
+    .streak-banner span { font-size: 13.5px; }
+    .streak-banner__go { margin-left: auto; color: var(--c-ocre); display: inline-flex; }
+
     /* ── COACH PRÉDICTIF ── */
     .coach { display: flex; gap: 12px; align-items: center; border-radius: var(--r-lg);
       padding: 14px 16px; margin-bottom: 16px; border: 1px solid var(--c-border);
@@ -426,6 +435,8 @@
     <div class="hero__ring ring-wrap" id="hero-ring"></div>
   </div>
 
+  <div id="streak-banner" style="display:none;"></div>
+
   <!-- SÉANCE INTELLIGENTE DU JOUR -->
   <a class="smart-cta" id="smart-cta" href="revision.html?mode=smart">
     <span class="smart-cta__ico" data-icon="sparkles"></span>
@@ -597,6 +608,11 @@
         <h3>Fiches de révision</h3>
         <p class="text-sm text-mid mt-8">Cartes recto/verso par niveau</p>
       </a>
+      <a href="revision.html?mode=express" class="card card--hover" style="text-decoration:none;color:inherit;padding:22px;">
+        <div class="quick-mode-ico" data-icon="zap"></div>
+        <h3>Révision express</h3>
+        <p class="text-sm text-mid mt-8">5 questions ciblées, en 2 minutes</p>
+      </a>
     </div>
   </div>
 
@@ -691,6 +707,23 @@
     const casDone = Object.keys(State.data.casDone || {}).length;
     const cb = document.getElementById('cas-cta-badge');
     if (cb) cb.textContent = casDone > 0 ? '✓ ' + casDone : '';
+
+    // Bannière série / rappel du jour (si pas encore révisé aujourd'hui)
+    const sb = document.getElementById('streak-banner');
+    if (sb) {
+      const today = new Date().toISOString().split('T')[0];
+      const studiedToday = State.data.lastStudyDay === today;
+      const streak = State.data.dailyStreak || 0;
+      if (!studiedToday) {
+        sb.style.display = 'block';
+        sb.innerHTML = `<a class="streak-banner" href="revision.html?mode=express">
+          <span class="streak-banner__ico">${icon('flame')}</span>
+          <span>${streak >= 1 ? `Série de <b>${streak} jour${streak > 1 ? 's' : ''}</b> — révise aujourd'hui pour la garder !` : `Prêt·e pour ta séance du jour ?`}</span>
+          <span class="streak-banner__go">${icon('arrow-right')}</span>
+        </a>`;
+        window.APP.hydrateIcons(sb);
+      } else { sb.style.display = 'none'; }
+    }
 
     // Séance intelligente : composition adaptée
     const smartSub = document.getElementById('smart-cta-sub');

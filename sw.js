@@ -1,7 +1,7 @@
 /* NaturoApp — Service Worker (PWA)
    Stratégie : app-shell en cache, fonctionne hors-ligne.
    Pense à incrémenter CACHE_VERSION quand tu modifies les fichiers. */
-const CACHE_VERSION = 'naturoapp-v22';
+const CACHE_VERSION = 'naturoapp-v23';
 const APP_SHELL = [
   'index.html',
   'cours.html',
@@ -62,6 +62,30 @@ self.addEventListener('fetch', event => {
         }
         return res;
       }).catch(() => cached);
+    })
+  );
+});
+
+// ── Rappel quotidien (Periodic Background Sync, best-effort) ─────
+self.addEventListener('periodicsync', (event) => {
+  if (event.tag === 'daily-reminder') {
+    event.waitUntil(
+      self.registration.showNotification('NaturoApp 🌿', {
+        body: "Ta séance du jour t'attend — quelques minutes suffisent !",
+        icon: 'icons/icon-192.png',
+        badge: 'icons/icon-192.png',
+        tag: 'daily-reminder'
+      })
+    );
+  }
+});
+
+self.addEventListener('notificationclick', (event) => {
+  event.notification.close();
+  event.waitUntil(
+    self.clients.matchAll({ type: 'window', includeUncontrolled: true }).then((list) => {
+      for (const c of list) { if ('focus' in c) return c.focus(); }
+      if (self.clients.openWindow) return self.clients.openWindow('revision.html?mode=express');
     })
   );
 });
