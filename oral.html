@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>NaturoApp — Examen oral</title>
+  <meta name="theme-color" content="#1A5C45">
+  <link rel="manifest" href="manifest.json">
+  <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="NaturoApp">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Lora:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+  <script>try{var t=localStorage.getItem('naturoapp_theme');if(t==='dark'||((!t||t==='auto')&&window.matchMedia('(prefers-color-scheme:dark)').matches)){document.documentElement.setAttribute('data-theme','dark');}else{document.documentElement.setAttribute('data-theme','light');}if(!sessionStorage.getItem('naturoapp_active'))document.documentElement.classList.add('pre-lock');}catch(e){}</script>
+  <style>
+    .or-hero { background: radial-gradient(120% 140% at 0% 0%, #1F6B50 0, rgba(31,107,80,0) 55%), linear-gradient(135deg, var(--c-green-deep), var(--c-green));
+      color:#fff; border-radius:var(--r-xl); padding:26px 28px; margin-bottom:20px; box-shadow:var(--shadow-lg); }
+    .or-hero h1 { color:#fff; font-size:25px; }
+    .or-hero p { color:rgba(255,255,255,.85); font-size:14px; margin-top:4px; max-width:560px; }
+    .or-setup label { font-weight:600; font-size:14px; display:block; margin:14px 0 6px; }
+    .or-chips { display:flex; gap:8px; flex-wrap:wrap; }
+    .or-chip { border:1.5px solid var(--c-border); background:var(--c-white); border-radius:20px; padding:8px 16px; font-size:14px; cursor:pointer; color:var(--c-dark); font-family:var(--font-body); }
+    .or-chip.active { border-color:var(--c-green); background:var(--c-green-pale); color:var(--c-green-deep); font-weight:600; }
+
+    .or-top { display:flex; align-items:center; gap:12px; margin-bottom:14px; }
+    .or-top .progress-bar { flex:1; }
+    .or-timer { font-family:var(--font-display); font-weight:700; font-size:20px; min-width:54px; text-align:right; }
+    .or-timer.low { color:var(--c-red); }
+    .or-card { background:var(--c-white); border:1px solid var(--c-border); border-radius:var(--r-xl); box-shadow:var(--shadow-md); padding:26px; }
+    .or-q { font-family:var(--font-display); font-size:22px; font-weight:600; line-height:1.35; }
+    .or-listen { background:none; border:none; color:var(--c-green); cursor:pointer; font-size:13px; display:inline-flex; align-items:center; gap:5px; margin-top:10px; padding:0; font-family:var(--font-body); }
+    .or-mic-wrap { text-align:center; margin:18px 0 4px; }
+    .or-mic { width:64px; height:64px; border-radius:50%; border:none; background:linear-gradient(135deg,var(--c-green-light),var(--c-green)); color:#fff; cursor:pointer; display:inline-flex; align-items:center; justify-content:center; box-shadow:var(--shadow-md); }
+    .or-mic .app-icon { width:28px; height:28px; }
+    .or-mic.live { background:var(--c-red); animation:orpulse 1.1s infinite; }
+    @keyframes orpulse { 0%,100%{box-shadow:0 0 0 0 rgba(192,57,43,.45)} 50%{box-shadow:0 0 0 12px rgba(192,57,43,0)} }
+    .or-mic-label { font-size:12px; color:var(--c-mid); margin-top:8px; }
+    .or-transcript { background:var(--c-green-pale); border-radius:var(--r-sm); padding:12px 14px; font-size:14px; margin-top:14px; min-height:20px; color:var(--c-dark); }
+    .or-transcript:empty { display:none; }
+    .or-answer { border-top:1px solid var(--c-border); margin-top:16px; padding-top:14px; }
+    .or-answer b { color:var(--c-green-deep); }
+    .or-eval { display:flex; gap:10px; margin-top:16px; }
+    .or-eval .btn { flex:1; }
+    .or-done { text-align:center; background:linear-gradient(135deg,var(--c-green-deep),var(--c-green)); color:#fff; border-radius:var(--r-xl); padding:32px; }
+    .or-done h2 { color:#fff; font-size:24px; }
+    .or-done__score { font-family:var(--font-display); font-size:44px; font-weight:700; margin:8px 0; }
+  </style>
+</head>
+<body>
+
+<nav class="topnav">
+  <a href="index.html" class="topnav__logo">
+    <div class="topnav__logo-icon" data-icon="leaf"></div>
+    <div><div class="topnav__logo-text">NaturoApp</div><span class="topnav__logo-sub">Révision Naturopathie</span></div>
+  </a>
+  <ul class="topnav__nav">
+    <li><a href="index.html"><span class="nav-ico" data-icon="home"></span> <span class="nav-label">Accueil</span></a></li>
+    <li><a href="cours.html"><span class="nav-ico" data-icon="book"></span> <span class="nav-label">Cours</span></a></li>
+    <li><a href="revision.html"><span class="nav-ico" data-icon="book-open"></span> <span class="nav-label">Révision</span></a></li>
+    <li><a href="examen.html"><span class="nav-ico" data-icon="edit"></span> <span class="nav-label">Examen</span></a></li>
+    <li><a href="stats.html"><span class="nav-ico" data-icon="chart"></span> <span class="nav-label">Stats</span></a></li>
+  </ul>
+  <button class="nav-lock" id="nav-search" data-icon="search" title="Rechercher (Ctrl/Cmd+K)" aria-label="Rechercher"></button>
+  <a class="nav-lock" id="nav-settings" href="reglages.html" data-icon="settings" title="Réglages" aria-label="Réglages"></a>
+  <button class="nav-lock" id="nav-theme" data-icon="moon" title="Thème sombre" aria-label="Changer de thème"></button>
+  <button class="nav-lock" id="nav-lock" data-icon="lock" title="Verrouiller l'app" aria-label="Verrouiller"></button>
+</nav>
+
+<div class="page" style="max-width:640px;">
+  <div id="or-setup">
+    <div class="or-hero">
+      <h1>🎤 Examen oral</h1>
+      <p>L'app te pose une question à voix haute, tu réponds en parlant (chrono), puis tu compares à la réponse modèle. Idéal pour préparer ton oral.</p>
+    </div>
+    <div class="or-setup">
+      <label>Niveau de difficulté</label>
+      <div class="or-chips" id="or-lvl">
+        <button class="or-chip active" data-lvl="all">Tous</button>
+        <button class="or-chip" data-lvl="1">Bases</button>
+        <button class="or-chip" data-lvl="2">Intermédiaire</button>
+        <button class="or-chip" data-lvl="3">Avancé</button>
+      </div>
+      <label>Nombre de questions</label>
+      <div class="or-chips" id="or-count">
+        <button class="or-chip active" data-n="5">5</button>
+        <button class="or-chip" data-n="10">10</button>
+      </div>
+      <label>Temps par question</label>
+      <div class="or-chips" id="or-time">
+        <button class="or-chip" data-t="60">60 s</button>
+        <button class="or-chip active" data-t="90">90 s</button>
+        <button class="or-chip" data-t="0">Sans chrono</button>
+      </div>
+      <button class="btn btn-primary btn-lg w-full" id="or-start" style="margin-top:22px;"><span data-icon="play"></span> Démarrer l'oral</button>
+      <p style="font-size:12px;color:var(--c-mid);text-align:center;margin-top:10px;" id="or-note"></p>
+    </div>
+  </div>
+  <div id="or-run" style="display:none;"></div>
+</div>
+
+<nav class="bottomnav">
+  <a href="index.html"><span class="bn-ico" data-icon="home"></span> Accueil</a>
+  <a href="cours.html"><span class="bn-ico" data-icon="book"></span> Cours</a>
+  <a href="revision.html"><span class="bn-ico" data-icon="book-open"></span> Révision</a>
+  <a href="examen.html"><span class="bn-ico" data-icon="edit"></span> Examen</a>
+  <a href="stats.html"><span class="bn-ico" data-icon="chart"></span> Stats</a>
+</nav>
+
+<div id="toast-container"></div>
+
+<script src="content.js"></script>
+<script src="app.js"></script>
+<script>
+const { icon, escapeHtml, shuffle, sfx, tts, stt } = window.APP;
+const FICHES = (window.NATURO_CONTENT && window.NATURO_CONTENT.fiches) || [];
+
+let cfgLvl = 'all', cfgN = 5, cfgT = 90;
+let cards = [], idx = 0, good = 0, revealed = false, timer = null, left = 0;
+
+const setupEl = document.getElementById('or-setup');
+const runEl = document.getElementById('or-run');
+
+// ── Setup chips ──
+function wireChips(id, attr, set) {
+  document.querySelectorAll('#' + id + ' .or-chip').forEach(c => c.addEventListener('click', () => {
+    document.querySelectorAll('#' + id + ' .or-chip').forEach(x => x.classList.remove('active'));
+    c.classList.add('active'); set(c.dataset[attr]);
+  }));
+}
+wireChips('or-lvl', 'lvl', v => cfgLvl = v);
+wireChips('or-count', 'n', v => cfgN = parseInt(v));
+wireChips('or-time', 't', v => cfgT = parseInt(v));
+
+document.getElementById('or-note').textContent = (stt && stt.supported())
+  ? 'Astuce : touche le micro pour répondre à la voix.'
+  : 'La réponse vocale n\'est pas dispo sur ce navigateur — réponds à voix haute puis compare.';
+
+document.getElementById('or-start').addEventListener('click', start);
+
+function start() {
+  const pool = cfgLvl === 'all' ? FICHES.slice() : FICHES.filter(f => f.niveau === Number(cfgLvl));
+  if (!pool.length) return;
+  cards = shuffle(pool).slice(0, cfgN);
+  idx = 0; good = 0;
+  setupEl.style.display = 'none';
+  runEl.style.display = 'block';
+  renderQ();
+}
+
+function renderQ() {
+  if (idx >= cards.length) { finish(); return; }
+  if (stt) stt.stop();
+  revealed = false;
+  const c = cards[idx];
+  runEl.innerHTML = `
+    <button class="btn btn-ghost btn-sm" id="or-quit" style="margin-bottom:10px;"><span data-icon="x"></span> Quitter</button>
+    <div class="or-top">
+      <span style="font-size:12px;color:var(--c-mid);white-space:nowrap;">Question ${idx + 1}/${cards.length}</span>
+      <div class="progress-bar"><div class="progress-bar__fill" style="width:${Math.round((idx + 1) / cards.length * 100)}%"></div></div>
+      ${cfgT ? `<span class="or-timer" id="or-timer"></span>` : ''}
+    </div>
+    <div class="or-card">
+      <div class="or-q">${escapeHtml(c.recto)}</div>
+      ${tts && tts.supported() ? `<button class="or-listen" id="or-relisten">${icon('volume')} Réécouter</button>` : ''}
+      ${stt && stt.supported() ? `<div class="or-mic-wrap">
+        <button class="or-mic" id="or-mic" aria-label="Répondre à la voix">${icon('mic')}</button>
+        <div class="or-mic-label" id="or-mic-label">Touche pour répondre à la voix</div>
+      </div>` : `<div class="or-mic-label" style="text-align:center;margin-top:14px;">Réponds à voix haute, puis vérifie.</div>`}
+      <div class="or-transcript" id="or-transcript"></div>
+      <div id="or-answer"></div>
+    </div>
+    <button class="btn btn-primary w-full" id="or-reveal" style="margin-top:16px;"><span data-icon="eye"></span> Voir la réponse modèle</button>`;
+  window.APP.hydrateIcons(runEl);
+  document.getElementById('or-quit').addEventListener('click', quit);
+  document.getElementById('or-reveal').addEventListener('click', reveal);
+  const rl = document.getElementById('or-relisten');
+  if (rl) rl.addEventListener('click', () => tts.speak(c.recto));
+  const mic = document.getElementById('or-mic');
+  if (mic) mic.addEventListener('click', micToggle);
+
+  if (tts && tts.supported()) tts.speak(c.recto);   // l'examinateur lit la question
+  if (cfgT) startTimer();
+  window.scrollTo(0, 0);
+}
+
+function micToggle() {
+  const mic = document.getElementById('or-mic');
+  const label = document.getElementById('or-mic-label');
+  if (stt.listening()) { stt.stop(); return; }
+  if (tts) tts.cancel();
+  mic.classList.add('live'); label.textContent = 'Je t\'écoute… (touche pour arrêter)';
+  stt.start(
+    txt => { document.getElementById('or-transcript').textContent = txt; },
+    () => { mic.classList.remove('live'); label.textContent = 'Touche pour reprendre'; }
+  );
+}
+
+function startTimer() {
+  left = cfgT;
+  const el = document.getElementById('or-timer');
+  function tick() {
+    el.textContent = left + 's';
+    el.classList.toggle('low', left <= 10);
+    if (left <= 0) { clearInterval(timer); if (!revealed) reveal(); return; }
+    left--;
+  }
+  tick();
+  clearInterval(timer);
+  timer = setInterval(tick, 1000);
+}
+
+function reveal() {
+  if (revealed) return;
+  revealed = true;
+  clearInterval(timer);
+  if (stt) stt.stop();
+  const c = cards[idx];
+  document.getElementById('or-reveal').style.display = 'none';
+  const ans = document.getElementById('or-answer');
+  ans.innerHTML = `
+    <div class="or-answer"><b>${icon('check-circle')} Réponse modèle :</b><br>${escapeHtml(c.verso)}</div>
+    <div class="or-eval">
+      <button class="btn btn-danger" id="or-bad"><span data-icon="x"></span> À revoir</button>
+      <button class="btn btn-primary" id="or-good"><span data-icon="check"></span> Bien répondu</button>
+    </div>`;
+  window.APP.hydrateIcons(ans);
+  document.getElementById('or-bad').addEventListener('click', () => next(false));
+  document.getElementById('or-good').addEventListener('click', () => next(true));
+  if (tts && tts.supported()) tts.speak(c.verso);
+  ans.scrollIntoView({ behavior: 'smooth', block: 'center' });
+}
+
+function next(ok) {
+  if (ok) { good++; if (sfx) sfx.correct(); } else if (sfx) sfx.wrong();
+  idx++;
+  renderQ();
+}
+
+function finish() {
+  clearInterval(timer); if (stt) stt.stop(); if (tts) tts.cancel();
+  const pct = cards.length ? Math.round(good / cards.length * 100) : 0;
+  runEl.innerHTML = `
+    <div class="or-done">
+      <div style="display:flex;justify-content:center;">${icon(pct >= 80 ? 'party' : 'thumbs-up')}</div>
+      <h2>Oral terminé !</h2>
+      <div class="or-done__score">${good}/${cards.length}</div>
+      <p>réponses jugées solides (${pct}%)</p>
+      <div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-top:20px;">
+        <button class="btn" style="background:#fff;color:var(--c-green-deep)" id="or-again"><span data-icon="rotate"></span> Recommencer</button>
+        <a class="btn" style="background:rgba(255,255,255,.2);color:#fff" href="tuteur.html"><span data-icon="message"></span> Oral avec l'IA</a>
+      </div>
+    </div>`;
+  window.APP.hydrateIcons(runEl);
+  document.getElementById('or-again').addEventListener('click', () => { runEl.style.display = 'none'; setupEl.style.display = 'block'; });
+  if (pct >= 80 && cards.length >= 3) { window.APP.celebrate(); if (sfx) sfx.levelup(); }
+  window.scrollTo(0, 0);
+}
+
+function quit() {
+  clearInterval(timer); if (stt) stt.stop(); if (tts) tts.cancel();
+  runEl.style.display = 'none'; setupEl.style.display = 'block';
+}
+
+window.APP.onReady(() => {});
+</script>
+</body>
+</html>

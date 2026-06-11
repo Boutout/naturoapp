@@ -207,18 +207,25 @@ window.NATURO_CONTENT = {
       resume: 'Aliments acidifiants vs alcalinisants : trouver l\'équilibre.',
       duree: 6,
       sections: [
-        { titre: 'Le pH du terrain', contenu: "L'organisme régule finement son pH. Une alimentation trop **acidifiante** au long cours peut, selon l'approche naturo, solliciter les systèmes tampons et le terrain." },
-        { titre: 'Acidifiant / alcalinisant', contenu: "**Acidifiants** : excès de protéines animales, sucres raffinés, sodas, café.\n**Alcalinisants** : *légumes verts*, fruits, pomme de terre, oléagineux, eaux riches en bicarbonates." },
-        { titre: 'En pratique', contenu: "On vise l'**équilibre** (assiette riche en végétaux), pas l'élimination totale d'une catégorie. La mastication et la respiration comptent aussi." }
+        { titre: 'Le pH du terrain', contenu: "Le **pH** mesure l'acidité (bas) ou l'alcalinité (haut). Le sang est maintenu très stable (≈ 7,4) par des **systèmes tampons**. En naturopathie, on s'intéresse au pH **des tissus** : une alimentation et un mode de vie trop **acidifiants** au long cours solliciteraient ces tampons et puiseraient dans les **réserves minérales** (d'où fatigue, déminéralisation selon l'approche)." },
+        { titre: 'Aliments acidifiants', contenu: "Tendent à acidifier le terrain :\n- **Excès de protéines animales** (viande, charcuterie, fromages)\n- **Sucres raffinés**, sodas, pâtisseries\n- **Café**, alcool, excès de céréales raffinées\n*À noter* : le citron est acide au goût mais **alcalinisant** après métabolisme." },
+        { titre: 'Aliments alcalinisants', contenu: "Tendent à alcaliniser (apportent des bases) :\n- **Légumes verts** et colorés, salades\n- **Fruits** (dont banane, châtaigne), **pomme de terre**\n- **Oléagineux** (amandes), eaux riches en **bicarbonates**\nIls fournissent les minéraux (potassium, magnésium, calcium) qui neutralisent les acides." },
+        { titre: 'Au-delà de l\'assiette', contenu: "L'équilibre acido-basique dépend aussi du **mode de vie** :\n- Le **stress** et le **manque de sommeil** acidifient.\n- Le **mouvement** et une **respiration** ample aident à éliminer les acides volatils (par les poumons).\n- Les **reins** et les **poumons** sont les émonctoires des acides." },
+        { titre: 'En pratique', contenu: "On vise l'**équilibre**, pas l'élimination d'une catégorie : une assiette riche en **végétaux** (l'idée des ⅔ de l'assiette en légumes), une bonne **mastication**, de l'eau, du mouvement et un sommeil suffisant." }
       ],
       pointsCles: [
-        'Acidifiants : protéines animales en excès, sucres raffinés, sodas',
-        'Alcalinisants : légumes verts, fruits, oléagineux',
-        'Objectif : équilibre, assiette végétale colorée'
+        'Le sang reste à ≈ 7,4 ; on s\'intéresse au pH des tissus et aux réserves minérales',
+        'Acidifiants : protéines animales en excès, sucres raffinés, sodas, café',
+        'Alcalinisants : légumes verts, fruits, pomme de terre, oléagineux',
+        'Le citron est acide au goût mais alcalinisant après métabolisme',
+        'Stress et sédentarité acidifient ; mouvement et respiration aident',
+        'Objectif : équilibre, assiette très végétale'
       ],
       definitions: [
         { terme: 'Acidifiant', def: 'Aliment dont le métabolisme tend à acidifier le terrain.' },
-        { terme: 'Alcalinisant', def: 'Aliment dont le métabolisme tend à alcaliniser le terrain.' }
+        { terme: 'Alcalinisant', def: 'Aliment dont le métabolisme tend à alcaliniser le terrain.' },
+        { terme: 'Système tampon', def: 'Mécanisme qui stabilise le pH en neutralisant les excès d\'acides ou de bases.' },
+        { terme: 'pH', def: 'Mesure de l\'acidité (bas) ou de l\'alcalinité (haut) d\'un milieu ; neutre = 7.' }
       ],
       questionIds: []
     },
@@ -231,18 +238,23 @@ window.NATURO_CONTENT = {
       resume: "L'eau comme outil : chaud, froid et alternance.",
       duree: 5,
       sections: [
-        { titre: 'Le chaud', contenu: "La **chaleur** détend, **vasodilate** (afflux de sang) et apaise. Utile sur les tensions et pour la relaxation." },
-        { titre: 'Le froid', contenu: "Le **froid** provoque d'abord une **vasoconstriction**, suivie d'une **vasodilatation réactionnelle** : c'est l'effet **tonifiant** (douche froide, jet écossais)." },
-        { titre: 'L\'alternance', contenu: "Alterner chaud/froid (**jet écossais**) entraîne une « gymnastique » des vaisseaux : stimulant pour la circulation. Toujours adapter à l'état de la personne." }
+        { titre: "Pourquoi l'eau ?", contenu: "L'**hydrothérapie** utilise l'eau (et la température) comme stimulus pour agir sur la **circulation**, le **système nerveux** et la **vitalité**. C'est une technique majeure de naturopathie, douce et accessible (douches, bains, applications, enveloppements)." },
+        { titre: 'Le chaud', contenu: "La **chaleur** détend, **vasodilate** (afflux de sang) et apaise. Utile sur les **tensions musculaires**, les spasmes et pour la relaxation.\n- *Exemples* : bain chaud, bouillotte, douche chaude.\n- *Prudence* : la chaleur est plutôt **dévitalisante** si elle est prolongée." },
+        { titre: 'Le froid', contenu: "Le **froid** provoque d'abord une **vasoconstriction** (les vaisseaux se resserrent), suivie d'une **vasodilatation réactionnelle** au réchauffement : c'est l'effet **tonifiant** et **revitalisant**.\n- *Exemples* : douche froide, jet, friction.\n- *Prudence* : bref et progressif ; éviter sur terrain très affaibli ou frileux." },
+        { titre: "L'alternance (jet écossais)", contenu: "Alterner **chaud puis froid** entraîne une véritable « **gymnastique** » des vaisseaux : on les dilate puis on les resserre. Très **stimulant pour la circulation** et le tonus.\n- *Règle* : toujours **terminer par le froid** pour l'effet tonifiant.\n- Adapter l'intensité à l'état et à la vitalité de la personne." },
+        { titre: 'Quand l\'utiliser ?', contenu: "Chaud → détente, douleurs, spasmes. Froid → tonus, circulation, récupération. Alternance → relance circulatoire. Toujours **individualiser** : un terrain dévitalisé tolère mal le froid intense ; un terrain pléthorique en profite davantage." }
       ],
       pointsCles: [
-        'Chaud = détente + vasodilatation',
-        'Froid = vasoconstriction puis afflux de sang (tonifiant)',
-        'Alternance chaud/froid = gymnastique vasculaire'
+        "L'eau agit sur la circulation, le nerveux et la vitalité",
+        'Chaud = détente + vasodilatation (mais dévitalisant si prolongé)',
+        'Froid = vasoconstriction puis afflux de sang (tonifiant, revitalisant)',
+        'Alternance chaud/froid (jet écossais) = gymnastique vasculaire, finir par le froid',
+        "Toujours adapter à la vitalité de la personne"
       ],
       definitions: [
         { terme: 'Vasoconstriction', def: 'Resserrement des vaisseaux sanguins.' },
-        { terme: 'Vasodilatation', def: 'Élargissement des vaisseaux sanguins.' }
+        { terme: 'Vasodilatation', def: 'Élargissement des vaisseaux sanguins.' },
+        { terme: 'Jet écossais', def: 'Alternance de jets chaud et froid pour stimuler la circulation (on termine par le froid).' }
       ],
       questionIds: [84]
     },
