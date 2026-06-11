@@ -5,9 +5,12 @@ name: Deploy
 # en SSH au VPS konect et y (re)construit le conteneur statique derrière Traefik.
 
 on:
-  push:
-    branches: [main]
+  # Déploiement MANUEL uniquement : Actions → Deploy → Run workflow.
+  # (Pas de déploiement automatique au push — réactive le bloc « push » ci-dessous
+  #  quand tu seras prêt à mettre en ligne sur le VPS.)
   workflow_dispatch:
+  # push:
+  #   branches: [main]
 
 concurrency:
   group: deploy-naturoapp
