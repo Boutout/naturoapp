@@ -45,19 +45,24 @@ window.NATURO_CONTENT = {
                    "En naturopathie, la lithothérapie est une technique *complémentaire* : elle ne remplace jamais un avis médical."
         },
         {
-          titre: 'À nuancer',
-          contenu: "Les mécanismes invoqués ne sont pas démontrés scientifiquement. " +
-                   "On la présente comme un outil de relaxation et d'accompagnement, pas comme un traitement."
+          titre: 'Ne pas confondre',
+          contenu: "Trois approches « minérales » à bien distinguer :\n- **Lithothérapie** : pierres et cristaux comme support (énergétique/relaxation).\n- **Homéopathie** : minéraux **dilués** de façon infinitésimale.\n- **Oligothérapie** : apport d'**oligo-éléments** (zinc, cuivre, sélénium…) à visée physiologique.\nLe mot vient du grec *lithos* = pierre."
+        },
+        {
+          titre: 'À nuancer (cadre prudent)',
+          contenu: "Les mécanismes invoqués ne sont **pas démontrés scientifiquement**. On la présente comme un outil de **relaxation** et d'**accompagnement**, pas comme un traitement. Comme toute technique naturo, elle reste **complémentaire** et ne remplace jamais un avis médical."
         }
       ],
       pointsCles: [
-        'Lithothérapie = soin par les pierres et cristaux',
-        "Ne pas confondre avec l'homéopathie (minéraux dilués)",
+        'Lithothérapie = soin par les pierres et cristaux (lithos = pierre)',
+        "Ne pas confondre avec l'homéopathie (minéraux dilués) ni l'oligothérapie (oligo-éléments)",
+        'Mécanismes non démontrés → outil de relaxation/accompagnement',
         'Technique complémentaire, jamais un substitut médical'
       ],
       definitions: [
         { terme: 'Lithothérapie', def: 'Pratique de soin utilisant pierres et cristaux.' },
-        { terme: 'Homéopathie', def: 'Approche utilisant des dilutions infinitésimales de substances.' }
+        { terme: 'Homéopathie', def: 'Approche utilisant des dilutions infinitésimales de substances.' },
+        { terme: 'Oligothérapie', def: "Apport d'oligo-éléments (zinc, cuivre, sélénium…) à visée physiologique." }
       ],
       questionIds: [1]
     },
@@ -294,19 +299,23 @@ window.NATURO_CONTENT = {
       resume: 'Soigner avec les plantes : formes galéniques et notion de totum.',
       duree: 6,
       sections: [
-        { titre: 'Le « totum »', contenu: "La phytothérapie utilise la plante **entière** (ou ses parties) : c'est le **totum**, l'ensemble des principes actifs qui agissent en synergie — différent d'une molécule isolée." },
-        { titre: 'Les formes', contenu: "**Tisane / infusion** (parties fragiles : fleurs, feuilles), **décoction** (parties dures : racines, écorces), **teinture-mère** (macération alcoolique), **EPS / extraits**, **gélules de poudre**, **huiles essentielles** (aromathérapie)." },
-        { titre: 'Prudence', contenu: "« Naturel » ne veut pas dire « sans risque » : interactions médicamenteuses, grossesse, terrain. Toujours se renseigner et orienter vers un professionnel si besoin." }
+        { titre: 'Le « totum »', contenu: "La phytothérapie utilise la plante **entière** (ou ses parties) : c'est le **totum**, l'ensemble des principes actifs qui agissent en **synergie** — souvent mieux toléré et plus complet qu'une molécule isolée." },
+        { titre: 'Les formes galéniques', contenu: "- **Tisane / infusion** : parties fragiles (fleurs, feuilles), eau frémissante.\n- **Décoction** : parties dures (racines, écorces), ébullition.\n- **Macération** : à froid (mucilages).\n- **Teinture-mère (TM)** : macération **alcoolique** (concentré, conservation).\n- **EPS / extraits standardisés**, **gélules de poudre**, **macérats de bourgeons** (gemmothérapie), **huiles essentielles** (aromathérapie)." },
+        { titre: 'Choisir selon la plante', contenu: "On adapte la forme à la **partie utilisée** et au **principe actif** recherché : fleurs/feuilles → infusion ; racines/écorces → décoction ; principes peu solubles dans l'eau → alcool (TM). Respecter les **posologies** (ex : gemmothérapie ≈ 3 × 5-15 gouttes/jour)." },
+        { titre: 'Prudence', contenu: "« Naturel » ne veut pas dire « sans risque » : **interactions médicamenteuses** (ex : millepertuis), **grossesse/allaitement**, **terrain** allergique, dosage. Toujours se renseigner et **orienter vers un professionnel** si besoin." }
       ],
       pointsCles: [
-        'Totum = plante entière en synergie',
-        'Infusion (fragile) vs décoction (dur)',
-        'Naturel ≠ sans risque : attention aux interactions'
+        'Totum = plante entière en synergie (vs molécule isolée)',
+        'Infusion (parties fragiles) vs décoction (parties dures)',
+        'Teinture-mère = macération alcoolique ; macérats de bourgeons = gemmothérapie',
+        'Adapter la forme à la partie de plante et au principe actif',
+        'Naturel ≠ sans risque : interactions, grossesse, terrain'
       ],
       definitions: [
         { terme: 'Totum', def: "Ensemble des composants d'une plante agissant en synergie." },
         { terme: 'Teinture-mère', def: 'Extrait obtenu par macération de la plante dans l\'alcool.' },
-        { terme: 'Décoction', def: 'Extraction par ébullition (racines, écorces).' }
+        { terme: 'Décoction', def: 'Extraction par ébullition (racines, écorces).' },
+        { terme: 'Infusion', def: 'Extraction en versant de l\'eau chaude sur les parties fragiles (fleurs, feuilles).' }
       ],
       questionIds: []
     },
@@ -319,19 +328,23 @@ window.NATURO_CONTENT = {
       resume: 'Comprendre les huiles essentielles par leurs molécules dominantes.',
       duree: 7,
       sections: [
-        { titre: 'Une HE = un bouquet de molécules', contenu: "Une **huile essentielle** est très concentrée. On la lit par sa **famille biochimique** dominante, qui oriente ses propriétés… et sa **dangerosité**." },
-        { titre: 'Quelques familles', contenu: "**Monoterpènes** : toniques (agrumes, pin).\n**Esters** : apaisants, antispasmodiques (lavande vraie).\n**Phénols** : anti-infectieux puissants mais **dermocaustiques/hépatotoxiques** (origan, thym à thymol).\n**Cétones** : mucolytiques mais **neurotoxiques/abortives** à doses élevées (menthe, romarin à camphre)." },
-        { titre: 'Sécurité', contenu: "Jamais d'HE pures sur la peau (sauf exception), prudence chez l'enfant, la femme enceinte, l'épileptique. Diluer dans une **huile végétale**." }
+        { titre: 'Une HE = un bouquet de molécules', contenu: "Une **huile essentielle** est l'extrait **volatil** et très **concentré** d'une plante aromatique (par distillation à la vapeur, ou expression pour les agrumes). On la lit par sa **famille biochimique** dominante, qui oriente ses propriétés… et sa **dangerosité**." },
+        { titre: 'Les familles biochimiques', contenu: "- **Monoterpènes** : toniques, antiseptiques (agrumes, pin) — peuvent être irritants.\n- **Esters** : apaisants, **antispasmodiques** (lavande vraie, petit grain) — bien tolérés.\n- **Alcools (monoterpénols)** : anti-infectieux **doux** et sûrs (tea tree, thym à linalol).\n- **Phénols** : anti-infectieux **puissants** mais **dermocaustiques/hépatotoxiques** (origan, thym à thymol).\n- **Cétones** : cicatrisantes, mucolytiques mais **neurotoxiques/abortives** à dose élevée (menthe, romarin à camphre).\n- **Aldéhydes** : calmants, anti-inflammatoires mais irritants cutanés (citronnelle)." },
+        { titre: 'Voies d\'utilisation', contenu: "Principales voies : **cutanée** (diluée dans une **huile végétale**), **olfactive/diffusion**, et **orale** (réservée à un usage encadré). Le choix dépend de l'effet recherché et de la sécurité de l'HE." },
+        { titre: 'Sécurité', contenu: "**Jamais d'HE pure** sur la peau (sauf exceptions comme la lavande), toujours **diluer**. Prudence (voire contre-indication) chez l'**enfant**, la **femme enceinte/allaitante**, l'**épileptique** et l'asthmatique. Attention aux HE **photosensibilisantes** (agrumes → pas de soleil après application)." }
       ],
       pointsCles: [
-        'On lit une HE par sa famille biochimique dominante',
-        'Phénols = anti-infectieux mais dermocaustiques',
-        'Cétones = mucolytiques mais neurotoxiques à dose élevée'
+        'Une HE se lit par sa famille biochimique dominante',
+        'Esters = apaisants ; alcools = anti-infectieux doux',
+        'Phénols = anti-infectieux puissants mais dermocaustiques/hépatotoxiques',
+        'Cétones = mucolytiques/cicatrisantes mais neurotoxiques à dose élevée',
+        'Toujours diluer ; prudence enfant, grossesse, épilepsie ; agrumes photosensibilisants'
       ],
       definitions: [
         { terme: 'Huile essentielle', def: 'Extrait aromatique volatil et très concentré d\'une plante.' },
         { terme: 'Phénols (HE)', def: 'Molécules anti-infectieuses puissantes, mais agressives pour la peau et le foie.' },
-        { terme: 'Cétones (HE)', def: 'Molécules mucolytiques, neurotoxiques et abortives à doses élevées.' }
+        { terme: 'Cétones (HE)', def: 'Molécules mucolytiques/cicatrisantes, neurotoxiques et abortives à doses élevées.' },
+        { terme: 'Esters (HE)', def: 'Molécules apaisantes et antispasmodiques, bien tolérées (ex : lavande vraie).' }
       ],
       questionIds: [27]
     },
@@ -344,18 +357,22 @@ window.NATURO_CONTENT = {
       resume: 'Les micronutriments qui reviennent le plus souvent en accompagnement.',
       duree: 6,
       sections: [
-        { titre: 'Vitamines', contenu: "**Vitamine D** (immunité, os ; synthèse via le soleil), **vitamines B** (énergie, système nerveux), **vitamine C** (antioxydant, immunité, fer), **vitamine E** (antioxydant)." },
-        { titre: 'Minéraux', contenu: "**Magnésium** (stress, muscles, sommeil), **fer** (transport de l'oxygène), **zinc** (immunité, peau), **iode** (thyroïde)." },
-        { titre: 'Logique naturo', contenu: "On vise d'abord l'**alimentation** (assiette dense en nutriments), la complémentation venant en **soutien ciblé**, pas en automatique." }
+        { titre: 'Macro vs micronutriments', contenu: "Les **macronutriments** (glucides, lipides, protéines) fournissent l'énergie. Les **micronutriments** (vitamines, minéraux, oligo-éléments) n'apportent pas d'énergie mais sont **indispensables** comme **cofacteurs** de milliers de réactions. Ils agissent en **synergie** (ex : vitamine D + K2 + magnésium + calcium pour l'os)." },
+        { titre: 'Vitamines clés', contenu: "- **Vitamine D** (immunité, os ; synthétisée via le **soleil** ; D3 > D2).\n- **Vitamines B** (énergie, système nerveux ; B1 = sucres, B6 = neurotransmetteurs, B9 = grossesse, B12).\n- **Vitamine C** (antioxydant, immunité, aide l'absorption du **fer**).\n- **Vitamine E** (antioxydant des membranes).\n- **Vitamine F** = acides gras essentiels (peau, immunité)." },
+        { titre: 'Minéraux & oligo-éléments', contenu: "- **Magnésium** (stress, muscles, sommeil ; >300 réactions ; déficit fréquent).\n- **Fer** (transport de l'O₂ ; jamais supplémenté **sans bilan** car pro-oxydant en excès).\n- **Zinc** (immunité, peau, cicatrisation).\n- **Iode** (thyroïde), **sélénium** (antioxydant, thyroïde), **chrome** (glycémie, fringales)." },
+        { titre: 'Logique naturopathique', contenu: "On vise d'abord l'**alimentation** (assiette dense en nutriments, peu transformée), la **complémentation** venant en **soutien ciblé** — idéalement sur signes ou bilan — pas en automatique. La **biodisponibilité** (forme, cofacteurs) compte autant que la dose." }
       ],
       pointsCles: [
-        'Vitamine D : immunité + os (soleil)',
-        'Magnésium : stress, muscles, sommeil',
+        'Micronutriments = cofacteurs indispensables, agissent en synergie',
+        'Vitamine D : immunité + os (soleil ; D3 > D2)',
+        'Magnésium : stress, muscles, sommeil (déficit fréquent)',
+        'Fer : jamais sans bilan (pro-oxydant en excès)',
         'Alimentation d\'abord, complément en soutien ciblé'
       ],
       definitions: [
         { terme: 'Micronutriment', def: 'Nutriment nécessaire en petite quantité (vitamines, minéraux, oligo-éléments).' },
-        { terme: 'Antioxydant', def: "Molécule qui neutralise les radicaux libres (vit. C, E, zinc…)." }
+        { terme: 'Antioxydant', def: "Molécule qui neutralise les radicaux libres (vit. C, E, zinc…)." },
+        { terme: 'Biodisponibilité', def: "Capacité d'un nutriment à être réellement absorbé et utilisé par l'organisme." }
       ],
       questionIds: []
     },
@@ -422,18 +439,21 @@ window.NATURO_CONTENT = {
       resume: 'Mettre la digestion au repos : principes et précautions.',
       duree: 5,
       sections: [
-        { titre: 'L\'idée', contenu: "Réduire ou suspendre l'apport alimentaire met le système digestif **au repos** et favorise, selon l'approche naturo, le travail des émonctoires. La **monodiète** = un seul aliment (ex : pommes, riz) sur une courte période." },
-        { titre: 'Formes douces', contenu: "**Jeûne intermittent** (fenêtre alimentaire réduite), **monodiète d'un repas ou d'une journée**. On adapte toujours à la **vitalité** de la personne." },
-        { titre: 'Précautions', contenu: "Déconseillé sans accompagnement chez les personnes fragiles (dénutrition, diabète, grossesse, troubles du comportement alimentaire). Reprise alimentaire **progressive**." }
+        { titre: 'L\'idée', contenu: "Réduire ou suspendre l'apport alimentaire met le système digestif **au repos** : l'énergie habituellement consacrée à la digestion serait redirigée vers le **nettoyage** (travail des émonctoires) et la réparation. La **monodiète** = un seul aliment (ex : pommes, raisin, riz) sur une courte période." },
+        { titre: 'Les formes', contenu: "- **Jeûne intermittent** : fenêtre alimentaire réduite (ex : 16/8).\n- **Monodiète** d'un repas, d'une journée ou de quelques jours.\n- **Jeûne hydrique** (eau seule) ou **modifié** (bouillons, jus) — réservé à un cadre accompagné.\nOn adapte toujours à la **vitalité** : un terrain dévitalisé tolère mal le jeûne (il faut d'abord revitaliser)." },
+        { titre: 'Bénéfices recherchés', contenu: "Repos digestif, allègement de la **toxémie**, soutien de l'élimination, parfois meilleure sensibilité à la satiété. C'est une **cure de désintoxication** parmi d'autres — pas une fin en soi." },
+        { titre: 'Précautions', contenu: "**Déconseillé sans accompagnement** chez les personnes fragiles : dénutrition, **diabète**, grossesse/allaitement, troubles du comportement alimentaire, certains traitements. La **reprise alimentaire** doit être **progressive** (réintroduction douce). En cas de doute, avis médical." }
       ],
       pointsCles: [
-        'Jeûne/monodiète = repos digestif',
-        'Formes douces : jeûne intermittent, monodiète courte',
-        'Précautions : terrains fragiles, reprise progressive'
+        'Jeûne/monodiète = repos digestif + soutien des émonctoires',
+        'Formes : jeûne intermittent (16/8), monodiète, jeûne accompagné',
+        'Toujours adapter à la vitalité (dévitalisé = revitaliser d\'abord)',
+        'Précautions : terrains fragiles ; reprise alimentaire progressive'
       ],
       definitions: [
         { terme: 'Monodiète', def: 'Alimentation réduite à un seul aliment sur une courte durée.' },
-        { terme: 'Jeûne intermittent', def: 'Alternance de périodes de jeûne et de prise alimentaire.' }
+        { terme: 'Jeûne intermittent', def: 'Alternance de périodes de jeûne et de prise alimentaire (ex : 16/8).' },
+        { terme: 'Toxémie', def: "Surcharge de l'organisme en déchets/toxines, que les cures cherchent à alléger." }
       ],
       questionIds: []
     }
