@@ -46,10 +46,14 @@
 
     /* glossaire */
     .gloss-list { display:flex; flex-direction:column; gap:0; }
-    .gloss-item { padding:14px 0; border-bottom:1px solid var(--c-border); }
+    .gloss-item { padding:14px 0; border-bottom:1px solid var(--c-border); display:flex; align-items:flex-start; gap:10px; }
     .gloss-item:last-child { border-bottom:none; }
+    .gloss-body { flex:1; min-width:0; }
     .gloss-term { font-weight:700; font-size:14.5px; color:var(--c-green-deep); }
     .gloss-def { font-size:13.5px; color:var(--c-mid); margin-top:2px; }
+    .gloss-say { flex-shrink:0; background:none; border:1px solid var(--c-border); border-radius:50%; width:34px; height:34px; cursor:pointer; color:var(--c-green); display:flex; align-items:center; justify-content:center; }
+    .gloss-say:hover { background:var(--c-green-pale); border-color:var(--c-green-light); }
+    .gloss-say .app-icon { width:17px; height:17px; }
     .gloss-cat { font-size:10.5px; }
 
     /* lecteur plein écran */
@@ -269,11 +273,19 @@ function renderGlossary() {
 
   const host = document.getElementById('glossary');
   if (!shown.length) { host.innerHTML = `<div class="empty-state"><div class="empty-state__text">Aucun terme.</div></div>`; return; }
-  host.innerHTML = shown.map(t => `
+  const canSay = tts && tts.supported();
+  host.innerHTML = shown.map((t, i) => `
     <div class="gloss-item">
-      <div class="gloss-term">${escapeHtml(t.terme)} ${t.categorie ? `<span class="badge badge-gray gloss-cat">${escapeHtml(t.categorie)}</span>`:''}</div>
-      <div class="gloss-def">${escapeHtml(t.definition)}</div>
+      <div class="gloss-body">
+        <div class="gloss-term">${escapeHtml(t.terme)} ${t.categorie ? `<span class="badge badge-gray gloss-cat">${escapeHtml(t.categorie)}</span>`:''}</div>
+        <div class="gloss-def">${escapeHtml(t.definition)}</div>
+      </div>
+      ${canSay ? `<button class="gloss-say" data-i="${i}" aria-label="Écouter" title="Écouter">${icon('volume')}</button>` : ''}
     </div>`).join('');
+  if (canSay) host.querySelectorAll('.gloss-say').forEach(b => b.addEventListener('click', () => {
+    const t = shown[parseInt(b.dataset.i)];
+    if (t) tts.speak(t.terme + '. ' + t.definition);
+  }));
 }
 
 function openReader(id) {

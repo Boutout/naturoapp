@@ -129,18 +129,23 @@ window.NATURO_CONTENT = {
       duree: 5,
       sections: [
         { titre: 'Les 5 émonctoires', contenu: "Ce sont les organes qui **éliminent les déchets** : le **foie**, les **reins**, les **intestins**, les **poumons** et la **peau**. Moyen mnémotechnique : **FRIPP**." },
-        { titre: 'Drainer : pourquoi ?', contenu: "Quand les déchets (*toxines/toxémie*) s'accumulent, le terrain s'encrasse. Le **drainage** soutient les émonctoires pour favoriser l'élimination. On adapte toujours l'intensité à la **vitalité** de la personne." },
-        { titre: 'Émonctoire ≠ digestion', contenu: "L'estomac digère mais **n'élimine pas** : ce n'est pas un émonctoire. À ne pas confondre avec l'intestin." }
+        { titre: 'Le rôle de chacun', contenu: "Chaque émonctoire élimine un type de déchet :\n- **Foie** : déchets **colloïdaux** (« colles ») via la bile, + détoxification.\n- **Intestins** : évacuation des selles (déchets solides).\n- **Reins** : déchets **acides** solubles via l'urine.\n- **Poumons** : acides **volatils** (CO₂) via la respiration.\n- **Peau** : sueur et sébum — émonctoire **de secours** quand les autres sont débordés (d'où acné, eczéma)." },
+        { titre: 'Acides et colles', contenu: "Distinction fondamentale : les déchets **ACIDES** sortent par les **reins + poumons** ; les déchets **COLLES** (colloïdaux) sortent par le **foie + gros intestin**. Orienter le drainage selon le type de surcharge." },
+        { titre: 'Drainer : pourquoi ?', contenu: "Quand les déchets (*toxines/toxémie*) s'accumulent, le terrain s'**encrasse**. Le **drainage** soutient les émonctoires pour favoriser l'élimination. On adapte toujours l'intensité à la **vitalité** de la personne : un terrain dévitalisé se draine en douceur (sinon on l'épuise)." },
+        { titre: 'Émonctoire ≠ digestion', contenu: "L'estomac digère mais **n'élimine pas** : ce n'est pas un émonctoire. À ne pas confondre avec l'**intestin**, qui, lui, est un émonctoire (élimination des selles)." }
       ],
       pointsCles: [
         'FRIPP : Foie, Reins, Intestins, Poumons, Peau',
+        'Foie = colles/bile · Reins = acides/urine · Poumons = acides volatils · Intestins = selles · Peau = secours',
+        'Acides → reins + poumons ; colles → foie + gros intestin',
         'Drainer = soutenir l\'élimination des déchets',
-        'Adapter l\'intensité à la vitalité'
+        'Adapter l\'intensité à la vitalité (terrain dévitalisé = drainage doux)'
       ],
       definitions: [
         { terme: 'Émonctoire', def: 'Organe d\'élimination des déchets de l\'organisme.' },
         { terme: 'Toxémie', def: 'Surcharge de l\'organisme en déchets/toxines.' },
-        { terme: 'Drainage', def: 'Stimulation des émonctoires pour favoriser l\'élimination.' }
+        { terme: 'Drainage', def: 'Stimulation des émonctoires pour favoriser l\'élimination.' },
+        { terme: 'Déchets colloïdaux', def: 'Déchets « colles » issus des graisses et féculents, éliminés par le foie et le gros intestin.' }
       ],
       questionIds: [81]
     },
@@ -877,5 +882,28 @@ window.NATURO_CONTENT = {
     { niveau: 3, theme: 'Régimes', recto: "Régime Atkins", verso: "Cétogène / low-carb : favorise protéines et graisses, supprime les féculents → cétose pour brûler les graisses." },
     { niveau: 3, theme: 'Pathologies', recto: "La candidose", verso: "Mycose (infection fongique) à Candida albicans, une levure. Favorisée par les antibiotiques et une alimentation riche en sucres." },
     { niveau: 3, theme: 'Nutrition', recto: "Acides gras essentiels (cuisson)", verso: "Éviter l'huile d'arachide en friture > 170°C (acides gras trans toxiques) ; apporter EPA/DHA (poissons gras)." }
+  ],
+
+  // ═══════════════════════════════════════════════════════════════
+  //  QUESTIONS D'ORAL — questions ouvertes « à développer » + réponse modèle.
+  //  Même schéma que les fiches { niveau, theme, recto, verso } : utilisées
+  //  par oral.html (en plus des fiches) pour un entraînement plus réaliste.
+  // ═══════════════════════════════════════════════════════════════
+  oralQuestions: [
+    { niveau: 1, theme: 'Concepts', recto: "Qu'est-ce que la naturopathie et sur quel principe repose-t-elle ?", verso: "C'est une approche de santé naturelle qui vise à stimuler la force vitale et la capacité d'auto-guérison de l'organisme. Elle repose sur le vitalisme (l'organisme se répare s'il en a les moyens) et le travail du terrain par l'hygiène de vie : alimentation, exercice, gestion du stress, sommeil. Elle est complémentaire, ne pose pas de diagnostic et n'établit pas de traitement médical." },
+    { niveau: 1, theme: 'Concepts', recto: "Citez les 5 émonctoires et le rôle de chacun.", verso: "Le foie (élimine les déchets colloïdaux/« colles » via la bile), les intestins (évacuent les selles), les reins (déchets acides via l'urine), les poumons (acides volatils via la respiration) et la peau (sueur et sébum, émonctoire de secours). Ce sont les portes de sortie des déchets de l'organisme." },
+    { niveau: 1, theme: 'Phytothérapie', recto: "Citez trois plantes qui soutiennent le foie et expliquez brièvement.", verso: "Artichaut (cholérétique/cholagogue, stimule la production et l'évacuation de la bile), radis noir (drainant hépatique, glucosinolates) et pissenlit (amers, stimulant hépatobiliaire et diurétique). C'est le trio hépatique classique." },
+    { niveau: 1, theme: 'Tempéraments', recto: "Citez les 4 tempéraments d'Hippocrate et une caractéristique de chacun.", verso: "Sanguin (extraverti, jovial, tendance aux excès), lymphatique/flegmatique (calme, lent, tendance à la rétention), bilieux/colérique (volontaire, ardent, terrain hépatique et irritable), nerveux/mélancolique (sensible, cérébral, anxieux). Ils dérivent des 4 humeurs : sang, lymphe, bile jaune, bile noire." },
+    { niveau: 2, theme: 'Cures', recto: "Expliquez les 3 cures de Marchesseau et leur ordre.", verso: "1. La désintoxication draine les émonctoires pour éliminer les surcharges. 2. La revitalisation recharge l'organisme en vitamines, minéraux et vitalité. 3. La stabilisation installe un équilibre durable. L'ordre est logique : on nettoie avant de recharger, et on adapte toujours à la vitalité de la personne (un terrain dévitalisé se revitalise d'abord)." },
+    { niveau: 2, theme: 'Système nerveux', recto: "Différenciez vagotonie et sympathicotonie.", verso: "La vagotonie est une dominance du parasympathique (nerf vague) : repos, digestion, péristaltisme augmenté, tendance à l'intuition. La sympathicotonie est une dominance de l'orthosympathique : action, stress, mobilisation de l'énergie, tension. L'équilibre entre les deux est l'objectif ; le stress chronique fait basculer vers le sympathique." },
+    { niveau: 2, theme: 'Microbiote', recto: "Quelle est la différence entre un prébiotique et un probiotique ?", verso: "Un probiotique est un micro-organisme vivant bénéfique (lactobacilles, bifidobactéries) qu'on apporte pour enrichir la flore. Un prébiotique est une fibre non digestible (inuline, FOS) qui sert de nourriture aux bonnes bactéries déjà présentes. On les associe souvent (symbiotique)." },
+    { niveau: 2, theme: 'Nutrition', recto: "Qu'est-ce que l'équilibre acido-basique et comment le soutenir ?", verso: "C'est l'équilibre entre apports acidifiants et alcalinisants. Trop d'acidifiants (protéines animales en excès, sucres raffinés, sodas, café, stress, sédentarité) sollicite les réserves minérales. On le soutient avec une assiette très végétale (légumes, fruits, oléagineux), de la mastication, du mouvement et de la respiration, et un bon sommeil." },
+    { niveau: 2, theme: 'Hydrologie', recto: "Décrivez l'effet du froid en hydrothérapie.", verso: "Le froid provoque d'abord une vasoconstriction (les vaisseaux se resserrent), puis une vasodilatation réactionnelle au réchauffement (afflux de sang) : c'est l'effet tonifiant et revitalisant, utilisé dans la douche froide ou le jet écossais. On l'applique brièvement et progressivement, en l'adaptant à la vitalité de la personne." },
+    { niveau: 2, theme: 'Gynécologie', recto: "Qu'est-ce que l'hyperœstrogénie relative ? Quand l'observe-t-on ?", verso: "C'est un excès d'œstrogènes par rapport à la progestérone (pas forcément un excès absolu d'œstrogènes). On l'observe à la puberté et surtout en préménopause, quand la progestérone chute avant les œstrogènes, d'où un syndrome prémenstruel accentué. On peut soutenir la progestérone avec l'alchémille ou le houblon (progestérone-like)." },
+    { niveau: 3, theme: 'Neuro', recto: "Décrivez la voie de synthèse de la sérotonine et de la mélatonine.", verso: "Le tryptophane est transformé en 5-HTP, puis en sérotonine, elle-même convertie en mélatonine. La sérotonine régule l'humeur et la satiété ; la mélatonine, produite par la glande pinéale dès la baisse de lumière (≈18h, pic vers 2-3h), régule le sommeil. À distinguer de la voie de la dopamine (tyrosine → L-DOPA → dopamine)." },
+    { niveau: 3, theme: 'Régimes', recto: "Présentez le régime Seignalet (régime hypotoxique).", verso: "Le régime du Dr Seignalet exclut tous les laits animaux et produits laitiers, ainsi que les céréales mutées et glutineuses (blé, seigle, épeautre, orge). Il privilégie le cru ou la cuisson douce, le riz, le sarrasin, les fruits, légumes, viandes et poissons. Objectif : réduire l'« encrassage » et l'hyperperméabilité intestinale dans certaines pathologies." },
+    { niveau: 3, theme: 'Microbiote', recto: "Expliquez la fermentation et la putréfaction intestinales.", verso: "La fermentation concerne les sucres : elle produit des acides organiques courts (AGCC), non néfastes et même nutritifs pour les colonocytes. La putréfaction concerne les protéines : elle produit des amines, phénols et ammoniac, surtout dans le côlon descendant. En cas de constipation, ces produits de putréfaction sont réabsorbés et chargent le foie (auto-intoxication)." },
+    { niveau: 3, theme: 'Terrain', recto: "Décrivez le terrain allergique et sa prise en charge en naturopathie.", verso: "C'est un terrain d'hyperréactivité immunitaire (rhinite, eczéma, asthme). On travaille le fond : plantes de terrain comme le plantain (antihistaminique) et le cassis (anti-inflammatoire, cortison-like), soin du microbiote intestinal (70 % de l'immunité), rééquilibrage du ratio oméga 6/oméga 3 en faveur des oméga 3, et réduction des sucres raffinés. En complément du suivi médical." },
+    { niveau: 3, theme: 'Micronutrition', recto: "Pourquoi le fer ne doit-il jamais être supplémenté sans bilan ?", verso: "Parce qu'en excès le fer est pro-oxydant (réaction de Fenton, production de radicaux libres), hépatotoxique, et peut masquer ou aggraver une pathologie sous-jacente. Un dosage sanguin (ferritine, fer sérique) est indispensable avant toute supplémentation." }
   ]
 };

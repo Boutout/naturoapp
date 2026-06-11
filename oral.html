@@ -116,7 +116,8 @@
 <script src="app.js"></script>
 <script>
 const { icon, escapeHtml, shuffle, sfx, tts, stt } = window.APP;
-const FICHES = (window.NATURO_CONTENT && window.NATURO_CONTENT.fiches) || [];
+const NC = window.NATURO_CONTENT || {};
+const POOL = [...(NC.oralQuestions || []), ...(NC.fiches || [])];   // questions d'oral d'abord, puis fiches
 
 let cfgLvl = 'all', cfgN = 5, cfgT = 90;
 let cards = [], idx = 0, good = 0, revealed = false, timer = null, left = 0;
@@ -142,7 +143,7 @@ document.getElementById('or-note').textContent = (stt && stt.supported())
 document.getElementById('or-start').addEventListener('click', start);
 
 function start() {
-  const pool = cfgLvl === 'all' ? FICHES.slice() : FICHES.filter(f => f.niveau === Number(cfgLvl));
+  const pool = cfgLvl === 'all' ? POOL.slice() : POOL.filter(f => f.niveau === Number(cfgLvl));
   if (!pool.length) return;
   cards = shuffle(pool).slice(0, cfgN);
   idx = 0; good = 0;
