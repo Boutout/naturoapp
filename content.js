@@ -516,6 +516,206 @@ window.NATURO_CONTENT = {
         }
       ],
       synthese: "Pistes : plantes de terrain (plantain, cassis), soin du microbiote, rééquilibrage oméga 3/oméga 6, réduction des sucres raffinés. En complément du suivi allergologique."
+    },
+
+    {
+      id: 'cas-insomnie',
+      titre: 'Insomnie & stress',
+      icon: 'clock',
+      profil: { nom: 'Karim', age: 42, motif: "Endormissement difficile, ruminations, réveils nocturnes" },
+      contexte: "Karim travaille tard sur écran, boit du café l'après-midi et se sent sous pression. Aucun trouble médical du sommeil diagnostiqué.",
+      etapes: [
+        {
+          question: "Quel précurseur soutenir pour fabriquer sérotonine puis mélatonine ?",
+          options: ['Le tryptophane (→ 5-HTP → sérotonine → mélatonine)', 'La tyrosine', 'La méthionine', 'La glutamine'],
+          bonne: 0,
+          explication: "Voie du sommeil : tryptophane → 5-HTP → sérotonine → mélatonine. La tyrosine, elle, mène à la dopamine (motivation), pas au sommeil."
+        },
+        {
+          question: "Quelle plante proposer pour favoriser l'endormissement ?",
+          options: ['Valériane / passiflore', 'Pissenlit', 'Échinacée', 'Romarin'],
+          bonne: 0,
+          explication: "Valériane et passiflore sont calmantes et favorisent le sommeil. Pissenlit = foie, échinacée = immunité, romarin = tonique."
+        },
+        {
+          question: "Quelle habitude corriger en priorité le soir ?",
+          options: ['Les écrans tardifs (la lumière bleue bloque la mélatonine)', 'Manger des légumes', "Boire de l'eau", 'Lire un livre papier'],
+          bonne: 0,
+          explication: "La mélatonine se fabrique avec la baisse de lumière (dès ~18h). Les écrans le soir freinent sa production. Couper les écrans et tamiser la lumière aident l'endormissement."
+        }
+      ],
+      synthese: "Pistes : tryptophane/magnésium, valériane-passiflore, cohérence cardiaque, couper le café après midi et les écrans le soir, lumière tamisée. Si l'insomnie persiste, consulter."
+    },
+
+    {
+      id: 'cas-glycemie',
+      titre: 'Surpoids & fringales sucrées',
+      icon: 'activity',
+      profil: { nom: 'Nadia', age: 50, motif: "Surpoids abdominal, fringales de sucre, coup de barre après les repas" },
+      contexte: "Nadia grignote sucré dans la journée et bouge peu. Bilan médical sans diabète déclaré.",
+      etapes: [
+        {
+          question: "Quels micronutriments aident à réduire les compulsions sucrées ?",
+          options: ['Chrome, magnésium, vitamine C', 'Vitamines A, D, E', 'Sodium et potassium', 'Fer et cuivre'],
+          bonne: 0,
+          explication: "Le chrome améliore la sensibilité à l'insuline, le magnésium stabilise la glycémie et réduit les envies liées au stress, la vitamine C est anti-stress."
+        },
+        {
+          question: "Quels aliments privilégier pour stabiliser la glycémie ?",
+          options: ['Légumes, crudités et fibres (index glycémique bas)', 'Jus de fruits et miel', 'Pain blanc et riz blanc', 'Charcuteries'],
+          bonne: 0,
+          explication: "Les fibres ralentissent l'absorption du glucose (IG bas) et évitent les pics/chutes responsables des fringales. Les sucres rapides font l'inverse."
+        },
+        {
+          question: "Quel pilier d'hygiène de vie ajouter ?",
+          options: ['Une activité physique régulière', 'Sauter le petit-déjeuner', 'Plus de café', 'Un régime très restrictif'],
+          bonne: 0,
+          explication: "Le mouvement améliore la sensibilité à l'insuline et la composition corporelle. Les régimes très restrictifs entretiennent au contraire les fringales."
+        }
+      ],
+      synthese: "Pistes : chrome/magnésium, repas à IG bas riches en fibres, protéines à chaque repas, activité physique, sommeil. Orienter vers un médecin pour le suivi métabolique."
+    },
+
+    {
+      id: 'cas-rhumatismes',
+      titre: 'Douleurs articulaires inflammatoires',
+      icon: 'flame',
+      profil: { nom: 'Robert', age: 63, motif: "Douleurs aux genoux et aux mains, raideur le matin" },
+      contexte: "Robert a des douleurs articulaires inflammatoires (raideur matinale). Suivi médical en place.",
+      etapes: [
+        {
+          question: "Quel acide gras aide à réduire l'inflammation articulaire ?",
+          options: ['Oméga 3 (EPA/DHA)', 'Oméga 6 en excès', 'Graisses saturées', 'Aucun gras'],
+          bonne: 0,
+          explication: "Les oméga 3 (EPA/DHA) sont anti-inflammatoires (prostaglandines de série 3). Un excès d'oméga 6 est au contraire pro-inflammatoire."
+        },
+        {
+          question: "Quelles plantes pour l'inflammation et les rhumatismes ?",
+          options: ['Gingembre et cassis', 'Valériane et mélisse', 'Artichaut et radis noir', 'Thym et eucalyptus'],
+          bonne: 0,
+          explication: "Gingembre (gingérols anti-inflammatoires) et cassis (flavonoïdes, soutien des surrénales, anti-rhumatismal) sont les plantes retenues ici."
+        },
+        {
+          question: "Quel terrain rééquilibrer en parallèle ?",
+          options: ["L'équilibre acido-basique (réduire les acidifiants)", 'Augmenter le sel', "Supprimer toute eau", 'Plus de sucre'],
+          bonne: 0,
+          explication: "Un terrain acidifié favorise l'inflammation et la déminéralisation. Réduire les acidifiants (sucre, excès de protéines animales) et apporter des bases (légumes) soutient les articulations."
+        }
+      ],
+      synthese: "Pistes : oméga 3, gingembre/cassis, rééquilibrage acido-basique, mouvement doux. En complément du suivi rhumatologique."
+    },
+
+    {
+      id: 'cas-orl-enfant',
+      titre: 'Infections ORL à répétition (enfant)',
+      icon: 'sprout',
+      profil: { nom: 'Léna', age: 7, motif: "Rhinos et otites à répétition l'hiver, après plusieurs antibiotiques" },
+      contexte: "La maman de Léna consulte : enchaînements d'infections ORL et de cures d'antibiotiques. Terrain fragilisé.",
+      etapes: [
+        {
+          question: "Que faut-il restaurer après des antibiotiques répétés ?",
+          options: ['Le microbiote (probiotiques, fibres)', 'Le taux de sodium', 'La masse grasse', 'Rien de particulier'],
+          bonne: 0,
+          explication: "Les antibiotiques appauvrissent le microbiote, or une grande part de l'immunité s'y joue. Le restaurer (probiotiques, fibres/prébiotiques) soutient les défenses."
+        },
+        {
+          question: "Quel apport soutient l'immunité ?",
+          options: ['Vitamine D + zinc', 'Sodium', 'Calcium seul', 'Vitamine K'],
+          bonne: 0,
+          explication: "Vitamine D et zinc sont des soutiens classiques de l'immunité, surtout en hiver. (Posologies enfant à adapter avec un professionnel.)"
+        },
+        {
+          question: "Quelle erreur alimentaire éviter ?",
+          options: ["L'excès de sucres raffinés (baisse l'immunité, nourrit candida)", 'Manger des légumes', 'Dormir suffisamment', "Boire de l'eau"],
+          bonne: 0,
+          explication: "L'excès de sucre raffiné abaisse l'efficacité immunitaire et favorise les déséquilibres (candida). Le réduire aide le terrain."
+        }
+      ],
+      synthese: "Pistes : restaurer le microbiote, vitamine D + zinc, réduire les sucres raffinés, sommeil et aération. Chez l'enfant, TOUJOURS en lien avec le pédiatre."
+    },
+
+    {
+      id: 'cas-constipation',
+      titre: 'Constipation & transit paresseux',
+      icon: 'droplet',
+      profil: { nom: 'Camille', age: 34, motif: "Constipation, ballonnements en fin de journée, transit lent" },
+      contexte: "Camille boit peu, mange peu de fibres et bouge peu. Pas de cause médicale identifiée.",
+      etapes: [
+        {
+          question: "Quel processus se produit quand les selles stagnent trop longtemps ?",
+          options: ['La putréfaction : des toxines sont réabsorbées → soutenir le transit', 'La fermentation, bénéfique ici', 'Rien à signaler', 'Un excès de fibres'],
+          bonne: 0,
+          explication: "Quand les selles stagnent, les produits de putréfaction des protéines sont réabsorbés et chargent le foie. Relancer le transit limite cette auto-intoxication."
+        },
+        {
+          question: "Quels apports favoriser ?",
+          options: ['Fibres + hydratation + prébiotiques', "Moins d'eau", 'Pain blanc', 'Charcuteries'],
+          bonne: 0,
+          explication: "Fibres (légumes, fruits), eau et prébiotiques (artichaut, oignon, chicorée) augmentent le bol fécal et nourrissent le microbiote → meilleur transit."
+        },
+        {
+          question: "Quel soutien complémentaire proposer ?",
+          options: ['Activité physique + magnésium (effet sur le transit)', 'Valériane', 'Échinacée', 'Thym'],
+          bonne: 0,
+          explication: "Le mouvement stimule le péristaltisme et le magnésium a un effet osmotique/relaxant favorable au transit. Valériane = sommeil, échinacée = immunité."
+        }
+      ],
+      synthese: "Pistes : fibres + eau + prébiotiques, magnésium, activité physique, horaires réguliers aux toilettes. Si la constipation est récente ou résistante, consulter."
     }
+  ],
+
+  // ═══════════════════════════════════════════════════════════════
+  //  FICHES DE RÉVISION — par niveau de complexité
+  //  niveau : 1 = bases · 2 = intermédiaire · 3 = avancé
+  //  { niveau, theme, recto, verso }  — étudiées en recto/verso (fiches.html)
+  // ═══════════════════════════════════════════════════════════════
+  fiches: [
+    // ── Niveau 1 : bases / définitions ──────────────────────────
+    { niveau: 1, theme: 'Concepts', recto: "Qu'est-ce que la naturopathie ?", verso: "Une approche de santé naturelle qui stimule la force vitale et la capacité d'auto-guérison de l'organisme, via l'hygiène de vie (alimentation, exercice, gestion du stress, sommeil…)." },
+    { niveau: 1, theme: 'Concepts', recto: "Les 5 émonctoires", verso: "Foie, reins, intestins, poumons, peau — les portes de sortie des déchets de l'organisme." },
+    { niveau: 1, theme: 'Concepts', recto: "L'homéostasie", verso: "La capacité de l'organisme à maintenir son équilibre interne (température, pH, eau, minéraux) de façon dynamique et permanente." },
+    { niveau: 1, theme: 'Concepts', recto: "Le vitalisme", verso: "Le principe selon lequel l'organisme possède une force vitale (énergie) capable de s'auto-réguler et de s'auto-réparer." },
+    { niveau: 1, theme: 'Concepts', recto: "Le « terrain »", verso: "L'ensemble des caractéristiques (héréditaires + mode de vie) qui déterminent la santé d'une personne et sa prédisposition aux déséquilibres." },
+    { niveau: 1, theme: 'Techniques', recto: "Phytothérapie ?", verso: "Le soin par les plantes médicinales (tisanes, teintures, extraits…)." },
+    { niveau: 1, theme: 'Techniques', recto: "Aromathérapie ?", verso: "Le soin par les huiles essentielles (concentrés aromatiques de plantes)." },
+    { niveau: 1, theme: 'Techniques', recto: "Gemmothérapie ?", verso: "Le soin par les bourgeons et jeunes pousses, sous forme de macérats glycérinés." },
+    { niveau: 1, theme: 'Tempéraments', recto: "Les 4 tempéraments d'Hippocrate", verso: "Sanguin, lymphatique (flegmatique), bilieux (colérique), nerveux (mélancolique)." },
+    { niveau: 1, theme: 'Phytothérapie', recto: "Une plante « carminative » sert à…", verso: "Réduire les ballonnements et expulser les gaz intestinaux. Ex : fenouil, anis, carvi, gingembre." },
+    { niveau: 1, theme: 'Cures', recto: "La cure de revitalisation", verso: "Recharge l'organisme en vitamines et minéraux et comble les carences. Elle reconstruit (elle ne draine pas)." },
+    { niveau: 1, theme: 'Microbiote', recto: "Probiotique ?", verso: "Un micro-organisme vivant bénéfique pour la flore intestinale (ex : lactobacilles, bifidobactéries)." },
+    { niveau: 1, theme: 'Microbiote', recto: "Prébiotique ?", verso: "Une fibre non digestible qui sert de nourriture aux bonnes bactéries du côlon (ex : inuline, FOS)." },
+    { niveau: 1, theme: 'Concepts', recto: "L'estomac est-il un émonctoire ?", verso: "Non : l'estomac est un organe de DIGESTION. Les émonctoires (foie, reins, intestins, poumons, peau) éliminent les déchets." },
+
+    // ── Niveau 2 : intermédiaire / mécanismes ───────────────────
+    { niveau: 2, theme: 'Cures', recto: "Les 3 cures de Marchesseau (dans l'ordre)", verso: "1. Désintoxication (drainage) → 2. Revitalisation (recharge) → 3. Stabilisation. On nettoie avant de recharger." },
+    { niveau: 2, theme: 'Phytothérapie', recto: "Cholagogue vs cholérétique", verso: "Cholérétique = stimule la PRODUCTION de bile par le foie. Cholagogue = favorise son ÉVACUATION de la vésicule." },
+    { niveau: 2, theme: 'Nutrition', recto: "Oméga 3, 6, 9 ?", verso: "Oméga 9 = mono-insaturé (huile d'olive). Oméga 3 et 6 = poly-insaturés ESSENTIELS. Viser un ratio oméga 6/oméga 3 proche de 4/1." },
+    { niveau: 2, theme: 'Système nerveux', recto: "Vagotonie vs sympathicotonie", verso: "Vagotonique = dominance parasympathique (péristaltisme ↑, intuition, cerveau droit). Sympathicotonique = dominance orthosympathique (action, tension)." },
+    { niveau: 2, theme: 'Micronutrition', recto: "Vitamine D3 vs D2", verso: "La D3 (cholécalciférol, animale/soleil) est mieux biodisponible que la D2 (végétale). Elle favorise l'absorption du calcium." },
+    { niveau: 2, theme: 'Terrain', recto: "Acides et colles : par où s'éliminent-ils ?", verso: "Déchets ACIDES → reins + poumons. Déchets COLLES (colloïdaux) → foie + gros intestin." },
+    { niveau: 2, theme: 'Phytothérapie', recto: "Le trio hépatique", verso: "Artichaut, radis noir, pissenlit — stimulent le foie et la vésicule (cholagogues/cholérétiques)." },
+    { niveau: 2, theme: 'Gynécologie', recto: "Hyperœstrogénie « relative »", verso: "Les œstrogènes sont en excès PAR RAPPORT à la progestérone (pas forcément élevés en absolu). Survient à la puberté et en préménopause." },
+    { niveau: 2, theme: 'Gynécologie', recto: "Rôles de la progestérone", verso: "Sécrétée par le corps jaune (phase lutéale), elle AUGMENTE la température basale et favorise le maintien de la grossesse." },
+    { niveau: 2, theme: 'Microbiote', recto: "Fermentation vs putréfaction", verso: "Fermentation (sucres) = acides organiques non néfastes. Putréfaction (protéines) = toxines réabsorbées surtout si constipation." },
+    { niveau: 2, theme: 'Phytochimie', recto: "Effet des furocoumarines", verso: "Photosensibilisantes : réaction cutanée au soleil (bergamote, céleri, angélique). Prudence en été." },
+    { niveau: 2, theme: 'Nutrition', recto: "Acide aminé limitant", verso: "Légumineuses pauvres en méthionine, céréales pauvres en lysine. Les associer (riz + lentilles) = protéines complètes." },
+    { niveau: 2, theme: 'Régimes', recto: "Méthode Kousmine : cuisson", verso: "Cuisson douce, inférieure à 100°C, pour préserver enzymes et vitamines thermosensibles." },
+    { niveau: 2, theme: 'Micronutrition', recto: "Fer : précaution clé", verso: "Ne jamais supplémenter sans bilan sanguin : en excès il est pro-oxydant (réaction de Fenton) et hépatotoxique." },
+
+    // ── Niveau 3 : avancé / clinique ────────────────────────────
+    { niveau: 3, theme: 'Neuro', recto: "Précurseur de la sérotonine (voie complète)", verso: "Tryptophane → 5-HTP → sérotonine → mélatonine (sommeil). À ne pas confondre avec la voie de la dopamine." },
+    { niveau: 3, theme: 'Neuro', recto: "Précurseur de la dopamine + plante source", verso: "Tyrosine → L-DOPA → dopamine. Source naturelle de L-DOPA : Mucuna pruriens (pois mascate)." },
+    { niveau: 3, theme: 'Terrain', recto: "Classification de Marchesseau (4 stades)", verso: "1. Carencé · 2. Intoxiqué · 3. Dystonique · 4. Dysorganique (le plus grave)." },
+    { niveau: 3, theme: 'Régimes', recto: "Régime Seignalet (hypotoxique)", verso: "Exclut TOUS les laits animaux et les céréales mutées/glutineuses (blé, seigle, épeautre, orge). Autorise riz, sarrasin, fruits, légumes, viande, poisson." },
+    { niveau: 3, theme: 'Biochimie', recto: "Réaction de Maillard", verso: "Réaction sucres + acides aminés sous l'effet de la chaleur → brunissement + AGE (glycotoxines / produits de glycation)." },
+    { niveau: 3, theme: 'Gynécologie', recto: "Plantes progestérone-like vs œstrogène-like", verso: "Progestérone-like : alchémille, houblon. Œstrogène-like : sauge, trèfle rouge." },
+    { niveau: 3, theme: 'Terrain', recto: "Terrain baso-colitique : prise en charge", verso: "Cible l'intestin : plantes digestives (fenouil, basilic, mélisse) + pré/probiotiques pour rééquilibrer le microbiote." },
+    { niveau: 3, theme: 'Micronutrition', recto: "Rôles de la L-Glutamine", verso: "Carburant des entérocytes : renouvelle la muqueuse intestinale, synthétise le glutathion intestinal, active la synthèse protéique." },
+    { niveau: 3, theme: 'Sport', recto: "Récupération sportive : 3 mécanismes", verso: "Sel (reconstitue le capital hydrique), B1 (recycle l'acide lactique), B6 (élimine les protéines musculaires endommagées)." },
+    { niveau: 3, theme: 'Terrain', recto: "Carence en « vitamine F »", verso: "Vitamine F = acides gras essentiels. Carence → baisse immunitaire, troubles cutanés, terrain asthmatique." },
+    { niveau: 3, theme: 'Phytochimie', recto: "Plantes à dérivés salicylés (aspirine naturelle)", verso: "Saule (salicine) et reine des prés (spiréine) — à l'origine de la synthèse de l'aspirine." },
+    { niveau: 3, theme: 'Microbiote', recto: "Vitamines synthétisées par le microbiote", verso: "Vitamine K, vitamine B12 (peu absorbée dans le côlon) et vitamine B9 (folates)." },
+    { niveau: 3, theme: 'Chrono-nutrition', recto: "Mélatonine : production", verso: "Produite par la glande pinéale à partir de la sérotonine ; sécrétion dès la baisse de lumière (≈18h), pic vers 2-3h du matin." },
+    { niveau: 3, theme: 'Pédiatrie', recto: "Probiotique de référence : eczéma du nourrisson", verso: "Lactobacillus rhamnosus GG (LGG) — la souche la mieux documentée pour l'eczéma atopique du nouveau-né." }
   ]
 };

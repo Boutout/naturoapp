@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>NaturoApp — Fiches de révision</title>
+  <meta name="theme-color" content="#1A5C45">
+  <link rel="manifest" href="manifest.json">
+  <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="NaturoApp">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Lora:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+  <script>try{var t=localStorage.getItem('naturoapp_theme');if(t==='dark'||((!t||t==='auto')&&window.matchMedia('(prefers-color-scheme:dark)').matches)){document.documentElement.setAttribute('data-theme','dark');}else{document.documentElement.setAttribute('data-theme','light');}if(!sessionStorage.getItem('naturoapp_active'))document.documentElement.classList.add('pre-lock');}catch(e){}</script>
+  <style>
+    .fi-hero { background: radial-gradient(120% 140% at 0% 0%, #1F6B50 0, rgba(31,107,80,0) 55%), linear-gradient(135deg, var(--c-green-deep), var(--c-green));
+      color:#fff; border-radius:var(--r-xl); padding:28px 30px; margin-bottom:22px; box-shadow:var(--shadow-lg); }
+    .fi-hero h1 { color:#fff; font-size:26px; }
+    .fi-hero p { color:rgba(255,255,255,.85); font-size:14px; margin-top:4px; max-width:560px; }
+
+    .lvl-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(200px,1fr)); gap:14px; }
+    .lvl-card { display:flex; flex-direction:column; gap:6px; padding:20px; cursor:pointer; border-left:5px solid var(--c-green); }
+    .lvl-card[data-lvl="1"] { border-left-color:#4EBF93; }
+    .lvl-card[data-lvl="2"] { border-left-color:var(--c-ocre); }
+    .lvl-card[data-lvl="3"] { border-left-color:#2C5F8A; }
+    .lvl-card[data-lvl="all"] { border-left-color:var(--c-purple); }
+    .lvl-card h3 { font-size:17px; }
+    .lvl-card__n { font-size:13px; color:var(--c-mid); }
+    .lvl-badge { display:inline-block; font-size:11px; font-weight:700; border-radius:20px; padding:2px 10px; color:#fff; width:max-content; }
+
+    /* étude */
+    .fi-top { display:flex; align-items:center; gap:12px; margin-bottom:14px; }
+    .fi-top .progress-bar { flex:1; }
+    .fi-card { background:var(--c-white); border:1px solid var(--c-border); border-radius:var(--r-xl); box-shadow:var(--shadow-md);
+      min-height:240px; padding:26px 26px 22px; display:flex; flex-direction:column; cursor:pointer; transition:transform .12s; }
+    .fi-card:active { transform:scale(.99); }
+    .fi-card__tag { display:flex; align-items:center; gap:8px; margin-bottom:14px; }
+    .fi-side { font-size:11px; font-weight:700; letter-spacing:.5px; text-transform:uppercase; color:var(--c-mid); }
+    .fi-recto { font-family:var(--font-display); font-size:22px; font-weight:600; line-height:1.35; flex:1; display:flex; align-items:center; }
+    .fi-verso { font-size:16px; line-height:1.6; color:var(--c-dark); flex:1; display:flex; align-items:center; }
+    .fi-hint { text-align:center; font-size:12px; color:var(--c-mid); margin-top:10px; }
+    .fi-eval { display:flex; gap:10px; margin-top:16px; }
+    .fi-eval .btn { flex:1; }
+
+    .fi-done { text-align:center; background:linear-gradient(135deg,var(--c-green-deep),var(--c-green)); color:#fff; border-radius:var(--r-xl); padding:32px; }
+    .fi-done h2 { color:#fff; font-size:24px; }
+    .fi-done__score { font-family:var(--font-display); font-size:44px; font-weight:700; margin:8px 0; }
+  </style>
+</head>
+<body>
+
+<nav class="topnav">
+  <a href="index.html" class="topnav__logo">
+    <div class="topnav__logo-icon" data-icon="leaf"></div>
+    <div><div class="topnav__logo-text">NaturoApp</div><span class="topnav__logo-sub">Révision Naturopathie</span></div>
+  </a>
+  <ul class="topnav__nav">
+    <li><a href="index.html"><span class="nav-ico" data-icon="home"></span> <span class="nav-label">Accueil</span></a></li>
+    <li><a href="cours.html"><span class="nav-ico" data-icon="book"></span> <span class="nav-label">Cours</span></a></li>
+    <li><a href="revision.html"><span class="nav-ico" data-icon="book-open"></span> <span class="nav-label">Révision</span></a></li>
+    <li><a href="examen.html"><span class="nav-ico" data-icon="edit"></span> <span class="nav-label">Examen</span></a></li>
+    <li><a href="stats.html"><span class="nav-ico" data-icon="chart"></span> <span class="nav-label">Stats</span></a></li>
+  </ul>
+  <button class="nav-lock" id="nav-search" data-icon="search" title="Rechercher (Ctrl/Cmd+K)" aria-label="Rechercher"></button>
+  <a class="nav-lock" id="nav-settings" href="reglages.html" data-icon="settings" title="Réglages" aria-label="Réglages"></a>
+  <button class="nav-lock" id="nav-theme" data-icon="moon" title="Thème sombre" aria-label="Changer de thème"></button>
+  <button class="nav-lock" id="nav-lock" data-icon="lock" title="Verrouiller l'app" aria-label="Verrouiller"></button>
+</nav>
+
+<div class="page" style="max-width:640px;">
+  <div id="fi-intro">
+    <div class="fi-hero">
+      <h1>Fiches de révision</h1>
+      <p>Des cartes recto/verso classées par niveau de complexité. Choisis ton niveau et auto-évalue-toi.</p>
+    </div>
+    <div class="lvl-grid" id="lvl-grid"></div>
+  </div>
+  <div id="fi-study" style="display:none;"></div>
+</div>
+
+<nav class="bottomnav">
+  <a href="index.html"><span class="bn-ico" data-icon="home"></span> Accueil</a>
+  <a href="cours.html"><span class="bn-ico" data-icon="book"></span> Cours</a>
+  <a href="revision.html"><span class="bn-ico" data-icon="book-open"></span> Révision</a>
+  <a href="examen.html"><span class="bn-ico" data-icon="edit"></span> Examen</a>
+  <a href="stats.html"><span class="bn-ico" data-icon="chart"></span> Stats</a>
+</nav>
+
+<div id="toast-container"></div>
+
+<script src="content.js"></script>
+<script src="app.js"></script>
+<script>
+const { icon, escapeHtml, shuffle, sfx } = window.APP;
+const ALL = (window.NATURO_CONTENT && window.NATURO_CONTENT.fiches) || [];
+const LEVELS = [
+  { lvl: 1, nom: 'Niveau 1 — Bases', desc: 'Définitions et concepts essentiels', color: '#4EBF93' },
+  { lvl: 2, nom: 'Niveau 2 — Intermédiaire', desc: 'Mécanismes et associations', color: '#C4873A' },
+  { lvl: 3, nom: 'Niveau 3 — Avancé', desc: 'Clinique et raisonnement', color: '#2C5F8A' },
+  { lvl: 'all', nom: 'Tous les niveaux', desc: 'Le paquet complet, mélangé', color: '#7D3C98' }
+];
+
+const intro = document.getElementById('fi-intro');
+const studyEl = document.getElementById('fi-study');
+
+// état d'étude
+let cards = [], idx = 0, flipped = false, acquis = 0, retry = [];
+
+function renderPicker() {
+  intro.style.display = 'block';
+  studyEl.style.display = 'none';
+  const host = document.getElementById('lvl-grid');
+  host.innerHTML = LEVELS.map(L => {
+    const n = L.lvl === 'all' ? ALL.length : ALL.filter(f => f.niveau === L.lvl).length;
+    return `<div class="card card--hover lvl-card" data-lvl="${L.lvl}">
+      <span class="lvl-badge" style="background:${L.color}">${L.lvl === 'all' ? 'TOUT' : 'N' + L.lvl}</span>
+      <h3>${escapeHtml(L.nom)}</h3>
+      <div class="lvl-card__n">${escapeHtml(L.desc)} · ${n} fiches</div>
+    </div>`;
+  }).join('');
+  host.querySelectorAll('.lvl-card').forEach(el => el.addEventListener('click', () => start(el.dataset.lvl)));
+}
+
+function start(lvl) {
+  const pool = lvl === 'all' ? ALL.slice() : ALL.filter(f => f.niveau === Number(lvl));
+  if (!pool.length) return;
+  cards = shuffle(pool);
+  idx = 0; acquis = 0; retry = []; flipped = false;
+  intro.style.display = 'none';
+  studyEl.style.display = 'block';
+  renderCard();
+}
+
+function renderCard() {
+  if (idx >= cards.length) { renderDone(); return; }
+  const c = cards[idx];
+  flipped = false;
+  studyEl.innerHTML = `
+    <button class="btn btn-ghost btn-sm" id="fi-back" style="margin-bottom:10px;"><span data-icon="arrow-left"></span> Niveaux</button>
+    <div class="fi-top">
+      <span style="font-size:12px;color:var(--c-mid);white-space:nowrap;">${idx + 1} / ${cards.length}</span>
+      <div class="progress-bar"><div class="progress-bar__fill" style="width:${Math.round((idx + 1) / cards.length * 100)}%"></div></div>
+    </div>
+    <div class="fi-card" id="fi-card">
+      <div class="fi-card__tag">
+        <span class="lvl-badge" style="background:${c.niveau === 1 ? '#4EBF93' : c.niveau === 2 ? '#C4873A' : '#2C5F8A'}">N${c.niveau}</span>
+        <span class="fi-side">${escapeHtml(c.theme || '')}</span>
+      </div>
+      <div class="fi-recto" id="fi-content">${escapeHtml(c.recto)}</div>
+    </div>
+    <p class="fi-hint" id="fi-hint">Touche la carte pour voir la réponse</p>
+    <div class="fi-eval" id="fi-eval" style="display:none;">
+      <button class="btn btn-danger" id="fi-retry"><span data-icon="rotate"></span> À revoir</button>
+      <button class="btn btn-primary" id="fi-ok"><span data-icon="check"></span> Acquis</button>
+    </div>`;
+  window.APP.hydrateIcons(studyEl);
+  document.getElementById('fi-back').addEventListener('click', renderPicker);
+  document.getElementById('fi-card').addEventListener('click', flip);
+  document.getElementById('fi-retry').addEventListener('click', () => next(false));
+  document.getElementById('fi-ok').addEventListener('click', () => next(true));
+  window.scrollTo(0, 0);
+}
+
+function flip() {
+  if (flipped) return;
+  flipped = true;
+  const c = cards[idx];
+  const content = document.getElementById('fi-content');
+  content.className = 'fi-verso';
+  content.innerHTML = escapeHtml(c.verso);
+  document.querySelector('#fi-card .fi-side').textContent = 'Réponse';
+  document.getElementById('fi-hint').style.display = 'none';
+  document.getElementById('fi-eval').style.display = 'flex';
+}
+
+function next(ok) {
+  if (ok) { acquis++; if (sfx) sfx.correct(); }
+  else { retry.push(cards[idx]); if (sfx) sfx.wrong(); }
+  idx++;
+  renderCard();
+}
+
+function renderDone() {
+  const total = cards.length;
+  const pct = total ? Math.round(acquis / total * 100) : 0;
+  studyEl.innerHTML = `
+    <div class="fi-done">
+      <div style="display:flex;justify-content:center;">${icon(pct >= 80 ? 'party' : 'thumbs-up')}</div>
+      <h2>Série terminée !</h2>
+      <div class="fi-done__score">${acquis}/${total}</div>
+      <p>fiches acquises (${pct}%)</p>
+      <div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-top:20px;">
+        ${retry.length ? `<button class="btn" style="background:#fff;color:var(--c-green-deep)" id="fi-redo"><span data-icon="rotate"></span> Revoir les ${retry.length} à revoir</button>` : ''}
+        <button class="btn" style="background:rgba(255,255,255,.2);color:#fff" id="fi-menu"><span data-icon="arrow-left"></span> Niveaux</button>
+      </div>
+    </div>`;
+  window.APP.hydrateIcons(studyEl);
+  const redo = document.getElementById('fi-redo');
+  if (redo) redo.addEventListener('click', () => { cards = shuffle(retry); idx = 0; acquis = 0; retry = []; renderCard(); });
+  document.getElementById('fi-menu').addEventListener('click', renderPicker);
+  if (pct >= 80 && total >= 3) { window.APP.celebrate(); if (sfx) sfx.levelup(); }
+  window.scrollTo(0, 0);
+}
+
+window.APP.onReady(renderPicker);
+</script>
+</body>
+</html>
