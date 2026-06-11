@@ -41,7 +41,7 @@ const QUESTIONS = [
     ],
     bonne: 1,
     explication: "Un acide gras insaturé possède AU MOINS UNE double liaison C=C. Mono-insaturé = 1 liaison (oméga 9). Poly-insaturé = plusieurs (oméga 3, 6). Le fichier original disait 'plusieurs' — c'est une imprécision corrigée ici.",
-    piege: "⚠️ CORRECTION : le cours original dit 'plusieurs doubles liaisons' mais un MUFA (oméga 9) n'en a qu'une seule. Un acide gras SATURÉ n'a que des liaisons simples.",
+    piege: "CORRECTION : le cours original dit 'plusieurs doubles liaisons' mais un MUFA (oméga 9) n'en a qu'une seule. Un acide gras SATURÉ n'a que des liaisons simples.",
     mnemo: "inSATURÉ = S'est SATURÉ de liaisons doubles. Au moins une. Saturé = aucune double liaison.",
     tags: ["biochimie", "lipides", "correction"],
     correction: true
@@ -86,7 +86,7 @@ const QUESTIONS = [
     sujet: "Cure de revitalisation",
     question: "La cure de revitalisation consiste en :",
     options: [
-      "Un drainage intensif des toxines par les émonctoines",
+      "Un drainage intensif des toxines par les émonctoires",
       "Un jeûne thérapeutique prolongé",
       "Une cure de vitamines et minéraux adaptée aux carences de l'organisme",
       "Une cure de plantes dépuratives"
@@ -178,7 +178,7 @@ const QUESTIONS = [
     ],
     bonne: 3,
     explication: "Les antibiotiques ne traitent pas les lithiases (calculs). Les plantes cholagogues (évacuent la bile) et cholérétiques (stimulent la production de bile) SOULAGENT bien. L'alimentation grasse est un facteur déclenchant réel.",
-    piege: "⚠️ PIÈGE DE FORMULATION : la question demande de trouver l'ERREUR. La bonne réponse est donc la proposition fausse (antibiotiques). Ne pas cocher la prop sur les plantes cholagogues comme erreur.",
+    piege: "PIÈGE DE FORMULATION : la question demande de trouver l'ERREUR. La bonne réponse est donc la proposition fausse (antibiotiques). Ne pas cocher la prop sur les plantes cholagogues comme erreur.",
     mnemo: "CHOLA-GOGUE = fait aller (gogue) la bile (chol). CHOLA-RÉTIQUE = retient/stimule la bile. Les deux aident. Antibiotiques ≠ traitement des calculs.",
     tags: ["phytothérapie", "digestion", "piège-formulation"],
     piege_special: true
@@ -434,7 +434,7 @@ const QUESTIONS = [
     ],
     bonne: 2,
     explication: "Mucuna pruriens = source naturelle de L-Dopa (précurseur de la dopamine). Utilisé pour le syndrome des jambes sans repos (lié à une carence dopaminergique) et parfois comme support dans la maladie de Parkinson.",
-    piege: "⚠️ NE PAS CONFONDRE : Mucuna = DOPAMINE (via L-Dopa). Griffonia/Tryptophane = SÉROTONINE. Ce sont deux neurotransmetteurs différents.",
+    piege: "NE PAS CONFONDRE : Mucuna = DOPAMINE (via L-Dopa). Griffonia/Tryptophane = SÉROTONINE. Ce sont deux neurotransmetteurs différents.",
     mnemo: "MuCUna = cuMiné de DOPA. Mucuna → L-DOPA → Dopamine. Jambes sans repos = manque de dopamine.",
     tags: ["phytothérapie", "neurotransmetteurs", "dopamine"],
     important: true
@@ -647,7 +647,7 @@ const QUESTIONS = [
     id: 38, jour: 4,
     categorie: "Phytochimie",
     sujet: "Plantes à dérivés salicylés",
-    question: "Quelles plantes contiennent des dérivés salicylés (aspirin naturelle) ?",
+    question: "Quelles plantes contiennent des dérivés salicylés (aspirine naturelle) ?",
     options: [
       "Arnica et hélichryse italienne",
       "Saule et reine des prés",
@@ -707,7 +707,7 @@ const QUESTIONS = [
     ],
     bonne: 2,
     explication: "Voie de synthèse : Tryptophane → 5-HTP (5-hydroxy-tryptophane) → Sérotonine. La tyrosine est le précurseur de la dopamine (tyrosine → DOPA → dopamine). Ces deux voies sont distinctes et importantes à ne pas confondre.",
-    piege: "⚠️ CONFUSION FRÉQUENTE : Tryptophane = sérotonine. Tyrosine = dopamine. Ce sont deux voies totalement distinctes.",
+    piege: "CONFUSION FRÉQUENTE : Tryptophane = sérotonine. Tyrosine = dopamine. Ce sont deux voies totalement distinctes.",
     mnemo: "TRYPtophane → SéROTonine. TYROSINE → DOPAMINE. TRY = séROTonine. TYR = DOpamine.",
     tags: ["neurotransmetteurs", "biochimie", "important"],
     important: true
@@ -742,7 +742,7 @@ const QUESTIONS = [
     ],
     bonne: 2,
     explication: "Oméga 9 = acides gras MONO-insaturés (une seule double liaison). Exemple : acide oléique dans l'huile d'olive. Oméga 3 et 6 = POLY-insaturés (plusieurs doubles liaisons) et ESSENTIELS (l'organisme ne peut pas les fabriquer).",
-    piege: "⚠️ À RETENIR : Oméga 9 = mono-insaturé (non essentiel, l'organisme peut en fabriquer). Oméga 3/6 = poly-insaturés essentiels.",
+    piege: "À RETENIR : Oméga 9 = mono-insaturé (non essentiel, l'organisme peut en fabriquer). Oméga 3/6 = poly-insaturés essentiels.",
     mnemo: "Oméga 9 = huile d'olive = 1 seule double liaison. UN seul C=C = MONO. Oméga 3 et 6 = nombreuses = POLY.",
     tags: ["nutrition", "lipides", "oméga", "important"],
     important: true
@@ -811,7 +811,7 @@ const QUESTIONS = [
     ],
     bonne: 2,
     explication: "La Vitamine B9 (folates/acide folique) est INDISPENSABLE avant la conception et les 3 premiers mois de grossesse pour prévenir les malformations du tube neural (spina bifida, anencéphalie). Supplémentation recommandée : 400 µg/jour.",
-    piege: "La vitamine D est aussi importante en grossesse mais la B9 est LA vitamine pré-conceptionelle. La B12 est à supplémenter chez les végétaliennes enceintes.",
+    piege: "La vitamine D est aussi importante en grossesse mais la B9 est LA vitamine préconceptionnelle. La B12 est à supplémenter chez les végétaliennes enceintes.",
     mnemo: "B9 = Bébé 9 mois = vitamine de la GROSSESSE. B9 → BÉBÉ en bonne santé. Folates = fondations du tube neural.",
     tags: ["micronutrition", "gynécologie", "grossesse", "important"]
   },
@@ -983,7 +983,7 @@ const QUESTIONS = [
     bonne: 1,
     explication: "Le régime Seignalet (hypotoxique) interdit : les laits animaux (TOUS : vache, chèvre, brebis) et les céréales mutées/glutineuses (blé, seigle, épeautre, kamut, orge). La bière = dérivé de céréale (orge/seigle). Autorisé : riz, sarrasin, fruits, légumes, viande, poisson.",
     piege: "Le lait de CHÈVRE est interdit chez Seignalet (tous les laits animaux). La bière est interdite car faite à partir de céréales à gluten. Épeautre = ancêtre du blé, interdit.",
-    mnemo: "SEIGNALET = Hypertoxico. Interdit : LAIT (toutes espèces) + CÉRÉALES GLUTEN (seigle, épeautre, blé) + BIÈRE. Autorisé : riz, légumes, fruits, viandes.",
+    mnemo: "SEIGNALET = régime HYPOtoxique (on réduit les toxines). Interdit : LAIT (toutes espèces) + CÉRÉALES À GLUTEN (seigle, épeautre, blé) + BIÈRE. Autorisé : riz, légumes, fruits, viandes.",
     tags: ["régimes", "Seignalet", "alimentation"],
     important: true
   },
@@ -1170,7 +1170,7 @@ const QUESTIONS = [
     ],
     bonne: 2,
     explication: "Dans CE COURS, l'ischémie-reperfusion est associée à un trouble digestif. Note : médicalement, l'ischémie-reperfusion est un mécanisme général (cardiovasculaire, rénale, cérébrale...) mais le contexte du cours la place dans le cadre digestif/sportif.",
-    piege: "⚠️ Cette réponse est spécifique au cours. Dans la littérature médicale générale, l'ischémie-reperfusion est un phénomène multi-systémique. Pour l'examen, retenir : trouble digestif.",
+    piege: "Cette réponse est spécifique au cours. Dans la littérature médicale générale, l'ischémie-reperfusion est un phénomène multi-systémique. Pour l'examen, retenir : trouble digestif.",
     mnemo: "Pour CE COURS : ischémie-reperfusion = trouble DIGESTIF. Mémoriser la réponse du cours, pas la définition médicale générale.",
     tags: ["physiologie", "sport", "correction"]
   },
@@ -1221,7 +1221,7 @@ const QUESTIONS = [
     ],
     bonne: 2,
     explication: "Mucuna pruriens (Pois mascate, Pois à gratter) est la plante riche en L-Dopa (précurseur de la dopamine). Griffonia = 5-HTP (précurseur sérotonine). Millepertuis = inhibiteur recapture sérotonine. Ces associations sont fondamentales.",
-    piege: "⚠️ TABLEAU CLÉS : Mucuna = DOPA/Dopamine. Griffonia = 5-HTP/Sérotonine. Millepertuis = inhibiteur recapture sérotonine. Ne jamais les mélanger.",
+    piege: "TABLEAU CLÉS : Mucuna = DOPA/Dopamine. Griffonia = 5-HTP/Sérotonine. Millepertuis = inhibiteur recapture sérotonine. Ne jamais les mélanger.",
     mnemo: "MUCUNA = MOTIVATION = Dopamine. Griffonia = GAITÉ = Sérotonine. Millepertuis = MOrale = sérotonine aussi.",
     tags: ["phytothérapie", "neurotransmetteurs", "dopamine", "important"],
     important: true
@@ -1239,7 +1239,7 @@ const QUESTIONS = [
     ],
     bonne: 1,
     explication: "Griffonia simplicifolia (graines riches en 5-HTP, précurseur direct de la sérotonine) et Millepertuis (Hypericum : hyperforine inhibe la recapture de sérotonine, dopamine et noradrénaline). Les deux agissent sur la voie sérotoninergique.",
-    piege: "⚠️ PIÈGE MAJEUR : Mucuna = DOPAMINE (pas sérotonine). Pour la sérotonine : Griffonia + Millepertuis.",
+    piege: "PIÈGE MAJEUR : Mucuna = DOPAMINE (pas sérotonine). Pour la sérotonine : Griffonia + Millepertuis.",
     mnemo: "GRIFFONIA + MILLEPERTUIS = le duo du SOURIRE (sérotonine = hormone du bonheur). GriFFonia = 5HtP → sérotonine.",
     tags: ["phytothérapie", "neurotransmetteurs", "sérotonine", "important"],
     important: true
@@ -1257,7 +1257,7 @@ const QUESTIONS = [
     ],
     bonne: 1,
     explication: "Les prébiotiques sont des fibres non digestibles (FOS, inuline, GOS) qui nourrissent les bactéries bénéfiques. Riches en prébiotiques : Artichaut (inuline), Oignon (FOS), Chicorée (inuline), Lait maternel (GOS/HMO = Human Milk Oligosaccharides).",
-    piege: "⚠️ NE PAS CONFONDRE : Prébiotiques (fibres = substrats) ≠ Probiotiques (bactéries vivantes = yaourt, kéfir). Ce sont des concepts OPPOSÉS mais complémentaires.",
+    piege: "NE PAS CONFONDRE : Prébiotiques (fibres = substrats) ≠ Probiotiques (bactéries vivantes = yaourt, kéfir). Ce sont des concepts OPPOSÉS mais complémentaires.",
     mnemo: "PRÉbiotiques = avant les bactéries = nourriture POUR les bactéries. PRObiotiques = bactéries elles-mêmes. PRÉ = l'herbe, PRO = les vaches qui mangent l'herbe.",
     tags: ["microbiote", "prébiotiques", "nutrition"],
     important: true
@@ -1309,7 +1309,7 @@ const QUESTIONS = [
     ],
     bonne: 1,
     explication: "Trois mécanismes : 1) Sel (sodium) après compétition = compense les pertes sodées par la sueur, reconstitue le capital hydrique. 2) B1 (thiamine) = co-enzyme du cycle de l'acide lactique (pyruvate déshydrogénase). 3) B6 (pyridoxine) = co-enzyme du métabolisme des acides aminés, élimine les protéines musculaires dégradées.",
-    piege: "Le SEL après l'effort est BÉNÉFIQUE (perd contraire au régime hypotensif). La B1 agit sur le LACTATE (pas sur les protéines). La B6 agit sur les PROTÉINES endommagées.",
+    piege: "Le SEL après l'effort est BÉNÉFIQUE (à l'inverse du régime pauvre en sel conseillé en cas d'hypertension). La B1 agit sur le LACTATE (pas sur les protéines). La B6 agit sur les PROTÉINES endommagées.",
     mnemo: "SEL = hydratation. B1 = lactate. B6 = protéines. Sel-B1-B6 = le trio de récupération.",
     tags: ["sport", "micronutrition", "récupération"]
   },
