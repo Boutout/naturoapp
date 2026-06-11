@@ -75,10 +75,11 @@
 <div class="page page--chat">
   <div class="tut-head">
     <div class="tut-head__ico" data-icon="sparkles"></div>
-    <div>
+    <div style="flex:1;">
       <h1>Tuteur IA</h1>
       <p>Ton professeur de naturopathie, disponible 24/7</p>
     </div>
+    <button class="btn btn-ghost btn-sm" id="tut-new" style="display:none;"><span data-icon="rotate"></span> Nouvelle</button>
   </div>
 
   <div id="tut-body" style="flex:1;display:flex;flex-direction:column;"></div>
@@ -121,8 +122,12 @@ function buildSystemPrompt() {
 }
 
 const SYSTEM = buildSystemPrompt();
-const conversation = [];   // { role: 'user'|'assistant', content: '...' }
+const CHAT_LS = 'naturoapp_tutor_chat';
+let conversation = [];   // { role: 'user'|'assistant', content: '...' }
 let busy = false;
+
+function loadChat() { try { conversation = JSON.parse(localStorage.getItem(CHAT_LS) || '[]'); } catch (e) { conversation = []; } }
+function saveChat() { try { localStorage.setItem(CHAT_LS, JSON.stringify(conversation.slice(-40))); } catch (e) {} }
 
 const body = document.getElementById('tut-body');
 
@@ -148,6 +153,7 @@ function renderChat() {
           <button class="tut-chip" data-q="Génère-moi un QCM de 5 questions sur la phytothérapie, sans les réponses. Je répondrai ensuite.">Génère un QCM</button>
           <button class="tut-chip" data-q="Interroge-moi : pose-moi une question d'examen de naturopathie et attends ma réponse pour la corriger.">Interroge-moi</button>
           <button class="tut-chip" data-q="Fais-moi une fiche de révision synthétique sur les tempéraments hippocratiques.">Crée une fiche</button>
+          <button class="tut-chip" id="chip-quiz">🎮 Quiz jouable</button>
         </div>
       </div>
     </div>
@@ -164,8 +170,19 @@ function renderChat() {
   input.addEventListener('input', () => { input.style.height = 'auto'; input.style.height = Math.min(input.scrollHeight, 140) + 'px'; });
   input.addEventListener('keydown', e => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); send(); } });
   sendBtn.addEventListener('click', send);
-  body.querySelectorAll('.tut-chip').forEach(c => c.addEventListener('click', () => { input.value = c.dataset.q; send(); }));
+  body.querySelectorAll('.tut-chip[data-q]').forEach(c => c.addEventListener('click', () => { input.value = c.dataset.q; send(); }));
+  const quizChip = document.getElementById('chip-quiz');
+  if (quizChip) quizChip.addEventListener('click', generateQuiz);
+
+  // restaure l'historique sauvegardé
+  conversation.forEach(m => addBubble(m.role, fmt(m.content)));
+  updateNewBtn();
   input.focus();
+}
+
+function updateNewBtn() {
+  const b = document.getElementById('tut-new');
+  if (b) b.style.display = (getAIKey() && conversation.length) ? 'inline-flex' : 'none';
 }
 
 function addBubble(role, html) {
@@ -203,13 +220,68 @@ async function send() {
     });
     aiDiv.innerHTML = fmt(full) || '<em>(réponse vide)</em>';
     conversation.push({ role: 'assistant', content: full });
+    saveChat();
   } catch (err) {
     aiDiv.classList.remove('bubble--ai');
     aiDiv.innerHTML = `<div class="tut-err">${escapeHtml(err.message || "Erreur lors de l'appel à l'IA.")}</div>`;
     conversation.pop();   // retire le dernier message user pour pouvoir réessayer proprement
+    saveChat();
   } finally {
     busy = false;
     document.getElementById('tut-send').disabled = false;
+    updateNewBtn();
+  }
+}
+
+// ── Quiz jouable généré par l'IA → rejouable dans la Révision ──
+function parseQuiz(text, topic) {
+  let arr;
+  try {
+    const a = text.indexOf('['), b = text.lastIndexOf(']');
+    if (a < 0 || b < 0) return [];
+    arr = JSON.parse(text.slice(a, b + 1));
+  } catch (e) { return []; }
+  if (!Array.isArray(arr)) return [];
+  const out = [];
+  arr.forEach((item, i) => {
+    if (!item || !item.q || !Array.isArray(item.options) || item.options.length < 2) return;
+    const opts = item.options.slice(0, 4).map(String);
+    let correct = parseInt(item.correct);
+    if (isNaN(correct) || correct < 0 || correct >= opts.length) correct = 0;
+    out.push({
+      id: 'ai-' + i, categorie: 'Quiz IA', sujet: topic,
+      question: String(item.q), options: opts, bonne: correct,
+      explication: item.exp ? String(item.exp) : '', tags: ['ia']
+    });
+  });
+  return out;
+}
+
+async function generateQuiz() {
+  if (busy) return;
+  const topic = (window.prompt('Sur quel thème veux-tu un quiz ?', 'naturopathie générale') || '').trim();
+  if (!topic) return;
+  busy = true; document.getElementById('tut-send').disabled = true;
+  addBubble('user', fmt('🎮 Génère un quiz sur : ' + topic));
+  const aiDiv = addBubble('ai', 'Je prépare ton quiz… <span class="tut-cursor"></span>');
+  const prompt = 'Génère un quiz de 6 questions à choix multiple (QCM) sur le thème : ' + topic +
+    ", dans le cadre d'une révision de naturopathie. Réponds UNIQUEMENT avec un tableau JSON valide, sans aucun texte autour ni balise de code. " +
+    'Format exact : [{"q":"énoncé","options":["A","B","C","D"],"correct":0,"exp":"explication courte"}]. ' +
+    'Exactement 4 options par question ; "correct" = index (0 à 3) de la bonne réponse.';
+  let acc = '';
+  try {
+    await streamAI([{ role: 'user', content: prompt }], d => { acc += d; });
+    const quiz = parseQuiz(acc, topic);
+    if (!quiz.length) throw new Error("Je n'ai pas réussi à générer un quiz exploitable. Réessaie (ou change de modèle).");
+    localStorage.setItem('naturoapp_ai_quiz', JSON.stringify({ topic, ts: Date.now(), questions: quiz }));
+    aiDiv.innerHTML = "J'ai préparé <b>" + quiz.length + ' questions</b> sur « ' + escapeHtml(topic) + ' ».<br>' +
+      '<a class="btn btn-primary" style="margin-top:10px;" href="revision.html?mode=aiquiz">' + icon('play') + ' Jouer ce quiz</a>';
+    window.APP.hydrateIcons(aiDiv);
+  } catch (err) {
+    aiDiv.classList.remove('bubble--ai');
+    aiDiv.innerHTML = `<div class="tut-err">${escapeHtml(err.message || 'Erreur de génération.')}</div>`;
+  } finally {
+    busy = false; document.getElementById('tut-send').disabled = false;
   }
 }
 
@@ -283,8 +355,20 @@ async function streamAI(messages, onDelta) {
   }
 }
 
+document.getElementById('tut-new').addEventListener('click', () => {
+  conversation = []; saveChat(); renderChat();
+});
+
 window.APP.onReady(() => {
-  if (getAIKey()) renderChat(); else renderSetup();
+  loadChat();
+  if (!getAIKey()) { renderSetup(); return; }
+  renderChat();
+  // ?q=… (depuis un cours, etc.) : pré-remplit et envoie automatiquement
+  const q = new URLSearchParams(location.search).get('q');
+  if (q) {
+    const input = document.getElementById('tut-input');
+    if (input) { input.value = q; setTimeout(send, 100); }
+  }
 });
 </script>
 </body>

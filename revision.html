@@ -496,6 +496,8 @@ function startSession(mode, dayNum) {
     if (q.length === 0) q = State.getWeakQuestions(10);
   } else if (mode === 'important') {
     q = QUESTIONS.filter(q => q.important);
+  } else if (mode === 'aiquiz') {
+    try { q = (JSON.parse(localStorage.getItem('naturoapp_ai_quiz') || '{}').questions) || []; } catch (e) { q = []; }
   } else {
     q = shuffle(QUESTIONS);
   }

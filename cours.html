@@ -301,6 +301,7 @@ function openReader(id) {
       <button class="btn btn-primary" id="reader-mark">${icon('check')} ${State.isLessonRead(c.id)?'Cours lu ✓':'Marquer comme lu'}</button>
       ${courseToFlashcards(c).length ? `<button class="btn btn-ocre" id="reader-cards">${icon('layers')} Cartes de révision</button>` : ''}
       ${(c.questionIds&&c.questionIds.length) ? `<a class="btn btn-ghost" href="revision.html?ids=${c.questionIds.join(',')}">${icon('list')} S'entraîner (${c.questionIds.length})</a>` : ''}
+      ${window.APP.getAIKey() ? `<a class="btn btn-ghost" href="tuteur.html?q=${encodeURIComponent('Explique-moi simplement le cours « ' + c.titre + ' » : les points clés, avec un exemple concret et un moyen mnémotechnique.')}">${icon('sparkles')} Demander au tuteur IA</a>` : ''}
     </div>`;
   window.APP.hydrateIcons(body);
   document.getElementById('reader-mark').addEventListener('click', () => {
