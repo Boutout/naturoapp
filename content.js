@@ -76,22 +76,34 @@ window.NATURO_CONTENT = {
                    "Retiens la règle : *Tyrosine → Dopamine*, *Tryptophane → Sérotonine*."
         },
         {
+          titre: 'Les deux voies en détail',
+          contenu: "**Voie dopamine** : Tyrosine → L-DOPA → **Dopamine** (motivation, mouvement, plaisir). Une carence donne fatigue, manque d'élan, parfois jambes sans repos.\n" +
+                   "**Voie sérotonine** : Tryptophane → 5-HTP → **Sérotonine** → **Mélatonine** (humeur, satiété, puis sommeil). Une carence donne tristesse, compulsions sucrées, troubles du sommeil."
+        },
+        {
           titre: 'Côté plantes',
           contenu: "**Mucuna pruriens** apporte de la L-Dopa → voie **dopamine**.\n" +
                    "**Griffonia simplicifolia** apporte du 5-HTP → voie **sérotonine**.\n" +
-                   "**Millepertuis** agit aussi sur l'humeur (sérotonine), mais attention aux interactions médicamenteuses."
+                   "**Millepertuis** agit aussi sur l'humeur (recapture de la sérotonine), mais **attention aux interactions médicamenteuses** (nombreuses)."
+        },
+        {
+          titre: 'Côté micronutrition',
+          contenu: "Les neurotransmetteurs ont besoin de **cofacteurs** pour être fabriqués : **magnésium**, **vitamines B** (B6 surtout), **fer** et **zinc**. Sans eux, même avec les précurseurs, la synthèse est freinée. La qualité du **microbiote** influence aussi la production (l'intestin, « 2ᵉ cerveau »)."
         }
       ],
       pointsCles: [
-        'Tyrosine → Dopamine ; Tryptophane → Sérotonine',
+        'Tyrosine → Dopamine ; Tryptophane → Sérotonine → Mélatonine',
         'Mucuna = L-Dopa = DOPAMINE',
-        'Griffonia = 5-HTP = SÉROTONINE'
+        'Griffonia = 5-HTP = SÉROTONINE',
+        'Cofacteurs : magnésium, vitamines B (B6), fer, zinc',
+        'Millepertuis = humeur mais interactions médicamenteuses'
       ],
       definitions: [
         { terme: 'Dopamine', def: 'Neurotransmetteur de la motivation et du mouvement (via la tyrosine / L-Dopa).' },
         { terme: 'Sérotonine', def: "Neurotransmetteur de l'humeur et du sommeil (via le tryptophane / 5-HTP)." },
         { terme: 'Mucuna pruriens', def: 'Plante riche en L-Dopa, précurseur de la dopamine.' },
-        { terme: 'Griffonia simplicifolia', def: 'Plante riche en 5-HTP, précurseur de la sérotonine.' }
+        { terme: 'Griffonia simplicifolia', def: 'Plante riche en 5-HTP, précurseur de la sérotonine.' },
+        { terme: 'Cofacteur', def: "Nutriment (vitamine, minéral) nécessaire au fonctionnement d'une enzyme — ici, la synthèse des neurotransmetteurs." }
       ],
       questionIds: []
     },
@@ -106,16 +118,22 @@ window.NATURO_CONTENT = {
       sections: [
         { titre: 'Une approche du terrain', contenu: "La naturopathie cherche à soutenir la **force vitale** (le *vitalisme*) et à agir sur le **terrain** plutôt que sur le seul symptôme. Objectif : prévenir et accompagner, en **complément** (jamais en remplacement) du suivi médical." },
         { titre: 'Les 3 techniques majeures', contenu: "1) **L'alimentation** (hygiène alimentaire, qualité, équilibre).\n2) **L'exercice physique** et le mouvement.\n3) **La gestion du psychisme / des émotions** (sommeil, stress, respiration).\nElles forment le socle ; les autres techniques (phyto, hydro, réflexo…) viennent en appui." },
-        { titre: 'Le principe d\'individualisation', contenu: "Deux personnes avec le même symptôme peuvent recevoir des conseils différents selon leur **tempérament** et leur **terrain**. C'est la logique du *« cas par cas »*." }
+        { titre: 'Les techniques mineures (en appui)', contenu: "Au-delà des 3 piliers, le naturopathe dispose de techniques complémentaires : **phytothérapie** et **aromathérapie**, **hydrothérapie**, **techniques manuelles** (massages, réflexologie), **techniques respiratoires**, **réflexologie**, **techniques énergétiques**. Elles renforcent l'action de fond mais ne la remplacent pas." },
+        { titre: 'Les 4 concepts fondateurs', contenu: "La naturopathie s'appuie sur 4 grands principes :\n- **Vitalisme** : soutenir la force vitale.\n- **Humorisme** : la qualité des liquides (humeurs) compte.\n- **Causalisme** : chercher la **cause** et pas seulement le symptôme.\n- **Holisme** : considérer la personne dans sa **globalité** (corps, mental, environnement)." },
+        { titre: 'Le principe d\'individualisation', contenu: "Deux personnes avec le même symptôme peuvent recevoir des conseils différents selon leur **tempérament** et leur **terrain**. C'est la logique du *« cas par cas »* : on adapte toujours à la vitalité et au mode de vie de la personne." }
       ],
       pointsCles: [
         'Naturopathie = agir sur le terrain + la vitalité, en complément du médical',
         'Techniques majeures : alimentation, exercice, gestion du psychisme',
-        'Approche individualisée selon le terrain'
+        'Techniques mineures en appui : phyto, hydro, manuelles, respiratoires…',
+        '4 concepts : vitalisme, humorisme, causalisme, holisme',
+        'Approche individualisée selon le terrain (cas par cas)'
       ],
       definitions: [
         { terme: 'Vitalisme', def: "Principe selon lequel l'organisme possède une force d'auto-guérison à soutenir." },
-        { terme: 'Terrain', def: "Ensemble des prédispositions et de l'état global d'une personne." }
+        { terme: 'Terrain', def: "Ensemble des prédispositions et de l'état global d'une personne." },
+        { terme: 'Causalisme', def: "Chercher la cause profonde d'un trouble, pas seulement à en supprimer le symptôme." },
+        { terme: 'Holisme', def: "Considérer la personne dans sa globalité (physique, psychique, environnement)." }
       ],
       questionIds: [82]
     },
@@ -188,18 +206,22 @@ window.NATURO_CONTENT = {
       resume: 'Deux profils opposés : le « vague » (repos) et le « sympathique » (action).',
       duree: 6,
       sections: [
-        { titre: 'Deux branches', contenu: "Le système nerveux autonome a deux branches :\n- **Parasympathique** (nerf **vague**) = *repos, digestion, récupération*.\n- **Sympathique** = *action, stress, mobilisation de l'énergie*." },
-        { titre: 'Vagotonique', contenu: "Profil à **dominance parasympathique** : péristaltisme intestinal **augmenté**, tendance aux émotions, intuition, créativité (cerveau droit). « Vague comme la mer » : fluide, intérieur." },
-        { titre: 'Sympathicotonique', contenu: "Profil à **dominance sympathique** : accélération, tonus, action, tendance au stress, pensée analytique (cerveau gauche)." }
+        { titre: 'Deux branches', contenu: "Le système nerveux autonome (involontaire) a deux branches **complémentaires** :\n- **Parasympathique** (nerf **vague**) = *repos, digestion, récupération* (« repos-digestion »).\n- **Sympathique** (orthosympathique) = *action, stress, mobilisation de l'énergie* (« combat-fuite »).\nElles fonctionnent en **balance** : quand l'une monte, l'autre baisse." },
+        { titre: 'Le profil vagotonique', contenu: "**Dominance parasympathique** : péristaltisme intestinal **augmenté** (intestin réactif), tendance aux **émotions**, à l'**intuition** et à la **créativité** (cerveau droit). « Vague comme la mer » : fluide, intérieur. Allié : un rythme régulier et **tonifiant** (mouvement, froid)." },
+        { titre: 'Le profil sympathicotonique', contenu: "**Dominance sympathique** : accélération, **tonus**, orientation vers l'**action**, tendance au **stress** et à la **tension**, pensée **analytique** (cerveau gauche). Allié : la **détente** et la **récupération** (cohérence cardiaque, sommeil)." },
+        { titre: "Pourquoi c'est utile", contenu: "Repérer la tendance dominante aide à **individualiser** les conseils : tonifier un vagotonique, apaiser un sympathicotonique. La plupart des personnes sont **mixtes** et peuvent basculer (le stress chronique pousse vers le sympathique)." }
       ],
       pointsCles: [
         'Parasympathique (vague) = repos/digestion ; Sympathique = action/stress',
-        'Vagotonique : intestin réactif, émotions, intuition',
-        'Sympathicotonique : accélération, stress, analyse'
+        'Les deux branches fonctionnent en balance',
+        'Vagotonique : intestin réactif, émotions, intuition → tonifier',
+        'Sympathicotonique : accélération, stress, analyse → apaiser',
+        'Le stress chronique fait basculer vers le sympathique'
       ],
       definitions: [
         { terme: 'Vagotonie', def: 'Dominance du parasympathique (nerf vague).' },
-        { terme: 'Sympathicotonie', def: 'Dominance du système sympathique.' }
+        { terme: 'Sympathicotonie', def: 'Dominance du système sympathique.' },
+        { terme: 'Nerf vague', def: 'Principal nerf du parasympathique ; sa stimulation favorise détente et digestion.' }
       ],
       questionIds: [26]
     },
@@ -346,18 +368,21 @@ window.NATURO_CONTENT = {
       resume: 'Rythmes, mélatonine et bonnes habitudes du soir.',
       duree: 5,
       sections: [
-        { titre: 'L\'horloge interne', contenu: "Le sommeil est piloté par un rythme **circadien**. La **mélatonine** (hormone du sommeil) est sécrétée le soir, dans l'**obscurité** — la lumière (surtout bleue des écrans) la freine." },
-        { titre: 'Le train du sommeil', contenu: "Le sommeil arrive par **cycles** de ~90 min. Rater son « train » (signaux : bâillements, yeux qui piquent) oblige à attendre le suivant." },
-        { titre: 'Bonnes habitudes', contenu: "Lumière baissée le soir, écrans réduits, repas léger, régularité des horaires, chambre fraîche et sombre. La *cohérence cardiaque* peut aider à l'endormissement." }
+        { titre: 'L\'horloge interne', contenu: "Le sommeil est piloté par un rythme **circadien** (~24 h). La **mélatonine** (hormone du sommeil) est sécrétée le soir dès la **baisse de lumière** (vers 18h), avec un pic vers 2-3h du matin. La lumière, surtout la **bleue des écrans**, la freine et retarde l'endormissement." },
+        { titre: 'De la sérotonine à la mélatonine', contenu: "La mélatonine est fabriquée par la **glande pinéale** à partir de la **sérotonine**, elle-même issue du **tryptophane**. Un bon statut en tryptophane (et en cofacteurs : magnésium, B6) soutient donc aussi le sommeil." },
+        { titre: 'Le train du sommeil', contenu: "Le sommeil arrive par **cycles** de ~90 min (sommeil léger → profond → paradoxal). Rater son « train » (signaux : **bâillements, yeux qui piquent**, frissons) oblige à attendre le cycle suivant (~90 min)." },
+        { titre: 'Bonnes habitudes', contenu: "- **Lumière baissée** et **écrans réduits** le soir.\n- **Repas léger**, pas trop tardif ; limiter café/excitants l'après-midi.\n- **Régularité** des horaires de coucher/lever.\n- Chambre **fraîche, sombre et calme**.\n- La **cohérence cardiaque** ou une tisane (valériane, passiflore) peuvent aider à l'endormissement." }
       ],
       pointsCles: [
-        'Mélatonine = hormone du soir, freinée par la lumière',
+        'Mélatonine = hormone du soir (dès ~18h), freinée par la lumière',
+        'Mélatonine ← sérotonine ← tryptophane (glande pinéale)',
         'Cycles de ~90 min : ne pas rater son « train »',
-        'Obscurité, régularité, écrans réduits'
+        'Obscurité, régularité, écrans réduits, chambre fraîche'
       ],
       definitions: [
-        { terme: 'Mélatonine', def: 'Hormone du sommeil sécrétée le soir dans l\'obscurité.' },
-        { terme: 'Rythme circadien', def: 'Horloge biologique sur ~24 h réglant veille et sommeil.' }
+        { terme: 'Mélatonine', def: 'Hormone du sommeil sécrétée le soir dans l\'obscurité, dérivée de la sérotonine.' },
+        { terme: 'Rythme circadien', def: 'Horloge biologique sur ~24 h réglant veille et sommeil.' },
+        { terme: 'Glande pinéale', def: 'Glande (épiphyse) qui sécrète la mélatonine à partir de la sérotonine.' }
       ],
       questionIds: []
     },
@@ -370,18 +395,21 @@ window.NATURO_CONTENT = {
       resume: 'Calmer le système nerveux par la respiration.',
       duree: 5,
       sections: [
-        { titre: 'Stress aigu vs chronique', contenu: "Le stress **aigu** est utile (mobilisation). Le stress **chronique** épuise (sympathique en surrégime, cortisol élevé) et pèse sur la digestion, le sommeil, l'immunité." },
-        { titre: 'La cohérence cardiaque', contenu: "Respirer **6 respirations par minute** (≈ 5 s d'inspiration, 5 s d'expiration) pendant ~5 minutes équilibre le système nerveux autonome (stimule le **nerf vague**). Méthode populaire : **365** (3 fois par jour, 6 respirations/min, 5 min)." },
-        { titre: 'Autres leviers', contenu: "Mouvement, nature, sommeil, lien social, parfois plantes adaptogènes — toujours en complément d'un accompagnement adapté." }
+        { titre: 'Stress aigu vs chronique', contenu: "Le stress **aigu** est utile (mobilisation immédiate de l'énergie, fuite/combat). Le stress **chronique** épuise : le **sympathique** reste en surrégime, le **cortisol** est élevé en continu, et cela pèse sur la **digestion**, le **sommeil**, l'**immunité** et l'humeur." },
+        { titre: 'Les 3 phases (Selye)', contenu: "Le syndrome général d'adaptation décrit 3 phases :\n1. **Alarme** : mobilisation (adrénaline).\n2. **Résistance** : l'organisme tient (cortisol soutenu).\n3. **Épuisement** : les surrénales « lâchent » → c'est le terrain du burn-out. Le but est d'intervenir avant cette phase." },
+        { titre: 'La cohérence cardiaque', contenu: "Respirer **6 respirations par minute** (≈ 5 s d'inspiration, 5 s d'expiration) pendant ~5 minutes équilibre le système nerveux autonome (stimule le **nerf vague**, parasympathique). Méthode populaire : **365** → **3** fois par jour, **6** respirations/min, **5** minutes." },
+        { titre: 'Autres leviers', contenu: "**Mouvement** (décharge la tension), **nature**, **sommeil**, **lien social**, **magnésium** (très consommé par le stress) et parfois **plantes adaptogènes** (rhodiola, ashwagandha, ginseng) — toujours en complément d'un accompagnement adapté." }
       ],
       pointsCles: [
-        'Stress chronique = sympathique en surrégime',
+        'Stress chronique = sympathique en surrégime, cortisol élevé',
+        'Selye : alarme → résistance → épuisement (burn-out)',
         'Cohérence cardiaque : 6 respirations/min, 5 min',
-        'Méthode 365 : 3×/jour'
+        'Méthode 365 : 3×/jour ; magnésium + adaptogènes en appui'
       ],
       definitions: [
         { terme: 'Cohérence cardiaque', def: 'Technique respiratoire (~6/min) qui équilibre le système nerveux autonome.' },
-        { terme: 'Cortisol', def: 'Hormone du stress, élevée en cas de stress chronique.' }
+        { terme: 'Cortisol', def: 'Hormone du stress, élevée en cas de stress chronique.' },
+        { terme: 'Adaptogène', def: "Plante qui aide l'organisme à mieux s'adapter au stress et à récupérer (rhodiola, ashwagandha, ginseng)." }
       ],
       questionIds: [26]
     },
