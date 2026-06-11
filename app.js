@@ -1918,7 +1918,10 @@ const ICON_PATHS = {
   volume:      '<polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07M19.07 4.93a10 10 0 0 1 0 14.14"/>',
   'volume-x':  '<polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><line x1="22" y1="9" x2="16" y2="15"/><line x1="16" y1="9" x2="22" y2="15"/>',
   search:      '<circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>',
-  network:     '<circle cx="12" cy="5" r="2.5"/><circle cx="5" cy="19" r="2.5"/><circle cx="19" cy="19" r="2.5"/><path d="M12 7.5v4M12 11.5 6.6 16.8M12 11.5l5.4 5.3"/>'
+  network:     '<circle cx="12" cy="5" r="2.5"/><circle cx="5" cy="19" r="2.5"/><circle cx="19" cy="19" r="2.5"/><path d="M12 7.5v4M12 11.5 6.6 16.8M12 11.5l5.4 5.3"/>',
+  sparkles:    '<path d="M12 3l1.9 4.6L18.5 9.5l-4.6 1.9L12 16l-1.9-4.6L5.5 9.5l4.6-1.9z"/><path d="M19 14l.7 1.8 1.8.7-1.8.7-.7 1.8-.7-1.8-1.8-.7 1.8-.7z"/>',
+  send:        '<line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/>',
+  message:     '<path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/>'
 };
 
 function icon(name, opts) {
@@ -2864,6 +2867,23 @@ function openSearch() {
 }
 function closeSearch() { if (_searchEl) _searchEl.classList.remove('open'); }
 
+// ═══════════════════════════════════════════════════════════════
+//  TUTEUR IA — configuration (clé API + modèle, stockés en local)
+//  La clé n'est JAMAIS dans le code : l'utilisateur colle la sienne
+//  dans les Réglages ; les appels partent du navigateur vers Anthropic.
+// ═══════════════════════════════════════════════════════════════
+const AI_KEY_LS = 'naturoapp_ai_key';
+const AI_MODEL_LS = 'naturoapp_ai_model';
+const AI_MODELS = [
+  { id: 'claude-opus-4-8',   nom: 'Claude Opus 4.8 — le plus intelligent' },
+  { id: 'claude-sonnet-4-6', nom: 'Claude Sonnet 4.6 — équilibré' },
+  { id: 'claude-haiku-4-5',  nom: 'Claude Haiku 4.5 — rapide & économique' }
+];
+function getAIKey()    { try { return localStorage.getItem(AI_KEY_LS) || ''; } catch (e) { return ''; } }
+function setAIKey(k)   { try { k ? localStorage.setItem(AI_KEY_LS, k) : localStorage.removeItem(AI_KEY_LS); } catch (e) {} }
+function getAIModel()  { try { return localStorage.getItem(AI_MODEL_LS) || 'claude-opus-4-8'; } catch (e) { return 'claude-opus-4-8'; } }
+function setAIModel(m) { try { localStorage.setItem(AI_MODEL_LS, m); } catch (e) {} }
+
 // Export global
 window.APP = {
   State, QUESTIONS, BADGES, shuffle, getQuestionsByDay, formatTime, getScoreColor, getGrade,
@@ -2872,6 +2892,7 @@ window.APP = {
   Profiles, onReady, currentProfile,
   applyTheme, toggleTheme, setTheme, getThemePref, sfx, tts,
   courseToFlashcards, gardenSVG, searchAll, openSearch,
+  getAIKey, setAIKey, getAIModel, setAIModel, AI_MODELS,
   animateNumber, progressRing, setRing, prefersReducedMotion, celebrate
 };
 

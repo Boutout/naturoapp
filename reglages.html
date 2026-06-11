@@ -102,6 +102,33 @@
     </div>
   </div></div>
 
+  <div class="card" id="tuteur" style="margin-top:18px;"><div class="card__body">
+    <div class="setting-row" style="align-items:flex-start;">
+      <div class="setting-row__label">
+        <b><span data-icon="sparkles" style="vertical-align:-3px;"></span> Tuteur IA</b>
+        <p>Active un professeur IA (Claude d'Anthropic) qui t'explique, t'interroge et te corrige. Ta clé reste sur cet appareil ; les requêtes partent directement vers Anthropic.</p>
+      </div>
+    </div>
+    <div style="margin-top:6px;">
+      <label class="text-sm" style="font-weight:600;display:block;margin-bottom:6px;">Clé API Anthropic</label>
+      <div style="display:flex;gap:8px;">
+        <input type="password" id="ai-key" placeholder="sk-ant-…" autocomplete="off" autocapitalize="off" spellcheck="false"
+               style="flex:1;padding:11px 13px;border:1.5px solid var(--c-border);border-radius:var(--r-sm);font-family:var(--font-mono);font-size:13px;background:var(--c-white);color:var(--c-dark);">
+        <button class="btn btn-ghost btn-sm" id="ai-key-show" type="button" aria-label="Afficher"><span data-icon="eye"></span></button>
+      </div>
+      <p class="text-sm text-mid" style="margin-top:6px;">Pas de clé ? Crée-en une sur <b>console.anthropic.com → API Keys</b>. <span id="ai-key-state"></span></p>
+    </div>
+    <div style="margin-top:14px;">
+      <label class="text-sm" style="font-weight:600;display:block;margin-bottom:6px;">Modèle</label>
+      <select id="ai-model" style="width:100%;padding:11px 13px;border:1.5px solid var(--c-border);border-radius:var(--r-sm);font-family:var(--font-body);font-size:14px;background:var(--c-white);color:var(--c-dark);"></select>
+    </div>
+    <div style="display:flex;gap:10px;margin-top:16px;flex-wrap:wrap;">
+      <button class="btn btn-primary" id="ai-save"><span data-icon="check"></span> Enregistrer</button>
+      <button class="btn btn-ghost" id="ai-clear"><span data-icon="trash"></span> Effacer la clé</button>
+      <a class="btn btn-ghost" href="tuteur.html"><span data-icon="sparkles"></span> Ouvrir le tuteur</a>
+    </div>
+  </div></div>
+
   <p class="text-sm text-mid" style="margin-top:16px;text-align:center;">
     Sauvegarde de la progression et gestion du compte : voir <a href="stats.html" style="color:var(--c-green);font-weight:600;">Stats → Compte</a>.
   </p>
@@ -139,6 +166,48 @@ soundToggle.addEventListener('change', () => {
   sfx.setEnabled(soundToggle.checked);
   if (soundToggle.checked) sfx.correct();   // petit aperçu
 });
+
+// ── Tuteur IA : clé API + modèle (niveau appareil, pas besoin du profil) ──
+(function () {
+  const keyInput = document.getElementById('ai-key');
+  const modelSel = document.getElementById('ai-model');
+  const stateEl  = document.getElementById('ai-key-state');
+  if (!keyInput) return;
+
+  keyInput.value = window.APP.getAIKey();
+  window.APP.AI_MODELS.forEach(m => {
+    const o = document.createElement('option');
+    o.value = m.id; o.textContent = m.nom;
+    modelSel.appendChild(o);
+  });
+  modelSel.value = window.APP.getAIModel();
+
+  function refreshState() {
+    const has = !!window.APP.getAIKey();
+    stateEl.innerHTML = has ? '<b style="color:var(--c-green);">✓ clé enregistrée</b>' : '';
+  }
+  refreshState();
+
+  function toast(msg) {
+    const t = document.createElement('div');
+    t.className = 'toast toast-success';
+    t.innerHTML = icon('check') + ' ' + msg;
+    document.getElementById('toast-container').appendChild(t);
+    setTimeout(() => t.remove(), 2600);
+  }
+
+  document.getElementById('ai-key-show').addEventListener('click', () => {
+    keyInput.type = keyInput.type === 'password' ? 'text' : 'password'; keyInput.focus();
+  });
+  document.getElementById('ai-save').addEventListener('click', () => {
+    window.APP.setAIKey(keyInput.value.trim());
+    window.APP.setAIModel(modelSel.value);
+    refreshState(); toast('Tuteur IA enregistré');
+  });
+  document.getElementById('ai-clear').addEventListener('click', () => {
+    window.APP.setAIKey(''); keyInput.value = ''; refreshState(); toast('Clé effacée');
+  });
+})();
 
 // ── Objectif quotidien (nécessite le profil → onReady) ──
 window.APP.onReady(() => {

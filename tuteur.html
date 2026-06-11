@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>NaturoApp — Tuteur IA</title>
+  <meta name="theme-color" content="#1A5C45">
+  <link rel="manifest" href="manifest.json">
+  <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="NaturoApp">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Lora:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+  <script>try{var t=localStorage.getItem('naturoapp_theme');if(t==='dark'||((!t||t==='auto')&&window.matchMedia('(prefers-color-scheme:dark)').matches)){document.documentElement.setAttribute('data-theme','dark');}else{document.documentElement.setAttribute('data-theme','light');}if(!sessionStorage.getItem('naturoapp_active'))document.documentElement.classList.add('pre-lock');}catch(e){}</script>
+  <style>
+    .page--chat { max-width: 760px; display: flex; flex-direction: column; min-height: calc(100dvh - var(--nav-h) - var(--bottomnav-h)); padding-bottom: 12px; }
+    .tut-head { display:flex; align-items:center; gap:12px; margin-bottom:14px; }
+    .tut-head__ico { width:46px; height:46px; flex-shrink:0; border-radius:14px; background:linear-gradient(135deg,#2C5F8A,#1F4763); color:#fff; display:flex; align-items:center; justify-content:center; }
+    .tut-head__ico .app-icon { width:26px; height:26px; }
+    .tut-head h1 { font-size:22px; }
+    .tut-head p { font-size:12.5px; color:var(--c-mid); }
+
+    .chat-log { flex:1; display:flex; flex-direction:column; gap:14px; padding:6px 2px 14px; }
+    .bubble { max-width:88%; padding:13px 16px; border-radius:18px; font-size:14.5px; line-height:1.6; white-space:normal; word-wrap:break-word; }
+    .bubble strong { font-weight:700; }
+    .bubble--user { align-self:flex-end; background:var(--c-green); color:#fff; border-bottom-right-radius:6px; }
+    .bubble--ai { align-self:flex-start; background:var(--c-white); border:1px solid var(--c-border); color:var(--c-dark); border-bottom-left-radius:6px; box-shadow:var(--shadow-sm); }
+    .bubble--ai .tut-cursor { display:inline-block; width:7px; height:15px; background:var(--c-green); margin-left:2px; vertical-align:middle; animation:tutblink 1s steps(2) infinite; }
+    @keyframes tutblink { 0%,100%{opacity:1} 50%{opacity:0} }
+
+    .tut-welcome { text-align:center; color:var(--c-mid); padding:18px 10px; }
+    .tut-chips { display:flex; flex-wrap:wrap; gap:8px; justify-content:center; margin-top:14px; }
+    .tut-chip { background:var(--c-white); border:1px solid var(--c-border); border-radius:20px; padding:8px 14px; font-size:13px; cursor:pointer; color:var(--c-dark); font-family:var(--font-body); }
+    .tut-chip:hover { background:var(--c-green-pale); border-color:var(--c-green-light); }
+
+    .tut-bar { position:sticky; bottom:0; display:flex; gap:8px; align-items:flex-end; background:var(--c-cream); padding:10px 0 2px; }
+    .tut-bar textarea { flex:1; resize:none; border:1.5px solid var(--c-border); border-radius:var(--r-md); padding:12px 14px; font-family:var(--font-body); font-size:15px; background:var(--c-white); color:var(--c-dark); max-height:140px; outline:none; }
+    .tut-bar textarea:focus { border-color:var(--c-green-light); }
+    .tut-send { flex-shrink:0; width:48px; height:48px; border-radius:14px; border:none; background:linear-gradient(135deg,var(--c-green-light),var(--c-green)); color:#fff; cursor:pointer; display:flex; align-items:center; justify-content:center; }
+    .tut-send:disabled { opacity:.45; cursor:not-allowed; }
+    .tut-send .app-icon { width:20px; height:20px; }
+
+    .tut-disclaimer { font-size:11px; color:var(--c-mid); text-align:center; margin-top:6px; }
+    .tut-setup { text-align:center; background:var(--c-white); border:1px solid var(--c-border); border-radius:var(--r-lg); padding:30px 24px; box-shadow:var(--shadow-sm); }
+    .tut-setup .app-icon { width:34px; height:34px; color:var(--c-green); }
+    .tut-setup h2 { margin:12px 0 8px; }
+    .tut-setup p { color:var(--c-mid); font-size:14px; line-height:1.6; max-width:460px; margin:0 auto 8px; }
+    .tut-err { background:var(--c-red-light); color:var(--c-red); border-radius:var(--r-sm); padding:10px 14px; font-size:13px; }
+  </style>
+</head>
+<body>
+
+<nav class="topnav">
+  <a href="index.html" class="topnav__logo">
+    <div class="topnav__logo-icon" data-icon="leaf"></div>
+    <div><div class="topnav__logo-text">NaturoApp</div><span class="topnav__logo-sub">Révision Naturopathie</span></div>
+  </a>
+  <ul class="topnav__nav">
+    <li><a href="index.html"><span class="nav-ico" data-icon="home"></span> <span class="nav-label">Accueil</span></a></li>
+    <li><a href="cours.html"><span class="nav-ico" data-icon="book"></span> <span class="nav-label">Cours</span></a></li>
+    <li><a href="revision.html"><span class="nav-ico" data-icon="book-open"></span> <span class="nav-label">Révision</span></a></li>
+    <li><a href="examen.html"><span class="nav-ico" data-icon="edit"></span> <span class="nav-label">Examen</span></a></li>
+    <li><a href="stats.html"><span class="nav-ico" data-icon="chart"></span> <span class="nav-label">Stats</span></a></li>
+  </ul>
+  <button class="nav-lock" id="nav-search" data-icon="search" title="Rechercher (Ctrl/Cmd+K)" aria-label="Rechercher"></button>
+  <a class="nav-lock" id="nav-settings" href="reglages.html" data-icon="settings" title="Réglages" aria-label="Réglages"></a>
+  <button class="nav-lock" id="nav-theme" data-icon="moon" title="Thème sombre" aria-label="Changer de thème"></button>
+  <button class="nav-lock" id="nav-lock" data-icon="lock" title="Verrouiller l'app" aria-label="Verrouiller"></button>
+</nav>
+
+<div class="page page--chat">
+  <div class="tut-head">
+    <div class="tut-head__ico" data-icon="sparkles"></div>
+    <div>
+      <h1>Tuteur IA</h1>
+      <p>Ton professeur de naturopathie, disponible 24/7</p>
+    </div>
+  </div>
+
+  <div id="tut-body" style="flex:1;display:flex;flex-direction:column;"></div>
+</div>
+
+<nav class="bottomnav">
+  <a href="index.html"><span class="bn-ico" data-icon="home"></span> Accueil</a>
+  <a href="cours.html"><span class="bn-ico" data-icon="book"></span> Cours</a>
+  <a href="revision.html"><span class="bn-ico" data-icon="book-open"></span> Révision</a>
+  <a href="examen.html"><span class="bn-ico" data-icon="edit"></span> Examen</a>
+  <a href="stats.html"><span class="bn-ico" data-icon="chart"></span> Stats</a>
+</nav>
+
+<div id="toast-container"></div>
+
+<script src="content.js"></script>
+<script src="app.js"></script>
+<script>
+const { icon, escapeHtml, getAIKey, getAIModel } = window.APP;
+
+function fmt(t) {
+  return escapeHtml(t)
+    .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
+    .replace(/\n/g, '<br>');
+}
+
+function buildSystemPrompt() {
+  const C = window.NATURO_CONTENT || { cours: [] };
+  const titres = (C.cours || []).map(c => c.titre).join(', ');
+  return [
+    "Tu es le tuteur personnel de naturopathie de Clara, une étudiante qui prépare son examen de naturopathie.",
+    "Réponds toujours en français, de façon claire, pédagogique, structurée et bienveillante.",
+    "Tu peux : expliquer un concept avec des exemples et des moyens mnémotechniques, générer des QCM, corriger les réponses de Clara, créer des fiches de révision synthétiques, et l'interroger.",
+    "Reste dans le périmètre de la naturopathie et des sciences associées (anatomie, physiologie, biochimie, nutrition, micronutrition, phytothérapie, hydrologie, techniques manuelles, etc.).",
+    "IMPORTANT : tu fais de la PÉDAGOGIE, jamais du conseil médical personnalisé. N'établis aucun diagnostic pour une personne réelle. Rappelle, quand c'est pertinent, que la naturopathie est complémentaire et ne remplace pas un avis médical.",
+    "Sois concis mais complet ; utilise des listes et du gras (**texte**) pour la lisibilité.",
+    titres ? ("Le programme de Clara couvre notamment ces cours : " + titres + ".") : ""
+  ].filter(Boolean).join('\n');
+}
+
+const SYSTEM = buildSystemPrompt();
+const conversation = [];   // { role: 'user'|'assistant', content: '...' }
+let busy = false;
+
+const body = document.getElementById('tut-body');
+
+function renderSetup() {
+  body.innerHTML = `
+    <div class="tut-setup">
+      <span data-icon="sparkles"></span>
+      <h2>Active ton tuteur IA</h2>
+      <p>Le tuteur utilise l'IA Claude d'Anthropic. Pour l'activer, ajoute ta <b>clé API personnelle</b> dans les Réglages (elle reste sur ton appareil, jamais envoyée ailleurs que chez Anthropic).</p>
+      <p style="font-size:12.5px;">Pas encore de clé ? Crée-en une gratuitement sur <b>console.anthropic.com</b> → API Keys.</p>
+      <a href="reglages.html#tuteur" class="btn btn-primary btn-lg" style="margin-top:14px;"><span data-icon="settings"></span> Configurer ma clé</a>
+    </div>`;
+  window.APP.hydrateIcons(body);
+}
+
+function renderChat() {
+  body.innerHTML = `
+    <div class="chat-log" id="chat-log">
+      <div class="tut-welcome" id="tut-welcome">
+        <div style="font-size:15px;">Pose-moi une question, ou choisis un point de départ :</div>
+        <div class="tut-chips">
+          <button class="tut-chip" data-q="Explique-moi simplement le rôle des émonctoires avec un moyen mnémotechnique.">Explique un concept</button>
+          <button class="tut-chip" data-q="Génère-moi un QCM de 5 questions sur la phytothérapie, sans les réponses. Je répondrai ensuite.">Génère un QCM</button>
+          <button class="tut-chip" data-q="Interroge-moi : pose-moi une question d'examen de naturopathie et attends ma réponse pour la corriger.">Interroge-moi</button>
+          <button class="tut-chip" data-q="Fais-moi une fiche de révision synthétique sur les tempéraments hippocratiques.">Crée une fiche</button>
+        </div>
+      </div>
+    </div>
+    <div class="tut-bar">
+      <textarea id="tut-input" rows="1" placeholder="Écris ta question…" autocomplete="off"></textarea>
+      <button class="tut-send" id="tut-send" aria-label="Envoyer"><span data-icon="send"></span></button>
+    </div>
+    <p class="tut-disclaimer">Outil pédagogique — ne remplace pas un avis médical. Modèle : ${escapeHtml(getAIModel())}.</p>`;
+  window.APP.hydrateIcons(body);
+
+  const input = document.getElementById('tut-input');
+  const sendBtn = document.getElementById('tut-send');
+
+  input.addEventListener('input', () => { input.style.height = 'auto'; input.style.height = Math.min(input.scrollHeight, 140) + 'px'; });
+  input.addEventListener('keydown', e => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); send(); } });
+  sendBtn.addEventListener('click', send);
+  body.querySelectorAll('.tut-chip').forEach(c => c.addEventListener('click', () => { input.value = c.dataset.q; send(); }));
+  input.focus();
+}
+
+function addBubble(role, html) {
+  const welcome = document.getElementById('tut-welcome');
+  if (welcome) welcome.remove();
+  const log = document.getElementById('chat-log');
+  const div = document.createElement('div');
+  div.className = 'bubble bubble--' + (role === 'user' ? 'user' : 'ai');
+  div.innerHTML = html;
+  log.appendChild(div);
+  div.scrollIntoView({ behavior: 'smooth', block: 'end' });
+  return div;
+}
+
+async function send() {
+  if (busy) return;
+  const input = document.getElementById('tut-input');
+  const text = (input.value || '').trim();
+  if (!text) return;
+  input.value = ''; input.style.height = 'auto';
+
+  addBubble('user', fmt(text));
+  conversation.push({ role: 'user', content: text });
+
+  busy = true;
+  document.getElementById('tut-send').disabled = true;
+  const aiDiv = addBubble('ai', '<span class="tut-cursor"></span>');
+  let full = '';
+
+  try {
+    await streamClaude(conversation, delta => {
+      full += delta;
+      aiDiv.innerHTML = fmt(full) + '<span class="tut-cursor"></span>';
+      aiDiv.scrollIntoView({ behavior: 'smooth', block: 'end' });
+    });
+    aiDiv.innerHTML = fmt(full) || '<em>(réponse vide)</em>';
+    conversation.push({ role: 'assistant', content: full });
+  } catch (err) {
+    aiDiv.classList.remove('bubble--ai');
+    aiDiv.innerHTML = `<div class="tut-err">${escapeHtml(err.message || "Erreur lors de l'appel à l'IA.")}</div>`;
+    conversation.pop();   // retire le dernier message user pour pouvoir réessayer proprement
+  } finally {
+    busy = false;
+    document.getElementById('tut-send').disabled = false;
+  }
+}
+
+// Appel direct au navigateur de l'API Anthropic (clé locale), en streaming SSE.
+async function streamClaude(messages, onDelta) {
+  const key = getAIKey();
+  if (!key) throw new Error("Aucune clé API. Configure-la dans les Réglages.");
+
+  const resp = await fetch('https://api.anthropic.com/v1/messages', {
+    method: 'POST',
+    headers: {
+      'content-type': 'application/json',
+      'x-api-key': key,
+      'anthropic-version': '2023-06-01',
+      'anthropic-dangerous-direct-browser-access': 'true'
+    },
+    body: JSON.stringify({
+      model: getAIModel(),
+      max_tokens: 2048,
+      system: SYSTEM,
+      stream: true,
+      messages: messages.map(m => ({ role: m.role, content: m.content }))
+    })
+  });
+
+  if (!resp.ok) {
+    let msg = 'Erreur ' + resp.status;
+    try { const j = await resp.json(); if (j.error && j.error.message) msg = j.error.message; } catch (e) {}
+    if (resp.status === 401) msg = "Clé API invalide. Vérifie-la dans les Réglages.";
+    if (resp.status === 429) msg = "Trop de requêtes (ou crédit épuisé). Réessaie plus tard.";
+    throw new Error(msg);
+  }
+
+  const reader = resp.body.getReader();
+  const decoder = new TextDecoder();
+  let buffer = '';
+  while (true) {
+    const { done, value } = await reader.read();
+    if (done) break;
+    buffer += decoder.decode(value, { stream: true });
+    const lines = buffer.split('\n');
+    buffer = lines.pop();
+    for (const line of lines) {
+      const l = line.trim();
+      if (!l.startsWith('data:')) continue;
+      const data = l.slice(5).trim();
+      if (!data || data === '[DONE]') continue;
+      try {
+        const evt = JSON.parse(data);
+        if (evt.type === 'content_block_delta' && evt.delta && evt.delta.type === 'text_delta') {
+          onDelta(evt.delta.text);
+        } else if (evt.type === 'error') {
+          throw new Error((evt.error && evt.error.message) || 'Erreur du flux IA.');
+        }
+      } catch (e) { if (e instanceof SyntaxError) continue; throw e; }
+    }
+  }
+}
+
+window.APP.onReady(() => {
+  if (getAIKey()) renderChat(); else renderSetup();
+});
+</script>
+</body>
+</html>
