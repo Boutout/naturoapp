@@ -85,6 +85,14 @@
     </div>
 
     <div class="setting-row">
+      <div class="setting-row__label"><b>Date d'examen</b><p>Pour un plan de révision et un compte à rebours.</p></div>
+      <div style="display:flex;align-items:center;gap:8px;">
+        <input type="date" id="exam-date" style="width:auto;min-width:160px;">
+        <button class="goal-btn" id="exam-clear" title="Effacer">✕</button>
+      </div>
+    </div>
+
+    <div class="setting-row">
       <div class="setting-row__label"><b>Son &amp; vibration</b><p>Petit retour sonore à chaque réponse.</p></div>
       <label class="switch">
         <input type="checkbox" id="sound-toggle">
@@ -138,6 +146,13 @@ window.APP.onReady(() => {
   show();
   document.getElementById('goal-minus').addEventListener('click', () => { State.setGoal((State.data.goalPerDay || 20) - 5); show(); });
   document.getElementById('goal-plus').addEventListener('click', () => { State.setGoal((State.data.goalPerDay || 20) + 5); show(); });
+
+  // Date d'examen
+  const examInput = document.getElementById('exam-date');
+  examInput.value = State.data.examDate || '';
+  examInput.addEventListener('change', () => { State.setExamDate(examInput.value || null); });
+  document.getElementById('exam-clear').addEventListener('click', () => { examInput.value = ''; State.setExamDate(null); });
+
   refreshThemeSeg();
 });
 </script>

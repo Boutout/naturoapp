@@ -1478,6 +1478,7 @@ const State = {
     if (typeof d.goalPerDay !== 'number') d.goalPerDay = 20;
     if (!Array.isArray(d.badges)) d.badges = [];
     if (!d.challenges) d.challenges = {};   // "YYYY-MM-DD" -> { total, correct, pct }
+    if (typeof d.examDate === 'undefined') d.examDate = null;   // 'YYYY-MM-DD' ou null
     QUESTIONS.forEach(q => {
       const s = d.questionStats[q.id];
       if (!s) {
@@ -1507,6 +1508,7 @@ const State = {
       goalPerDay: 20,
       badges: [],          // ids des badges débloqués
       challenges: {},      // "YYYY-MM-DD" -> { total, correct, pct } (défi du jour)
+      examDate: null,      // date d'examen visée ('YYYY-MM-DD')
       dailyStats: {},      // "YYYY-MM-DD" -> { questions, correct }
     };
     QUESTIONS.forEach(q => {
@@ -1643,6 +1645,47 @@ const State = {
     this.data.xp = (this.data.xp || 0) + bonus;
     this.save();
     return bonus;
+  },
+
+  // ── Examen : date cible + préparation ───────────────────────
+  setExamDate(iso) { this.data.examDate = iso || null; this.save(); },
+  examCountdown() {
+    if (!this.data.examDate) return null;
+    const today = new Date(this._today() + 'T00:00:00');
+    const exam = new Date(this.data.examDate + 'T00:00:00');
+    const days = Math.round((exam - today) / 86400000);
+    return { date: this.data.examDate, days };
+  },
+  // % de questions « maîtrisées » (vues, ≥80% de réussite OU boîte SRS ≥3)
+  getReadiness() {
+    let mastered = 0;
+    QUESTIONS.forEach(q => {
+      const s = this.data.questionStats[q.id];
+      const rate = s.seen > 0 ? s.correct / s.seen : 0;
+      if (s.seen > 0 && (rate >= 0.8 || (s.box || 0) >= 3)) mastered++;
+    });
+    return { mastered, total: QUESTIONS.length, pct: Math.round(mastered / QUESTIONS.length * 100) };
+  },
+  // Combien réviser/jour pour tout voir avant l'examen
+  recommendedPerDay() {
+    const c = this.examCountdown();
+    let unseen = 0;
+    QUESTIONS.forEach(q => { if (this.data.questionStats[q.id].seen === 0) unseen++; });
+    if (!c || c.days <= 0) return Math.max(this.data.goalPerDay || 20, unseen);
+    return Math.max(5, Math.ceil(unseen / Math.max(1, c.days)) + 5);
+  },
+
+  // ── Jardin (plante qui pousse) ──────────────────────────────
+  gardenStage() {   // 0..5 selon le niveau
+    const lvl = this.levelInfo().level;
+    return Math.max(0, Math.min(5, lvl - 1));
+  },
+  gardenHealthy() {  // fane si la série est sur le point d'être perdue
+    const last = this.data.lastStudyDay;
+    if (!last) return true;                 // jamais étudié → graine saine
+    const t = this._today();
+    const yest = new Date(Date.now() - 86400000).toISOString().split('T')[0];
+    return last === t || last === yest;     // sinon : a sauté un jour → fanée
   },
 
   // ── Badges ──────────────────────────────────────────────────
@@ -2425,6 +2468,30 @@ const sfx = {
   levelup() { this._melody([523.25, 659.25, 783.99, 1046.5], 0.2, 'triangle'); this.vibe([12, 30, 12, 30]); }
 };
 
+// ═══════════════════════════════════════════════════════════════
+//  AUDIO — lecture vocale (Web Speech API) pour écouter mains-libres
+// ═══════════════════════════════════════════════════════════════
+const tts = {
+  supported() { return 'speechSynthesis' in window; },
+  speaking()  { return this.supported() && window.speechSynthesis.speaking; },
+  cancel()    { if (this.supported()) window.speechSynthesis.cancel(); },
+  // texte = string OU tableau de strings (lus à la suite). opts.onend appelé à la fin.
+  speak(text, opts) {
+    if (!this.supported()) return false;
+    opts = opts || {};
+    window.speechSynthesis.cancel();
+    const parts = (Array.isArray(text) ? text : [text]).filter(Boolean);
+    if (!parts.length) return false;
+    parts.forEach((p, i) => {
+      const u = new SpeechSynthesisUtterance(String(p));
+      u.lang = 'fr-FR'; u.rate = opts.rate || 0.98; u.pitch = opts.pitch || 1;
+      if (i === parts.length - 1 && opts.onend) u.onend = opts.onend;
+      window.speechSynthesis.speak(u);
+    });
+    return true;
+  }
+};
+
 // ── onReady : différé jusqu'à ce qu'un profil soit actif ─────────
 let _ready = false;
 const _readyCbs = [];
@@ -2552,13 +2619,69 @@ function celebrate(opts) {
   setTimeout(() => layer.remove(), 5000);
 }
 
+// Génère des flashcards depuis un cours (définitions → Q/R, sinon points clés)
+function courseToFlashcards(c) {
+  const cards = [];
+  (c.definitions || []).forEach(d => cards.push({ front: d.terme, back: d.def, tag: 'Définition' }));
+  if (cards.length === 0) {
+    (c.pointsCles || []).forEach(p => cards.push({ front: 'À retenir', back: p, tag: 'Point clé' }));
+  }
+  return cards;
+}
+
+// SVG d'une plante en pot, paramétrique selon le stade (0..5) et la santé.
+function gardenSVG(stage, healthy) {
+  stage = Math.max(0, Math.min(5, stage | 0));
+  const leaf = healthy ? '#4EBF93' : '#A7B0A4';
+  const leafDark = healthy ? '#2E9B77' : '#8C968A';
+  const stemC = healthy ? '#3A9B6E' : '#94A08C';
+  const flower = healthy ? '#E8A23A' : '#C7B79A';
+  const stemTop = 122 - (14 + stage * 16);        // plus haut = plus grand
+  let parts = '';
+  // pot
+  parts += '<path d="M40 122 L80 122 L75 138 L45 138 Z" fill="#C4873A"/><rect x="38" y="116" width="44" height="8" rx="2" fill="#D8954A"/>';
+  // sol
+  parts += '<ellipse cx="60" cy="118" rx="20" ry="3" fill="#6B4A28"/>';
+  if (stage === 0) {
+    // graine / pousse minuscule
+    parts += `<path d="M60 118 q-1 -8 0 -12" stroke="${stemC}" stroke-width="3" fill="none" stroke-linecap="round"/>`;
+    parts += `<ellipse cx="56" cy="104" rx="6" ry="3.5" fill="${leaf}" transform="rotate(-30 56 104)"/>`;
+    parts += `<ellipse cx="64" cy="104" rx="6" ry="3.5" fill="${leafDark}" transform="rotate(30 64 104)"/>`;
+  } else {
+    // tige
+    parts += `<path d="M60 118 C58 ${100 - stage * 4}, 62 ${stemTop + 14}, 60 ${stemTop}" stroke="${stemC}" stroke-width="3.5" fill="none" stroke-linecap="round"/>`;
+    // paires de feuilles le long de la tige
+    const pairs = Math.min(4, stage);
+    for (let i = 0; i < pairs; i++) {
+      const y = 110 - i * ((110 - stemTop) / (pairs + 0.5));
+      const fl = (i % 2 === 0) ? leaf : leafDark;
+      parts += `<ellipse cx="48" cy="${y}" rx="11" ry="5" fill="${fl}" transform="rotate(-28 48 ${y})"/>`;
+      parts += `<ellipse cx="72" cy="${y - 4}" rx="11" ry="5" fill="${i % 2 ? leaf : leafDark}" transform="rotate(28 72 ${y - 4})"/>`;
+    }
+    // fleur(s) au sommet pour les stades élevés
+    if (stage >= 4) {
+      const cx = 60, cy = stemTop - 2;
+      for (let a = 0; a < 6; a++) {
+        const ang = (a / 6) * Math.PI * 2;
+        parts += `<ellipse cx="${(cx + Math.cos(ang) * 7).toFixed(1)}" cy="${(cy + Math.sin(ang) * 7).toFixed(1)}" rx="5" ry="3.2" fill="${flower}" transform="rotate(${(ang * 180 / Math.PI).toFixed(0)} ${(cx + Math.cos(ang) * 7).toFixed(1)} ${(cy + Math.sin(ang) * 7).toFixed(1)})"/>`;
+      }
+      parts += `<circle cx="${cx}" cy="${cy}" r="4.5" fill="${healthy ? '#F4C95D' : '#D8CBA8'}"/>`;
+    } else {
+      // bourgeon
+      parts += `<circle cx="60" cy="${stemTop}" r="5" fill="${leafDark}"/>`;
+    }
+  }
+  return `<svg viewBox="0 0 120 145" class="garden-svg" aria-hidden="true">${parts}</svg>`;
+}
+
 // Export global
 window.APP = {
   State, QUESTIONS, BADGES, shuffle, getQuestionsByDay, formatTime, getScoreColor, getGrade,
   answerKey, isMultiAnswer, isSelectionCorrect, getDailyChallenge,
   icon, hydrateIcons, escapeHtml,
   Profiles, onReady, currentProfile,
-  applyTheme, toggleTheme, setTheme, getThemePref, sfx,
+  applyTheme, toggleTheme, setTheme, getThemePref, sfx, tts,
+  courseToFlashcards, gardenSVG,
   animateNumber, progressRing, setRing, prefersReducedMotion, celebrate
 };
 

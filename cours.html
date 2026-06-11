@@ -79,6 +79,20 @@
     .def-row:last-child { border-bottom:none; }
     .def-row b { color:var(--c-green-deep); }
     .reader__actions { display:flex; gap:12px; flex-wrap:wrap; margin-top:26px; }
+    #reader-listen.playing { background:var(--c-green-pale); border-color:var(--c-green); color:var(--c-green-deep); }
+
+    /* lecteur de flashcards */
+    .fc-player { position:fixed; inset:0; z-index:210; background:var(--c-cream);
+      display:none; flex-direction:column; }
+    .fc-player.open { display:flex; }
+    .fc-player__bar { display:flex; align-items:center; justify-content:space-between;
+      padding:14px 18px calc(14px); border-bottom:1px solid var(--c-border); }
+    .fc-player__progress { font-size:13px; font-weight:600; color:var(--c-mid); }
+    .fc-player__stage { flex:1; display:flex; align-items:center; justify-content:center; padding:20px; }
+    .fc-player .flip-card { cursor:pointer; }
+    .fc-player .flip-card__front, .fc-player .flip-card__back {
+      min-height:300px; display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; }
+    .fc-player__nav { display:flex; gap:12px; justify-content:center; padding:18px 18px calc(18px + env(safe-area-inset-bottom)); }
   </style>
 </head>
 <body>
@@ -130,9 +144,36 @@
   <div class="reader__bar">
     <button class="btn btn-ghost" id="reader-back"><span data-icon="arrow-left"></span> Cours</button>
     <div style="flex:1"></div>
+    <button class="btn btn-ghost btn-sm" id="reader-listen"><span id="listen-ico" data-icon="volume"></span> <span id="listen-label">Écouter</span></button>
     <button class="btn btn-ghost btn-sm" id="reader-print"><span data-icon="printer"></span> Imprimer</button>
   </div>
   <div class="reader__body" id="reader-body"></div>
+</div>
+
+<!-- LECTEUR DE FLASHCARDS -->
+<div class="fc-player" id="fc-player">
+  <div class="fc-player__bar">
+    <button class="btn btn-ghost btn-sm" id="fcp-close"><span data-icon="x"></span> Fermer</button>
+    <div class="fc-player__progress" id="fcp-progress">1 / 1</div>
+  </div>
+  <div class="fc-player__stage">
+    <div class="flip-card" id="fcp-card">
+      <div class="flip-card__inner">
+        <div class="flip-card__front">
+          <div style="font-size:11px;color:var(--c-green);font-weight:700;letter-spacing:.5px;text-transform:uppercase;margin-bottom:14px;" id="fcp-tag">Définition</div>
+          <div style="font-size:22px;font-weight:700;line-height:1.35;" id="fcp-front">—</div>
+          <div style="margin-top:20px;font-size:12px;color:var(--c-mid);">Touche la carte pour révéler →</div>
+        </div>
+        <div class="flip-card__back">
+          <div style="font-size:16px;line-height:1.55;" id="fcp-back">—</div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="fc-player__nav">
+    <button class="btn btn-ghost" id="fcp-prev"><span data-icon="arrow-left"></span></button>
+    <button class="btn btn-primary" id="fcp-next">Suivante <span data-icon="arrow-right"></span></button>
+  </div>
 </div>
 
 <nav class="bottomnav">
@@ -148,7 +189,8 @@
 <script src="content.js"></script>
 <script src="app.js"></script>
 <script>
-const { State, icon, escapeHtml, progressRing, setRing, animateNumber } = window.APP;
+const { State, icon, escapeHtml, progressRing, setRing, animateNumber, courseToFlashcards, tts } = window.APP;
+let currentCourse = null;
 const CONTENT = window.NATURO_CONTENT || { cours: [], glossaire: [] };
 
 // Mise en forme légère et SÛRE : on échappe, puis on applique **gras**/*italique*/sauts de ligne.
@@ -236,6 +278,8 @@ function renderGlossary() {
 function openReader(id) {
   const c = CONTENT.cours.find(x => x.id === id);
   if (!c) return;
+  currentCourse = c;
+  stopListening();
   const body = document.getElementById('reader-body');
   body.innerHTML = `
     <div class="reader__cat">${escapeHtml(c.categorie)}${c.jour ? ' · Jour '+c.jour : ''}</div>
@@ -254,7 +298,8 @@ function openReader(id) {
       </div>` : ''}
     <div class="reader__actions">
       <button class="btn btn-primary" id="reader-mark">${icon('check')} ${State.isLessonRead(c.id)?'Cours lu ✓':'Marquer comme lu'}</button>
-      ${(c.questionIds&&c.questionIds.length) ? `<a class="btn btn-ocre" href="revision.html?ids=${c.questionIds.join(',')}">${icon('list')} S'entraîner (${c.questionIds.length})</a>` : ''}
+      ${courseToFlashcards(c).length ? `<button class="btn btn-ocre" id="reader-cards">${icon('layers')} Cartes de révision</button>` : ''}
+      ${(c.questionIds&&c.questionIds.length) ? `<a class="btn btn-ghost" href="revision.html?ids=${c.questionIds.join(',')}">${icon('list')} S'entraîner (${c.questionIds.length})</a>` : ''}
     </div>`;
   window.APP.hydrateIcons(body);
   document.getElementById('reader-mark').addEventListener('click', () => {
@@ -262,11 +307,66 @@ function openReader(id) {
     document.getElementById('reader-mark').innerHTML = icon('check') + ' Cours lu ✓';
     renderProgress(); renderList();
   });
+  const cardsBtn = document.getElementById('reader-cards');
+  if (cardsBtn) cardsBtn.addEventListener('click', () => openFlashcards(c));
   document.getElementById('reader').classList.add('open');
   document.getElementById('reader-body').scrollTop = 0;
 }
 
-function closeReader() { document.getElementById('reader').classList.remove('open'); }
+function closeReader() { stopListening(); document.getElementById('reader').classList.remove('open'); }
+
+// ── AUDIO : lecture vocale du cours ──────────────────────────
+function courseToSpeech(c) {
+  const parts = [c.titre + '.', c.resume || ''];
+  (c.sections || []).forEach(s => { parts.push(s.titre + '.'); parts.push(s.contenu.replace(/\*\*?/g, '')); });
+  if (c.pointsCles && c.pointsCles.length) { parts.push('À retenir.'); c.pointsCles.forEach(p => parts.push(p + '.')); }
+  return parts;
+}
+function setListenUI(playing) {
+  const btn = document.getElementById('reader-listen');
+  btn.classList.toggle('playing', playing);
+  document.getElementById('listen-ico').innerHTML = icon(playing ? 'volume-x' : 'volume');
+  document.getElementById('listen-label').textContent = playing ? 'Stop' : 'Écouter';
+}
+function stopListening() { tts.cancel(); setListenUI(false); }
+document.getElementById('reader-listen').addEventListener('click', () => {
+  if (!tts.supported()) { showToast('La lecture vocale n\'est pas disponible sur ce navigateur.', 'error'); return; }
+  if (tts.speaking()) { stopListening(); return; }
+  if (!currentCourse) return;
+  tts.speak(courseToSpeech(currentCourse), { onend: () => setListenUI(false) });
+  setListenUI(true);
+});
+
+// ── LECTEUR DE FLASHCARDS ────────────────────────────────────
+let fcDeck = [], fcIdx = 0;
+function openFlashcards(c) {
+  fcDeck = courseToFlashcards(c); fcIdx = 0;
+  if (!fcDeck.length) return;
+  renderFlashcard();
+  document.getElementById('fc-player').classList.add('open');
+}
+function renderFlashcard() {
+  const card = fcDeck[fcIdx];
+  document.getElementById('fcp-card').classList.remove('flipped');
+  document.getElementById('fcp-tag').textContent = card.tag || '';
+  document.getElementById('fcp-front').textContent = card.front;
+  document.getElementById('fcp-back').textContent = card.back;
+  document.getElementById('fcp-progress').textContent = `${fcIdx + 1} / ${fcDeck.length}`;
+  const next = document.getElementById('fcp-next');
+  next.innerHTML = (fcIdx >= fcDeck.length - 1) ? `Terminé ${icon('check')}` : `Suivante ${icon('arrow-right')}`;
+}
+document.getElementById('fcp-card').addEventListener('click', () => document.getElementById('fcp-card').classList.toggle('flipped'));
+document.getElementById('fcp-prev').addEventListener('click', () => { if (fcIdx > 0) { fcIdx--; renderFlashcard(); } });
+document.getElementById('fcp-next').addEventListener('click', () => {
+  if (fcIdx >= fcDeck.length - 1) { document.getElementById('fc-player').classList.remove('open'); return; }
+  fcIdx++; renderFlashcard();
+});
+document.getElementById('fcp-close').addEventListener('click', () => document.getElementById('fc-player').classList.remove('open'));
+
+function showToast(msg, type) {
+  const el = document.createElement('div'); el.className = `toast toast-${type||'info'}`; el.textContent = msg;
+  document.getElementById('toast-container').appendChild(el); setTimeout(() => el.remove(), 3000);
+}
 
 function renderProgress() {
   const total = CONTENT.cours.length;

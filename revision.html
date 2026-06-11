@@ -95,7 +95,18 @@
       box-shadow: var(--shadow-md);
       border: 1px solid var(--c-border);
       max-width: 700px; margin: 0 auto;
+      position: relative;
     }
+    .qcm-listen {
+      position: absolute; top: 16px; right: 16px;
+      width: 38px; height: 38px; border-radius: 50%;
+      border: 1.5px solid var(--c-border); background: var(--c-white);
+      color: var(--c-green); cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .qcm-listen:hover { background: var(--c-green-pale); border-color: var(--c-green-light); }
+    .qcm-listen.playing { background: var(--c-green); color: #fff; border-color: var(--c-green); }
+    .qcm-listen .app-icon { width: 18px; height: 18px; }
 
     @media (max-width: 600px) { .qcm-card { padding: 22px 18px; } }
 
@@ -280,6 +291,7 @@
       </div>
 
       <div class="qcm-card">
+        <button class="qcm-listen" id="qcm-listen" title="Écouter la question" aria-label="Écouter"><span data-icon="volume"></span></button>
         <div class="qcm-question" id="qcm-question">Question ici</div>
         <div class="qcm-multi-hint" id="qcm-multi-hint" style="display:none;"><span data-icon="list"></span> Plusieurs réponses possibles — sélectionne-les toutes puis valide.</div>
         <div class="options-grid" id="qcm-options"><!-- filled --></div>
@@ -355,7 +367,16 @@
 
 <script src="app.js"></script>
 <script>
-const { State, QUESTIONS, shuffle, getQuestionsByDay, formatTime, icon, isMultiAnswer, answerKey, isSelectionCorrect, getDailyChallenge, sfx } = window.APP;
+const { State, QUESTIONS, shuffle, getQuestionsByDay, formatTime, icon, isMultiAnswer, answerKey, isSelectionCorrect, getDailyChallenge, sfx, tts } = window.APP;
+
+document.getElementById('qcm-listen').addEventListener('click', () => {
+  const btn = document.getElementById('qcm-listen');
+  if (!tts.supported()) return;
+  if (tts.speaking()) { tts.cancel(); btn.classList.remove('playing'); return; }
+  const q = queue[current]; if (!q) return;
+  tts.speak([q.question, ...q.options], { onend: () => btn.classList.remove('playing') });
+  btn.classList.add('playing');
+});
 
 // ── DRAWER MOBILE (hamburger) ─────────────────────────────────
 const sidebarEl  = document.querySelector('.sidebar');
@@ -483,6 +504,8 @@ function showQCM() {
 
 function renderQCMQuestion() {
   if (current >= queue.length) { showCompletion(); return; }
+  tts.cancel();
+  const lb = document.getElementById('qcm-listen'); if (lb) lb.classList.remove('playing');
   answered = false;
   qcmSelected = new Set();
 

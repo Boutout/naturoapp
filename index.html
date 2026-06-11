@@ -155,6 +155,42 @@
     .badge-chip.locked .badge-chip__name { color: var(--c-mid); }
     .badge-chip.earned .badge-chip__ico { box-shadow: 0 4px 12px rgba(39,137,106,0.25); }
 
+    /* ── PRÉPARATION EXAMEN ── */
+    .exam-prep { margin-bottom: 16px; }
+    .exam-prep a, .exam-prep__card {
+      display: flex; align-items: center; gap: 16px;
+      background: var(--c-white); border: 1px solid rgba(26,92,69,0.1);
+      border-radius: var(--r-lg); padding: 16px 18px; box-shadow: var(--shadow-sm);
+      text-decoration: none; color: var(--c-dark);
+    }
+    .exam-prep a:hover { box-shadow: var(--shadow-md); transform: translateY(-2px); transition: all .2s; }
+    .exam-prep__count { text-align: center; flex-shrink: 0; min-width: 70px; }
+    .exam-prep__days { font-family: var(--font-display); font-size: 30px; font-weight: 700; color: var(--c-ocre); line-height: 1; }
+    .exam-prep__jlabel { font-size: 10.5px; text-transform: uppercase; letter-spacing: .5px; color: var(--c-mid); }
+    .exam-prep__body { flex: 1; min-width: 0; }
+    .exam-prep__body b { font-size: 14.5px; }
+    .exam-prep__body .text-sm { margin: 4px 0 6px; }
+    .exam-prep__ico { width: 44px; height: 44px; flex-shrink: 0; border-radius: 14px;
+      background: var(--c-ocre-light); color: var(--c-ocre); display: flex; align-items: center; justify-content: center; }
+    .exam-prep__ico .app-icon { width: 24px; height: 24px; }
+
+    /* ── JARDIN + colonnes ── */
+    .dash-cols { display: grid; grid-template-columns: 210px 1fr; gap: 14px; margin-bottom: 28px; align-items: stretch; }
+    @media (max-width: 760px) { .dash-cols { grid-template-columns: 1fr; } }
+    .dash-cols .gami { margin-bottom: 0; }
+    @media (max-width: 760px) { .dash-cols .gami { grid-template-columns: repeat(3,1fr); } }
+    @media (max-width: 480px) { .dash-cols .gami { grid-template-columns: 1fr; } }
+
+    .garden-card {
+      background: linear-gradient(180deg, var(--c-green-pale) 0%, var(--c-white) 70%);
+      border: 1px solid rgba(26,92,69,0.1); border-radius: var(--r-md);
+      box-shadow: var(--shadow-sm); padding: 14px;
+      display: flex; flex-direction: column; align-items: center; text-align: center;
+    }
+    .garden-svg { width: 116px; height: 140px; display: block; }
+    .garden-card__title { font-weight: 700; font-size: 14.5px; color: var(--c-green-deep); margin-top: 4px; }
+    .garden-card__sub { font-size: 12px; color: var(--c-mid); margin-top: 2px; line-height: 1.4; }
+
     /* Planning grid */
     .plan-grid {
       display: grid;
@@ -359,6 +395,19 @@
     <span class="srs-cta__go" data-icon="arrow-right"></span>
   </a>
 
+  <!-- PRÉPARATION EXAMEN -->
+  <div class="exam-prep" id="exam-prep"></div>
+
+  <!-- JARDIN + GAMIFICATION -->
+  <div class="dash-cols">
+    <div class="garden-card" id="garden-card">
+      <div class="garden-card__plant" id="garden-plant"></div>
+      <div class="garden-card__info">
+        <div class="garden-card__title" id="garden-title">Ta plante</div>
+        <div class="garden-card__sub" id="garden-sub">Révise chaque jour pour la faire grandir.</div>
+      </div>
+    </div>
+
   <!-- GAMIFICATION -->
   <div class="gami">
     <div class="gami-card gami-level">
@@ -378,6 +427,7 @@
       <div><div class="gami-card__label">Objectif du jour</div><div class="gami-card__sub" id="gami-goal-sub">0 / 20</div></div>
     </div>
   </div>
+  </div><!-- /.dash-cols -->
 
   <!-- BADGES -->
   <div class="section-header" style="margin-bottom:10px;"><h2><span data-icon="award"></span> Succès</h2></div>
@@ -467,7 +517,7 @@
 
 <script src="app.js"></script>
 <script>
-  const { State, QUESTIONS, BADGES, getQuestionsByDay, icon, escapeHtml, animateNumber, progressRing, setRing, currentProfile, celebrate } = window.APP;
+  const { State, QUESTIONS, BADGES, getQuestionsByDay, icon, escapeHtml, animateNumber, progressRing, setRing, currentProfile, celebrate, gardenSVG } = window.APP;
 
   const PLAN_THEMES = [
     { title: "Bases fondamentales", q: "Q1–10",  icon: "sprout" },
@@ -528,6 +578,42 @@
       document.getElementById('dc-title').textContent = 'Défi du jour';
       document.getElementById('dc-sub').textContent = '10 questions · jusqu\'à +50 XP';
     }
+
+    // Préparation examen
+    const ep = document.getElementById('exam-prep');
+    const cd = State.examCountdown();
+    const rd = State.getReadiness();
+    if (cd) {
+      const rec = State.recommendedPerDay();
+      ep.innerHTML = `
+        <div class="exam-prep__card">
+          <div class="exam-prep__count"><div class="exam-prep__days">${cd.days < 0 ? '✓' : 'J-' + cd.days}</div><div class="exam-prep__jlabel">${cd.days < 0 ? 'jour J passé' : (cd.days === 0 ? "c'est aujourd'hui !" : "avant l'exam")}</div></div>
+          <div class="exam-prep__body">
+            <b>Préparation : ${rd.pct}% maîtrisé</b>
+            <div class="text-sm text-mid">${rd.mastered}/${rd.total} questions solides${cd.days > 0 ? ` · vise ~${rec}/jour` : ''}</div>
+            <div class="progress-bar"><div class="progress-bar__fill" style="width:${rd.pct}%"></div></div>
+          </div>
+          <a href="reglages.html" class="exam-prep__ico" title="Modifier la date">${icon('settings')}</a>
+        </div>`;
+      window.APP.hydrateIcons(ep);
+    } else {
+      ep.innerHTML = `
+        <a href="reglages.html">
+          <div class="exam-prep__ico">${icon('calendar')}</div>
+          <div class="exam-prep__body"><b>Quand est ton examen ?</b><div class="text-sm text-mid">Définis ta date pour un plan de révision adapté.</div></div>
+          <span style="color:var(--c-ocre);display:inline-flex;">${icon('arrow-right')}</span>
+        </a>`;
+    }
+
+    // Jardin
+    const stage = State.gardenStage();
+    const healthy = State.gardenHealthy();
+    document.getElementById('garden-plant').innerHTML = gardenSVG(stage, healthy);
+    const gnames = ['Graine', 'Pousse', 'Jeune plante', 'Belle plante', 'En fleur', 'Épanouie'];
+    document.getElementById('garden-title').textContent = gnames[stage];
+    document.getElementById('garden-sub').textContent = healthy
+      ? (stage >= 5 ? 'Magnifique, continue ainsi !' : 'Révise pour la faire grandir.')
+      : 'Elle a soif… révise aujourd\'hui pour la raviver.';
 
     // Niveau + XP
     const li = State.levelInfo();
