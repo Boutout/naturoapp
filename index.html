@@ -121,6 +121,23 @@
     .srs-cta.is-empty .srs-cta__txt b { color: var(--c-green-deep); }
     .srs-cta.is-empty .srs-cta__go { color: var(--c-green); }
 
+    /* ── SÉANCE INTELLIGENTE ── */
+    .smart-cta { display: flex; align-items: center; gap: 14px;
+      background: linear-gradient(135deg, #14503B, #27896A 55%, #4EBF93);
+      color: #fff; border-radius: var(--r-lg); padding: 18px 20px; margin-bottom: 14px;
+      text-decoration: none; position: relative; overflow: hidden;
+      box-shadow: 0 8px 22px rgba(39,137,106,.32);
+      transition: transform .2s var(--ease-out), box-shadow .2s var(--ease-out); }
+    .smart-cta:hover { transform: translateY(-2px); box-shadow: 0 12px 30px rgba(39,137,106,.42); }
+    .smart-cta__ico { width: 48px; height: 48px; flex-shrink: 0; border-radius: 15px;
+      background: rgba(255,255,255,.2); display: flex; align-items: center; justify-content: center; }
+    .smart-cta__ico .app-icon { width: 26px; height: 26px; color: #fff; }
+    .smart-cta__txt { flex: 1; display: flex; flex-direction: column; }
+    .smart-cta__txt b { font-size: 16.5px; }
+    .smart-cta__sub { font-size: 12.5px; color: rgba(255,255,255,.85); margin-top: 2px; }
+    .smart-cta__go { color: #fff; }
+    .smart-cta__go .app-icon { width: 22px; height: 22px; }
+
     /* ── CAS PRATIQUES ── */
     .cas-cta {
       display: flex; align-items: center; gap: 14px;
@@ -397,6 +414,16 @@
     <div class="hero__ring ring-wrap" id="hero-ring"></div>
   </div>
 
+  <!-- SÉANCE INTELLIGENTE DU JOUR -->
+  <a class="smart-cta" id="smart-cta" href="revision.html?mode=smart">
+    <span class="smart-cta__ico" data-icon="sparkles"></span>
+    <span class="smart-cta__txt">
+      <b>Séance intelligente du jour</b>
+      <span class="smart-cta__sub" id="smart-cta-sub">Un entraînement adapté à ta mémoire et à tes points faibles.</span>
+    </span>
+    <span class="smart-cta__go" data-icon="play"></span>
+  </a>
+
   <!-- DÉFI DU JOUR -->
   <a class="daily-challenge" id="daily-challenge" href="revision.html?mode=challenge">
     <span class="daily-challenge__ico" id="dc-ico" data-icon="zap"></span>
@@ -651,6 +678,14 @@
     const casDone = Object.keys(State.data.casDone || {}).length;
     const cb = document.getElementById('cas-cta-badge');
     if (cb) cb.textContent = casDone > 0 ? '✓ ' + casDone : '';
+
+    // Séance intelligente : composition adaptée
+    const smartSub = document.getElementById('smart-cta-sub');
+    if (smartSub) {
+      const target = Math.min(20, Math.max(10, State.recommendedPerDay()));
+      const wt = State.weakThemes(2);
+      smartSub.textContent = `${target} questions ciblées${wt.length ? ' · focus : ' + wt.join(', ') : ''}`;
+    }
 
     // Préparation examen
     const ep = document.getElementById('exam-prep');

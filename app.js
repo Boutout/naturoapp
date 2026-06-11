@@ -1610,6 +1610,39 @@ const State = {
       return acc + ((s.seen === 0 || (s.nextReview || 0) <= now) ? 1 : 0);
     }, 0);
   },
+  // ── Intelligence : séance adaptative + analyse par thème ──────
+  // Mix priorisé : mémoire à réviser (SRS dû + jamais vues) → points faibles → complément au hasard.
+  getSmartQueue(max = 15) {
+    const seen = new Set(), out = [];
+    const push = arr => arr.forEach(q => { if (!seen.has(q.id) && out.length < max) { seen.add(q.id); out.push(q); } });
+    push(this.getDueQuestions(max));
+    push(this.getWeakQuestions(max));
+    push(shuffle(QUESTIONS));
+    return out.slice(0, max);
+  },
+  // Maîtrise (% réussite sur questions répondues) par thème principal (avant le « / »).
+  masteryByTheme() {
+    const g = {};
+    QUESTIONS.forEach(q => {
+      const s = this.data.questionStats[q.id];
+      const theme = (q.categorie || '').split('/')[0].trim() || 'Autre';
+      if (!g[theme]) g[theme] = { total: 0, ans: 0, correct: 0, seenQ: 0 };
+      g[theme].total++; g[theme].ans += s.seen; g[theme].correct += s.correct; g[theme].seenQ += s.seen > 0 ? 1 : 0;
+    });
+    return Object.entries(g).map(([theme, v]) => ({
+      theme, count: v.total,
+      pct: v.ans > 0 ? Math.round(v.correct / v.ans * 100) : 0,
+      coverage: v.total ? v.seenQ / v.total : 0
+    }));
+  },
+  // Les k thèmes les plus faibles (peu maîtrisés / peu vus), parmi ceux à ≥3 questions.
+  weakThemes(k = 3) {
+    return this.masteryByTheme()
+      .filter(t => t.count >= 3)
+      .sort((a, b) => (a.pct - b.pct) || (a.coverage - b.coverage))
+      .slice(0, k)
+      .map(t => t.theme);
+  },
 
   // ── Gamification : XP / niveaux ─────────────────────────────
   getXP() { return this.data.xp || 0; },

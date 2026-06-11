@@ -489,6 +489,9 @@ function startSession(mode, dayNum) {
   } else if (mode === 'srs') {
     q = State.getDueQuestions(20);
     if (q.length === 0) q = State.getWeakQuestions(15);
+  } else if (mode === 'smart') {
+    const target = Math.min(20, Math.max(10, State.recommendedPerDay()));
+    q = State.getSmartQueue(target);
   } else if (mode === 'weak') {
     q = State.getWeakQuestions(20);
   } else if (mode === 'unseen') {

@@ -224,6 +224,12 @@
     </div>
   </div>
 
+  <!-- RADAR DE MAÎTRISE -->
+  <div class="section" id="radar-section" style="display:none;">
+    <h2 class="mb-16"><span data-icon="target"></span> Radar de maîtrise</h2>
+    <div class="card"><div class="card__body" style="display:flex;justify-content:center;"><div id="mastery-radar" style="width:100%;max-width:380px;"></div></div></div>
+  </div>
+
   <!-- PAR THÈME -->
   <div class="section">
     <h2 class="mb-16"><span data-icon="tag"></span> Par thème</h2>
@@ -362,7 +368,8 @@ function render() {
   // Day progress
   renderDayProgress();
 
-  // Category progress
+  // Radar de maîtrise + progression par thème
+  renderMasteryRadar();
   renderCatProgress();
 
   // Exam history + courbe d'évolution
@@ -371,6 +378,36 @@ function render() {
 
   // Q grid
   renderQGrid();
+}
+
+function renderMasteryRadar() {
+  const section = document.getElementById('radar-section');
+  const data = State.masteryByTheme().sort((a, b) => b.count - a.count).slice(0, 6);
+  const anySeen = data.some(d => d.pct > 0 || d.coverage > 0);
+  if (data.length < 3 || !anySeen) { section.style.display = 'none'; return; }
+  section.style.display = 'block';
+
+  const N = data.length, W = 320, H = 300, cx = W / 2, cy = H / 2 + 4, maxR = 90;
+  const ang = i => (i / N) * 2 * Math.PI - Math.PI / 2;
+  const pt = (i, r) => [cx + Math.cos(ang(i)) * r, cy + Math.sin(ang(i)) * r];
+  let svg = `<svg viewBox="0 0 ${W} ${H}" style="width:100%;height:auto;display:block;">`;
+  [0.25, 0.5, 0.75, 1].forEach(f => {
+    const pts = data.map((_, i) => pt(i, maxR * f).map(n => n.toFixed(1)).join(',')).join(' ');
+    svg += `<polygon points="${pts}" fill="none" style="stroke:var(--c-border)" stroke-width="1"/>`;
+  });
+  data.forEach((_, i) => { const [x, y] = pt(i, maxR); svg += `<line x1="${cx}" y1="${cy}" x2="${x.toFixed(1)}" y2="${y.toFixed(1)}" style="stroke:var(--c-border)" stroke-width="1"/>`; });
+  const poly = data.map((d, i) => pt(i, maxR * (d.pct / 100)).map(n => n.toFixed(1)).join(',')).join(' ');
+  svg += `<polygon points="${poly}" style="fill:var(--c-green);stroke:var(--c-green)" fill-opacity="0.28" stroke-width="2"/>`;
+  data.forEach((d, i) => { const [x, y] = pt(i, maxR * (d.pct / 100)); svg += `<circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="3.2" fill="${getScoreColor(d.pct)}"/>`; });
+  data.forEach((d, i) => {
+    const [x, y] = pt(i, maxR + 13);
+    const c = Math.cos(ang(i));
+    const anchor = Math.abs(c) < 0.35 ? 'middle' : (c > 0 ? 'start' : 'end');
+    const short = d.theme.length > 13 ? d.theme.slice(0, 12) + '…' : d.theme;
+    svg += `<text x="${x.toFixed(1)}" y="${(y + 3).toFixed(1)}" text-anchor="${anchor}" font-size="10" style="fill:var(--c-mid)">${window.APP.escapeHtml(short)} ${d.pct}%</text>`;
+  });
+  svg += `</svg>`;
+  document.getElementById('mastery-radar').innerHTML = svg;
 }
 
 function renderExamChart() {
