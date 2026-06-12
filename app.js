@@ -2937,6 +2937,24 @@ const Cloud = (function () {
     return m || 'Une erreur est survenue. Réessaie.';
   }
 
+  // Logos de marque (SVG inline — multicolores, hors set d'icônes monochrome).
+  const GOOGLE_SVG = '<svg viewBox="0 0 48 48" width="18" height="18" aria-hidden="true"><path fill="#FFC107" d="M43.6 20.5h-1.9V20H24v8h11.3c-1.6 4.7-6.1 8-11.3 8-6.6 0-12-5.4-12-12s5.4-12 12-12c3.1 0 5.9 1.2 8 3.1l5.7-5.7C34.6 4.1 29.6 2 24 2 11.8 2 2 11.8 2 24s9.8 22 22 22 22-9.8 22-22c0-1.3-.1-2.3-.4-3.5z"/><path fill="#FF3D00" d="M6.3 14.7l6.6 4.8C14.7 16 19 13 24 13c3.1 0 5.9 1.2 8 3.1l5.7-5.7C34.6 7.1 29.6 5 24 5 16.3 5 9.7 9.3 6.3 14.7z"/><path fill="#4CAF50" d="M24 43c5.5 0 10.4-2.1 14.1-5.5l-6.5-5.5C29.6 33.6 27 35 24 35c-5.2 0-9.6-3.3-11.2-7.9l-6.6 5.1C9.6 38.6 16.2 43 24 43z"/><path fill="#1976D2" d="M43.6 20.5H24v8h11.3c-.8 2.2-2.2 4.1-4.1 5.5l6.5 5.5C41.4 36.9 44 31.6 44 24c0-1.3-.1-2.3-.4-3.5z"/></svg>';
+  const APPLE_SVG = '<svg viewBox="0 0 24 24" width="17" height="17" aria-hidden="true"><path fill="currentColor" d="M16.4 12.8c0-2.3 1.9-3.4 2-3.5-1.1-1.6-2.8-1.8-3.4-1.8-1.4-.1-2.8.9-3.5.9s-1.8-.9-3-.8c-1.5 0-3 .9-3.8 2.3-1.6 2.8-.4 7 1.2 9.3.8 1.1 1.7 2.4 2.9 2.3 1.2 0 1.6-.7 3-.7s1.8.7 3 .7 2-1.1 2.8-2.2c.9-1.3 1.2-2.5 1.3-2.6-.1 0-2.5-1-2.5-3.8zM14.3 5.9c.6-.8 1.1-1.9.9-3-1 0-2.2.7-2.9 1.5-.6.7-1.2 1.8-1 2.9 1.1.1 2.3-.6 3-1.4z"/></svg>';
+
+  async function oauth(provider, errEl) {
+    const c = getClient(); if (!c) return;
+    try {
+      const { error } = await c.auth.signInWithOAuth({
+        provider,
+        options: { redirectTo: location.origin + location.pathname }
+      });
+      if (error) throw error;
+      // succès → redirection vers le fournisseur en cours
+    } catch (ex) {
+      if (errEl) errEl.textContent = translateErr(ex);
+    }
+  }
+
   // ───────── Écran d'authentification cloud (4 modes) ─────────
   //  'signin' · 'signup' · 'forgot' (envoi du lien) · 'reset' (nouveau mdp)
   function renderAuth(onAuth, opts) {
@@ -2984,12 +3002,24 @@ const Cloud = (function () {
       const back = (mode === 'forgot' || mode === 'reset')
         ? `<button class="lock-add" id="cl-back">${icon('arrow-left')} Retour à la connexion</button>` : '';
 
+      const PROVIDERS = Array.isArray(window.SUPABASE_OAUTH) ? window.SUPABASE_OAUTH : [];
+      const META = {
+        google: { label: 'Continuer avec Google', svg: GOOGLE_SVG },
+        apple:  { label: 'Continuer avec Apple',  svg: APPLE_SVG }
+      };
+      const social = ((mode === 'signin' || mode === 'signup') && PROVIDERS.length) ? `
+        <div class="cloud-social">
+          ${PROVIDERS.map(p => META[p] ? `<button type="button" class="social-btn" data-provider="${p}">${META[p].svg} ${META[p].label}</button>` : '').join('')}
+        </div>
+        <div class="cloud-or"><span>ou par e-mail</span></div>` : '';
+
       screen.innerHTML = `
         <div class="lock-card cloud-auth">
           <div class="lock-logo">${icon('leaf')}</div>
           <h1 class="lock-title">NaturoApp</h1>
           <p class="lock-sub">${SUB[mode]}</p>
           ${tabs}
+          ${social}
           <form class="lock-form" id="cloud-form">
             ${fields}
             <div class="lock-error" id="cl-error"></div>
@@ -3005,6 +3035,10 @@ const Cloud = (function () {
     function setMode(m) { mode = m; paint(); }
 
     function wire() {
+      const errSocial = screen.querySelector('#cl-error');
+      screen.querySelectorAll('.social-btn').forEach(b => b.addEventListener('click', () => {
+        b.disabled = true; oauth(b.dataset.provider, errSocial);
+      }));
       screen.querySelectorAll('.cloud-tab').forEach(b => b.addEventListener('click', () => setMode(b.dataset.go)));
       const back = screen.querySelector('#cl-back'); if (back) back.addEventListener('click', () => setMode('signin'));
       const forgot = screen.querySelector('#cl-forgot'); if (forgot) forgot.addEventListener('click', () => setMode('forgot'));
@@ -3079,9 +3113,31 @@ const Cloud = (function () {
     paint();
   }
 
+  // Récupère la session initiale de façon fiable, y compris au retour d'un
+  // flux OAuth (Google/Apple) où la session arrive après l'échange du code dans l'URL.
+  function getInitialSession(c) {
+    return new Promise(resolve => {
+      let settled = false;
+      const finish = s => { if (!settled) { settled = true; resolve(s); } };
+      // supabase-js émet INITIAL_SESSION une fois l'init (et l'échange OAuth) terminée.
+      c.auth.onAuthStateChange((event, sess) => {
+        if (event === 'INITIAL_SESSION' || event === 'SIGNED_IN') finish(sess);
+      });
+      c.auth.getSession().then(({ data }) => { if (data && data.session) finish(data.session); }).catch(() => {});
+      setTimeout(() => finish(null), 6000);   // filet de sécurité
+    });
+  }
+
+  function cleanAuthUrl() {
+    // retire ?code=…&state=… (PKCE) ou le hash de jeton après connexion
+    if (/[?&]code=|access_token=/.test(location.search + location.hash)) {
+      try { history.replaceState(null, '', location.pathname); } catch (e) {}
+    }
+  }
+
   // Point d'entrée : appelé par boot() quand le cloud est activé.
   async function start(done) {
-    // Capturé AVANT la création du client (supabase-js nettoie le hash en parsant l'URL).
+    // Capturé AVANT la création du client (supabase-js nettoie l'URL en la parsant).
     const hadRecovery = /type=recovery/.test(location.hash || '');
     const c = getClient(); if (!c) { done(); return; }
 
@@ -3089,6 +3145,7 @@ const Cloud = (function () {
       user = u;
       ensureLocalProfile(u);
       try { await reconcile(); } catch (e) { console.warn('[cloud] reconcile', e); }
+      cleanAuthUrl();
       done();
     };
     _onAuth = onAuth;
@@ -3097,8 +3154,7 @@ const Cloud = (function () {
     // Retour d'un lien « mot de passe oublié » → écran de nouveau mot de passe
     if (hadRecovery) { renderAuth(onAuth, { mode: 'reset' }); return; }
 
-    let session = null;
-    try { session = (await c.auth.getSession()).data.session; } catch (e) {}
+    const session = await getInitialSession(c);
     if (session && session.user) {
       await onAuth(session.user);
     } else {

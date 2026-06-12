@@ -14,3 +14,9 @@
    ───────────────────────────────────────────────────────────── */
 window.SUPABASE_URL      = 'https://rhnkxeikigeqodeeyqpq.supabase.co';
 window.SUPABASE_ANON_KEY = 'sb_publishable_7VSNknb2sxT2BMulKCXAUA_L1yAgEWb';
+
+/* Connexion sociale : n'active un fournisseur ICI qu'une fois configuré dans
+   Supabase (Auth → Providers). Tant qu'il n'est pas listé, son bouton n'apparaît
+   pas (évite un bouton cassé). Valeurs possibles : 'google', 'apple'.
+   Ex. une fois Google prêt :  window.SUPABASE_OAUTH = ['google']; */
+window.SUPABASE_OAUTH = [];
