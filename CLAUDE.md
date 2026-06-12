@@ -5,10 +5,16 @@
 
 ## 1. C'est quoi
 Application web de **révision en naturopathie**, pensée d'abord pour mobile et
-**installable comme une app (PWA)**. Multi-utilisateurs sur un même appareil.
-100 % **vanilla HTML/CSS/JS**, **aucune dépendance**, **aucun serveur** : tout
-tourne en local, la progression vit dans `localStorage`. Seule ressource externe :
-Google Fonts.
+**installable comme une app (PWA)**. Multi-utilisateurs.
+**Vanilla HTML/CSS/JS**, sans build. La progression vit dans `localStorage`
+(cache local + hors-ligne) ET se **synchronise dans le cloud via Supabase**
+(comptes e-mail/mot de passe, multi-appareils). Ressources externes : Google Fonts
++ client `@supabase/supabase-js` (CDN).
+
+> ⚠️ Évolution d'archi (2026-06-12) : la règle d'or historique « aucun serveur /
+> aucune dépendance » a été **volontairement abandonnée** pour permettre la sync
+> multi-appareils. Voir §9. Supabase ne demande pas de backend à écrire : la clé
+> `anon` est publique par conception, la sécurité passe par Row Level Security.
 
 ## 2. Fichiers
 ```
@@ -26,7 +32,9 @@ docs/           ARCHITECTURE.md · AJOUTER-DU-CONTENU.md · SECURITE.md
 ```
 
 ## 3. Règles d'or (NE PAS casser)
-1. **Vanilla only.** Pas de framework, pas de npm, pas de build, pas de fetch externe.
+1. **Vanilla, sans build.** Pas de framework, pas de npm, pas de bundler. Dépendances
+   externes limitées et chargées par CDN (Google Fonts, `@supabase/supabase-js`). Pas
+   d'autre fetch externe non justifié.
 2. **app.js est encapsulé dans une IIFE.** SEUL `window.APP` est global. ⚠️ Ne JAMAIS
    déclarer `const State`/`QUESTIONS`… au niveau global : ça entre en collision avec
    `const { State } = window.APP` des pages (« Identifier already declared ») et casse
@@ -42,8 +50,9 @@ docs/           ARCHITECTURE.md · AJOUTER-DU-CONTENU.md · SECURITE.md
 6. **Sécurité : échapper toute saisie utilisateur** rendue en innerHTML avec
    `APP.escapeHtml(...)` (noms de profil, contenu des cours). Voir `docs/SECURITE.md`.
 7. **Respecter `prefers-reduced-motion`** (déjà géré globalement + helpers).
-8. **Toujours charger `app.js` en dernier** dans le `<body>` ; `content.js` AVANT `app.js`
-   sur les pages qui l'utilisent (cours.html).
+8. **Toujours charger `app.js` en dernier** dans le `<body>`. Ordre des scripts en fin
+   de `<body>` : `content.js` (si besoin) → CDN `supabase-js` → `supabase-config.js`
+   → `app.js`. Toute nouvelle page doit reprendre ce bloc.
 
 ## 4. API publique — `window.APP`
 - `State` — données du profil actif. `.init() .save() .reset() .recordAnswer(id,ok)`
@@ -53,7 +62,8 @@ docs/           ARCHITECTURE.md · AJOUTER-DU-CONTENU.md · SECURITE.md
 - `Profiles` — comptes. `.all() .count() .get(id) .active() .activeId()`
   `.create({name,method,credential}) .verify(id,cred) .rename(id,name) .remove(id)`
   `.changeCredential(id,method,cred) .clearActive()`. `method = 'pin' | 'password'`.
-- `onReady(cb)` — exécute cb quand un profil est déverrouillé. `currentProfile()`.
+- `Cloud` — sync Supabase. `.enabled()` (config présente ?) `.start(done)` (auth + réconciliation, appelé par boot) `.signOut()` `.schedulePush()` (push debouncé, appelé par State.save) `.currentUser()`.
+- `onReady(cb)` — exécute cb quand un compte est actif (cloud ou local). `currentProfile()`.
 - `QUESTIONS` (80) · `shuffle` · `getQuestionsByDay` · `formatTime` · `getScoreColor` · `getGrade`
 - `icon(name,opts)` · `hydrateIcons(root)` · `escapeHtml(s)`
 - `animateNumber(el,to,opts)` · `progressRing(pct,opts)` · `setRing(barEl,pct)` · `prefersReducedMotion()`
@@ -63,6 +73,24 @@ docs/           ARCHITECTURE.md · AJOUTER-DU-CONTENU.md · SECURITE.md
 - `naturoapp_active` (sessionStorage) : id du profil déverrouillé pour la session
 - `naturoapp_data_<id>` (localStorage) : la progression du profil (questionStats, sessions, lessonsRead, dailyStats…)
 - Migration auto de l'ancien compte unique (`naturoapp_v1` + `naturoapp_auth`) → 1er profil « Clara ».
+
+## 5bis. Sync cloud (Supabase)
+- Config dans **`supabase-config.js`** (`window.SUPABASE_URL` + `window.SUPABASE_ANON_KEY`,
+  publiques). Tant que les valeurs contiennent `YOUR-PROJECT`, le cloud est **désactivé**
+  et l'app retombe sur les comptes locaux PIN (aucune régression).
+- **Cloud activé** : `boot()` appelle `Cloud.start(fireReady)` → connexion e-mail/mdp
+  (Supabase Auth) → un profil local « miroir » est créé (`id = user.id`, `auth.method='cloud'`)
+  pour réutiliser tout le moteur `State`. La progression de l'utilisateur cloud vit donc
+  toujours dans `naturoapp_data_<user.id>` (cache local), et se synchronise.
+- **Réconciliation au login** : compare `updatedAt` local vs cloud → le plus récent gagne
+  (last-write-wins sur le blob `data`). Si le cloud est vide → migration du compte local
+  le plus « riche » de l'appareil.
+- **Push** : `State.save()` estampille `data.updatedAt` puis déclenche `Cloud.schedulePush()`
+  (upsert debouncé ~2 s dans la table `user_progress`).
+- **Table SQL** : `user_progress(user_id uuid PK → auth.users, display_name text, data jsonb, updated_at timestamptz)` + RLS (chaque user ne lit/écrit que sa ligne). SQL complet dans `docs/` ou le handoff.
+- **Hors-ligne** : la 1re connexion sur un appareil exige le réseau ; ensuite la session
+  Supabase est persistée → l'app marche hors-ligne sur le cache local et resynchronise au retour.
+- Recommandé côté Supabase : désactiver « Confirm email » (Auth → Email) pour une UX fluide.
 
 ## 6. Ajouter du contenu
 Voir **`docs/AJOUTER-DU-CONTENU.md`**. En bref : éditer `content.js`

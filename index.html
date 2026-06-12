@@ -439,6 +439,16 @@
 
   <div id="streak-banner" style="display:none;"></div>
 
+  <!-- REPRENDRE LA SESSION EN COURS (par profil) -->
+  <a class="smart-cta" id="resume-cta" href="#" style="display:none;background:linear-gradient(135deg,#C77D3A,#A85F25);box-shadow:0 10px 26px rgba(168,95,37,.34);">
+    <span class="smart-cta__ico" data-icon="rotate"></span>
+    <span class="smart-cta__txt">
+      <b id="resume-cta-title">Reprendre ma session</b>
+      <span class="smart-cta__sub" id="resume-cta-sub">Tu as un exercice en cours.</span>
+    </span>
+    <span class="smart-cta__go" data-icon="play"></span>
+  </a>
+
   <!-- SÉANCE INTELLIGENTE DU JOUR -->
   <a class="smart-cta" id="smart-cta" href="revision.html?mode=smart">
     <span class="smart-cta__ico" data-icon="sparkles"></span>
@@ -641,6 +651,8 @@
 <div id="toast-container"></div>
 
 <script src="content.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="supabase-config.js"></script>
 <script src="app.js"></script>
 <script>
   const { State, QUESTIONS, BADGES, getQuestionsByDay, icon, escapeHtml, animateNumber, progressRing, setRing, currentProfile, celebrate, gardenSVG } = window.APP;
@@ -991,9 +1003,44 @@
   }
 
   // Rendu différé : on attend qu'un profil soit déverrouillé.
+  // ── Carte « Reprendre » : surface la session en cours du profil actif ──
+  function buildResumeCta() {
+    const cta = document.getElementById('resume-cta');
+    const ip = (State.data && State.data.inProgress) || {};
+    const entries = [];
+    if (ip.revision && ip.revision.queue && ip.revision.current < ip.revision.queue.length) {
+      entries.push({ type: 'revision', page: 'revision.html',
+        title: 'Reprendre ma révision',
+        sub: `Question ${ip.revision.current + 1} / ${ip.revision.queue.length}`,
+        at: ip.revision.savedAt || 0 });
+    }
+    if (ip.exam && ip.exam.queue && ip.exam.queue.length) {
+      const answered = Object.keys(ip.exam.examAnswers || {}).length;
+      entries.push({ type: 'exam', page: 'examen.html',
+        title: 'Reprendre mon examen',
+        sub: `${answered} / ${ip.exam.queue.length} répondues`,
+        at: ip.exam.savedAt || 0 });
+    }
+    if (ip.cas && ip.cas.caseId) {
+      entries.push({ type: 'cas', page: 'cas.html',
+        title: 'Reprendre mon cas pratique',
+        sub: `Étape ${ip.cas.stepIdx + 1}`,
+        at: ip.cas.savedAt || 0 });
+    }
+    if (!entries.length) { cta.style.display = 'none'; return; }
+    entries.sort((a, b) => b.at - a.at);          // la plus récente d'abord
+    const top = entries[0];
+    cta.href = top.page + '?resume=1';
+    document.getElementById('resume-cta-title').textContent = top.title;
+    document.getElementById('resume-cta-sub').textContent =
+      top.sub + (entries.length > 1 ? ` · +${entries.length - 1} autre${entries.length > 2 ? 's' : ''}` : '');
+    cta.style.display = 'flex';
+  }
+
   window.APP.onReady(() => {
     State.init();
     render();
+    buildResumeCta();
     maybeOnboard();
   });
 </script>

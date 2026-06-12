@@ -184,6 +184,24 @@
       font-size: 11.5px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px;
       color: var(--c-green);
     }
+
+    /* RESUME BANNER (reprise de session) */
+    .resume-banner {
+      display: flex; align-items: center; gap: 14px; flex-wrap: wrap;
+      background: linear-gradient(135deg, var(--c-green-pale), var(--c-blue-light));
+      border: 1.5px solid var(--c-green-light);
+      border-radius: var(--r-lg); padding: 16px 18px; margin-bottom: 22px;
+    }
+    .resume-banner__ico {
+      width: 42px; height: 42px; flex-shrink: 0; border-radius: 12px;
+      background: var(--c-green); color: #fff;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .resume-banner__ico .app-icon { width: 22px; height: 22px; }
+    .resume-banner__body { flex: 1; min-width: 180px; }
+    .resume-banner__title { font-weight: 700; font-size: 15px; color: var(--c-green-deep); }
+    .resume-banner__meta { font-size: 12.5px; color: var(--c-mid); margin-top: 2px; }
+    .resume-banner__actions { display: flex; gap: 8px; flex-wrap: wrap; }
   </style>
 </head>
 <body>
@@ -238,6 +256,8 @@
     <!-- MODE PICKER (when nothing selected) -->
     <div id="pick-mode">
       <h2 class="mb-16"><span data-icon="book-open"></span> Mode Révision</h2>
+
+      <div id="resume-banner" class="resume-banner" style="display:none;"></div>
 
       <p class="text-mid mb-24">Le mode révision te montre les questions une par une, t'explique pourquoi la réponse est bonne, et mémorise tes erreurs pour les retravailler en priorité.</p>
 
@@ -369,6 +389,8 @@
 <div id="toast-container"></div>
 
 <script src="content.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="supabase-config.js"></script>
 <script src="app.js"></script>
 <script>
 const { State, QUESTIONS, shuffle, getQuestionsByDay, formatTime, icon, isMultiAnswer, answerKey, isSelectionCorrect, getDailyChallenge, sfx, tts } = window.APP;
@@ -514,6 +536,7 @@ function startSession(mode, dayNum) {
 
   queue = shuffle(q);
   document.getElementById('pick-mode').style.display = 'none';
+  saveRevSnapshot(0);
 
   if (currentFormat === 'flashcard') {
     showFC();
@@ -618,6 +641,7 @@ function handleQCMAnswer(selectedArr, q) {
   document.getElementById('qcm-validate').style.display = 'none';
   document.getElementById('qcm-next').disabled = false;
   updateScoreLive();
+  saveRevSnapshot(current + 1);   // reprise : la prochaine question non répondue
 }
 
 document.getElementById('qcm-validate').addEventListener('click', () => {
@@ -687,6 +711,7 @@ document.getElementById('fc-wrong-btn').addEventListener('click', () => {
   const q = queue[current];
   State.recordAnswer(q.id, false); sfx.wrong();
   sessionTotal++; current++;
+  saveRevSnapshot(current);
   renderFCQuestion();
 });
 
@@ -694,6 +719,7 @@ document.getElementById('fc-correct-btn').addEventListener('click', () => {
   const q = queue[current];
   State.recordAnswer(q.id, true); sfx.correct();
   sessionTotal++; sessionCorrect++; current++;
+  saveRevSnapshot(current);
   renderFCQuestion();
 });
 
@@ -702,6 +728,7 @@ document.getElementById('fc-stop').addEventListener('click', showPickMode);
 // ── COMPLETION ───────────────────────────────────────────────
 function showCompletion() {
   stopSprintTimer();
+  State.clearProgress('revision');   // session terminée : plus rien à reprendre
   document.querySelectorAll('.revision-area').forEach(a => a.classList.remove('active'));
   const pct = sessionTotal === 0 ? 0 : Math.round((sessionCorrect / sessionTotal) * 100);
   const dur = Math.round((Date.now() - sessionStart) / 1000);
@@ -753,6 +780,67 @@ function showPickMode() {
   stopSprintTimer();
   document.querySelectorAll('.revision-area').forEach(a => a.classList.remove('active'));
   document.getElementById('pick-mode').style.display = 'block';
+  renderResumeBanner();   // « Arrêter » = pause : la session reste reprenable
+}
+
+// ── REPRISE DE SESSION (instantané isolé par profil) ──────────
+const REV_MODE_LABELS = {
+  today:'Questions du jour', all:'Aléatoire (toutes)', weak:'Points faibles',
+  unseen:'Non vues', important:'Questions clés', sprint:'Sprint (chrono)',
+  challenge:'Défi du jour', srs:'Révision espacée', smart:'Révision intelligente',
+  express:'Express', aiquiz:'Quiz IA', day:'Jour ciblé', ids:'Sélection ciblée'
+};
+
+// Sauvegarde l'état au point `idx` (question à afficher, pas encore répondue).
+function saveRevSnapshot(idx) {
+  if (!queue.length) return;
+  State.saveProgress('revision', {
+    format: currentFormat, mode: currentMode,
+    current: idx, sessionCorrect, sessionTotal,
+    elapsedMs: Date.now() - sessionStart,
+    queue: queue
+  });
+}
+
+function renderResumeBanner() {
+  const host = document.getElementById('resume-banner');
+  const snap = State.getProgress('revision');
+  if (!snap || !snap.queue || !snap.queue.length || snap.current >= snap.queue.length) {
+    host.style.display = 'none'; return;
+  }
+  const label = REV_MODE_LABELS[snap.mode] || 'Révision';
+  const fmt = snap.format === 'flashcard' ? 'Flashcards' : 'QCM';
+  host.style.display = 'flex';
+  host.innerHTML = `
+    <div class="resume-banner__ico">${icon('rotate')}</div>
+    <div class="resume-banner__body">
+      <div class="resume-banner__title">Reprendre ta révision en cours</div>
+      <div class="resume-banner__meta">${label} · ${fmt} · question ${snap.current + 1} / ${snap.queue.length}</div>
+    </div>
+    <div class="resume-banner__actions">
+      <button class="btn btn-primary btn-sm" id="resume-go"><span data-icon="play"></span> Reprendre</button>
+      <button class="btn btn-ghost btn-sm" id="resume-discard"><span data-icon="x"></span> Abandonner</button>
+    </div>`;
+  window.APP.hydrateIcons(host);
+  document.getElementById('resume-go').addEventListener('click', resumeRevision);
+  document.getElementById('resume-discard').addEventListener('click', () => {
+    State.clearProgress('revision'); renderResumeBanner();
+  });
+}
+
+function resumeRevision() {
+  const snap = State.getProgress('revision');
+  if (!snap || !snap.queue || !snap.queue.length) return;
+  queue = snap.queue;
+  current = snap.current || 0;
+  sessionCorrect = snap.sessionCorrect || 0;
+  sessionTotal = snap.sessionTotal || 0;
+  currentMode = snap.mode || 'all';
+  currentFormat = snap.format || 'qcm';
+  sessionStart = Date.now() - (snap.elapsedMs || 0);
+  answered = false;
+  document.getElementById('pick-mode').style.display = 'none';
+  if (currentFormat === 'flashcard') showFC(); else showQCM();
 }
 
 // ── TOAST ─────────────────────────────────────────────────────
@@ -774,7 +862,9 @@ function handleParams() {
     const ids = params.get('ids').split(',').map(n => parseInt(n)).filter(Boolean);
     queue = shuffle(QUESTIONS.filter(q => ids.includes(q.id)));
     if (queue.length) { current = 0; sessionCorrect = 0; sessionTotal = 0; sessionStart = Date.now();
+      currentMode = 'ids';
       document.getElementById('pick-mode').style.display = 'none';
+      saveRevSnapshot(0);
       (currentFormat === 'flashcard') ? showFC() : showQCM();
     }
   } else if (params.get('mode')) {
@@ -793,6 +883,8 @@ window.APP.onReady(() => {
   State.init();
   buildSidebarDays();
   handleParams();
+  renderResumeBanner();   // propose de reprendre la session en cours du profil actif
+  if (new URLSearchParams(location.search).get('resume') === '1') resumeRevision();
 });
 </script>
 </body>

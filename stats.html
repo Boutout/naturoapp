@@ -282,6 +282,25 @@
   <div class="section">
     <h2 class="mb-16"><span data-icon="lock"></span> Compte &amp; sauvegarde</h2>
     <div class="card"><div class="card__body">
+      <!-- Bloc compte cloud (Supabase) — visible uniquement si la sync est active -->
+      <div id="cloud-account" style="display:none;">
+        <div class="account-row">
+          <div>
+            <div class="text-sm text-mid"><span data-icon="check-circle" style="color:var(--c-green);vertical-align:-2px;"></span> Synchronisé dans le cloud</div>
+            <div id="cloud-email" style="font-weight:700;font-size:16px;">—</div>
+          </div>
+          <button class="btn btn-ghost btn-sm" id="cloud-logout"><span data-icon="lock"></span> Se déconnecter</button>
+        </div>
+        <div class="account-row" style="margin-top:12px;">
+          <div>
+            <div style="font-weight:600;">Mot de passe</div>
+            <div class="text-sm text-mid">Change le mot de passe de ton compte.</div>
+          </div>
+          <button class="btn btn-ghost btn-sm" id="cloud-pw-btn"><span data-icon="edit"></span> Changer</button>
+        </div>
+        <hr style="border:none;border-top:1px solid var(--c-border);margin:14px 0;">
+      </div>
+
       <div class="account-row">
         <div>
           <div class="text-sm text-mid">Compte actif</div>
@@ -328,9 +347,11 @@
 <div id="toast-container"></div>
 
 <script src="content.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="supabase-config.js"></script>
 <script src="app.js"></script>
 <script>
-const { State, QUESTIONS, getGrade, getScoreColor, animateNumber, currentProfile, Profiles } = window.APP;
+const { State, QUESTIONS, getGrade, getScoreColor, animateNumber, currentProfile, Profiles, Cloud, icon } = window.APP;
 
 const CATEGORIES = [...new Set(QUESTIONS.map(q => q.categorie))];
 const DAY_LABELS = [
@@ -701,11 +722,37 @@ function wireAccount() {
   });
 }
 
+// ── Compte cloud (Supabase) ──────────────────────────────────
+function wireCloudAccount() {
+  if (!Cloud || !Cloud.enabled()) return;
+  const u = Cloud.currentUser();
+  if (!u) return;
+  const box = document.getElementById('cloud-account');
+  box.style.display = 'block';
+  document.getElementById('cloud-email').textContent = u.email || '—';
+
+  document.getElementById('cloud-logout').addEventListener('click', () => {
+    if (confirm('Se déconnecter ? Ta progression est sauvegardée dans le cloud, tu la retrouveras à la reconnexion.')) Cloud.signOut();
+  });
+
+  document.getElementById('cloud-pw-btn').addEventListener('click', async () => {
+    const pw = prompt('Nouveau mot de passe (6 caractères minimum) :');
+    if (pw === null) return;
+    if (pw.length < 6) { showToast('Mot de passe trop court (6 min).', 'error'); return; }
+    try {
+      const res = await Cloud.updatePassword(pw);
+      if (res && res.error) throw res.error;
+      showToast('Mot de passe mis à jour.', 'success');
+    } catch (e) { showToast('Échec : ' + (e.message || 'réessaie'), 'error'); }
+  });
+}
+
 // Rendu différé : on attend qu'un profil soit déverrouillé.
 window.APP.onReady(() => {
   State.init();
   render();
   wireAccount();
+  wireCloudAccount();
 });
 </script>
 </body>

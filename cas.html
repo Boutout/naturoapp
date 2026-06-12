@@ -66,6 +66,24 @@
     .cas-synthese { background:rgba(255,255,255,.14); border-radius:var(--r-md); padding:16px 18px; text-align:left;
       font-size:14px; line-height:1.6; margin-top:18px; }
     .cas-synthese b { display:flex; align-items:center; gap:7px; margin-bottom:6px; }
+
+    /* RESUME BANNER (reprise d'un cas) */
+    .resume-banner {
+      display: flex; align-items: center; gap: 14px; flex-wrap: wrap;
+      background: linear-gradient(135deg, var(--c-green-pale), var(--c-blue-light));
+      border: 1.5px solid var(--c-green-light);
+      border-radius: var(--r-lg); padding: 16px 18px; margin-bottom: 22px;
+    }
+    .resume-banner__ico {
+      width: 42px; height: 42px; flex-shrink: 0; border-radius: 12px;
+      background: var(--c-green); color: #fff;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .resume-banner__ico .app-icon { width: 22px; height: 22px; }
+    .resume-banner__body { flex: 1; min-width: 180px; }
+    .resume-banner__title { font-weight: 700; font-size: 15px; color: var(--c-green-deep); }
+    .resume-banner__meta { font-size: 12.5px; color: var(--c-mid); margin-top: 2px; }
+    .resume-banner__actions { display: flex; gap: 8px; flex-wrap: wrap; }
   </style>
 </head>
 <body>
@@ -97,6 +115,7 @@
     <h1>Cas pratiques</h1>
     <p>Mets-toi dans la peau du naturopathe : un client te consulte, mène l'anamnèse et propose des pistes. Le raisonnement par le terrain, pas le par-cœur.</p>
   </div>
+  <div id="resume-banner" class="resume-banner" style="display:none;"></div>
   <div class="cas-grid" id="cas-list"></div>
 </div>
 
@@ -135,6 +154,8 @@
 <div id="toast-container"></div>
 
 <script src="content.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="supabase-config.js"></script>
 <script src="app.js"></script>
 <script>
 const { State, icon, escapeHtml, shuffle, sfx, celebrate } = window.APP;
@@ -143,6 +164,54 @@ const CASES = (window.NATURO_CONTENT && window.NATURO_CONTENT.casPratiques) || [
 function initials(name){ return (name||'?').trim()[0] ? (name.trim()[0]).toUpperCase() : '?'; }
 
 let cur = null, stepIdx = 0, correctCount = 0, answered = false;
+
+// ── REPRISE D'UN CAS (instantané isolé par profil) ────────────
+function saveCasSnapshot(idx, correct) {
+  if (!cur) return;
+  State.saveProgress('cas', { caseId: cur.id, stepIdx: idx, correctCount: correct });
+}
+
+function renderResumeBanner() {
+  const host = document.getElementById('resume-banner');
+  const snap = State.getProgress('cas');
+  const c = snap && CASES.find(x => x.id === snap.caseId);
+  if (!snap || !c) { host.style.display = 'none'; return; }
+  const total = c.etapes.length;
+  host.style.display = 'flex';
+  host.innerHTML = `
+    <div class="resume-banner__ico">${icon('rotate')}</div>
+    <div class="resume-banner__body">
+      <div class="resume-banner__title">Reprendre ton cas en cours</div>
+      <div class="resume-banner__meta">${escapeHtml(c.titre)} · étape ${Math.min(snap.stepIdx + 1, total)} / ${total}</div>
+    </div>
+    <div class="resume-banner__actions">
+      <button class="btn btn-primary btn-sm" id="resume-go"><span data-icon="play"></span> Reprendre</button>
+      <button class="btn btn-ghost btn-sm" id="resume-discard"><span data-icon="x"></span> Abandonner</button>
+    </div>`;
+  window.APP.hydrateIcons(host);
+  document.getElementById('resume-go').addEventListener('click', resumeCase);
+  document.getElementById('resume-discard').addEventListener('click', () => {
+    State.clearProgress('cas'); renderResumeBanner();
+  });
+}
+
+function resumeCase() {
+  const snap = State.getProgress('cas');
+  if (!snap) return;
+  const c = CASES.find(x => x.id === snap.caseId);
+  if (!c) { State.clearProgress('cas'); renderResumeBanner(); return; }
+  cur = c;
+  correctCount = snap.correctCount || 0;
+  stepIdx = snap.stepIdx || 0;
+  answered = false;
+  showView('player');
+  document.getElementById('cas-intro').style.display = 'none';
+  document.getElementById('cas-result').style.display = 'none';
+  if (stepIdx >= cur.etapes.length) { showResult(); return; }
+  document.getElementById('cas-step').style.display = 'block';
+  renderStep();
+  window.scrollTo(0, 0);
+}
 
 function showView(which) {
   document.getElementById('cas-list-view').style.display = which === 'list' ? 'block' : 'none';
@@ -199,6 +268,7 @@ function openCase(id) {
 function startSteps() {
   document.getElementById('cas-intro').style.display = 'none';
   document.getElementById('cas-step').style.display = 'block';
+  saveCasSnapshot(stepIdx, correctCount);
   renderStep();
 }
 
@@ -247,6 +317,7 @@ function answerStep(idx, step) {
       <div class="explain-section"><b>${icon('lightbulb')} Pourquoi :</b><br>${escapeHtml(step.explication)}</div>
     </div>`;
   document.getElementById('cas-next').disabled = false;
+  saveCasSnapshot(stepIdx + 1, correctCount);   // reprise : pointe l'étape suivante
 }
 
 document.getElementById('cas-next').addEventListener('click', () => {
@@ -255,6 +326,7 @@ document.getElementById('cas-next').addEventListener('click', () => {
 });
 
 function showResult() {
+  State.clearProgress('cas');   // cas terminé : plus rien à reprendre
   const total = cur.etapes.length;
   const pct = Math.round(correctCount / total * 100);
   const isNew = State.markCaseDone(cur.id, total, correctCount);
@@ -286,13 +358,15 @@ function showResult() {
   window.scrollTo(0, 0);
 }
 
-function backToList() { showView('list'); renderList(); window.scrollTo(0, 0); }
+function backToList() { showView('list'); renderList(); renderResumeBanner(); window.scrollTo(0, 0); }
 document.getElementById('cas-back').addEventListener('click', backToList);
 
 window.APP.onReady(() => {
   State.init();
   renderList();
+  renderResumeBanner();   // propose de reprendre le cas en cours du profil actif
   const params = new URLSearchParams(location.search);
+  if (params.get('resume') === '1') { resumeCase(); return; }
   if (params.get('id')) openCase(params.get('id'));
 });
 </script>

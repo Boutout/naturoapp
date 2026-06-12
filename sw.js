@@ -1,7 +1,8 @@
 /* NaturoApp — Service Worker (PWA)
    Stratégie : app-shell en cache, fonctionne hors-ligne.
    Pense à incrémenter CACHE_VERSION quand tu modifies les fichiers. */
-const CACHE_VERSION = 'naturoapp-v29';
+const CACHE_VERSION = 'naturoapp-v33';
+const SUPABASE_CDN = 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2';
 const APP_SHELL = [
   'index.html',
   'cours.html',
@@ -19,6 +20,7 @@ const APP_SHELL = [
   'app.js',
   'content.js',
   'style.css',
+  'supabase-config.js',
   'manifest.json',
   'icons/icon-192.png',
   'icons/icon-512.png',
@@ -28,7 +30,11 @@ const APP_SHELL = [
 self.addEventListener('install', event => {
   event.waitUntil(
     caches.open(CACHE_VERSION)
-      .then(cache => cache.addAll(APP_SHELL).catch(() => {}))
+      .then(cache => cache.addAll(APP_SHELL)
+        // Bundle Supabase (CDN) mis en cache à part : son échec ne doit pas
+        // casser l'installation du reste de l'app-shell (hors-ligne préservé).
+        .then(() => cache.add(SUPABASE_CDN).catch(() => {}))
+        .catch(() => {}))
       .then(() => self.skipWaiting())
   );
 });

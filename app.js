@@ -1481,6 +1481,7 @@ const State = {
     if (!d.casDone) d.casDone = {};         // idCas -> { total, correct, pct }
     if (typeof d.fichesSeries !== 'number') d.fichesSeries = 0;  // séries de fiches terminées
     if (typeof d.examDate === 'undefined') d.examDate = null;   // 'YYYY-MM-DD' ou null
+    if (!d.inProgress || typeof d.inProgress !== 'object') d.inProgress = {};  // sessions en cours (reprise) par type
     QUESTIONS.forEach(q => {
       const s = d.questionStats[q.id];
       if (!s) {
@@ -1514,6 +1515,7 @@ const State = {
       fichesSeries: 0,     // nb de séries de fiches de révision terminées
       examDate: null,      // date d'examen visée ('YYYY-MM-DD')
       dailyStats: {},      // "YYYY-MM-DD" -> { questions, correct }
+      inProgress: {},      // sessions en cours, reprenables — { revision|exam|cas: {…snapshot} }
     };
     QUESTIONS.forEach(q => {
       this.data.questionStats[q.id] = {
@@ -1527,7 +1529,11 @@ const State = {
 
   save() {
     const k = this.key();
-    if (k && this.data) localStorage.setItem(k, JSON.stringify(this.data));
+    if (k && this.data) {
+      this.data.updatedAt = Date.now();           // horodatage pour la réconciliation cloud
+      localStorage.setItem(k, JSON.stringify(this.data));
+    }
+    if (typeof Cloud !== 'undefined' && Cloud && Cloud.schedulePush) Cloud.schedulePush();
   },
 
   // Suivi des cours
@@ -1824,6 +1830,23 @@ const State = {
   saveRevisionSession(session) {
     this.data.revisionSessions.push(session);
     this.save();
+  },
+
+  // ─── Sessions en cours (reprise) — isolées par profil via this.data ───
+  // type : 'revision' | 'exam' | 'cas'. payload = instantané de la session.
+  saveProgress(type, payload) {
+    if (!this.data) return;
+    if (!this.data.inProgress) this.data.inProgress = {};
+    this.data.inProgress[type] = Object.assign({}, payload, { savedAt: Date.now() });
+    this.save();
+  },
+  getProgress(type) {
+    if (!this.data || !this.data.inProgress) return null;
+    return this.data.inProgress[type] || null;
+  },
+  clearProgress(type) {
+    if (!this.data || !this.data.inProgress) return;
+    if (this.data.inProgress[type]) { delete this.data.inProgress[type]; this.save(); }
   }
 };
 
@@ -2721,6 +2744,371 @@ function onReady(cb) { if (_ready) cb(); else _readyCbs.push(cb); }
 
 function currentProfile() { return Profiles.active(); }
 
+// ═══════════════════════════════════════════════════════════════
+//  SYNC CLOUD (Supabase) — la progression suit l'utilisateur
+//  d'un appareil à l'autre. Auth e-mail/mot de passe + RLS.
+//  Si non configuré (supabase-config.js placeholder), tout reste
+//  local (système de profils PIN) : aucune régression.
+// ═══════════════════════════════════════════════════════════════
+const Cloud = (function () {
+  let client = null, user = null, pushTimer = null, bound = false;
+
+  function configured() {
+    const url = window.SUPABASE_URL, key = window.SUPABASE_ANON_KEY;
+    return typeof url === 'string' && typeof key === 'string'
+      && url && key
+      && !/YOUR-PROJECT|YOUR-ANON/.test(url + key)
+      && !!(window.supabase && window.supabase.createClient);
+  }
+  function enabled() { return configured(); }
+  function currentUser() { return user; }
+
+  function getClient() {
+    if (!client && configured()) {
+      try { client = window.supabase.createClient(window.SUPABASE_URL, window.SUPABASE_ANON_KEY); }
+      catch (e) { console.warn('[cloud] createClient', e); client = null; }
+    }
+    return client;
+  }
+
+  function displayName(u) {
+    return (u && u.user_metadata && u.user_metadata.display_name)
+      || (u && u.email ? u.email.split('@')[0] : 'Moi');
+  }
+
+  // Crée/maj une entrée de profil locale pour l'utilisateur cloud :
+  // permet de réutiliser tout le moteur State + currentProfile() sans le réécrire.
+  function ensureLocalProfile(u) {
+    const name = displayName(u);
+    const o = Profiles._load();
+    let p = o.profiles.find(x => x.id === u.id);
+    if (!p) {
+      o.profiles.push({ id: u.id, name, auth: { method: 'cloud' }, createdAt: Date.now(), cloud: true });
+      Profiles._save(o);
+    } else if (name && p.name !== name) { p.name = name; Profiles._save(o); }
+    try { sessionStorage.setItem(ACTIVE_KEY, u.id); } catch (e) {}
+  }
+
+  function readLocal(id) {
+    try { return JSON.parse(localStorage.getItem(Profiles.dataKey(id))); } catch (e) { return null; }
+  }
+
+  // Cherche la progression locale la plus « riche » d'un autre profil
+  // (pour migrer le compte local existant vers le 1er compte cloud).
+  function richestLocalData(excludeId) {
+    let best = null, bestScore = 0;
+    for (let i = 0; i < localStorage.length; i++) {
+      const k = localStorage.key(i);
+      if (!k || k.indexOf('naturoapp_data_') !== 0) continue;
+      if (k === Profiles.dataKey(excludeId)) continue;
+      let d; try { d = JSON.parse(localStorage.getItem(k)); } catch (e) { continue; }
+      if (!d || !d.questionStats) continue;
+      let score = 0;
+      Object.values(d.questionStats).forEach(s => { score += (s.seen || 0); });
+      score += Object.keys(d.lessonsRead || {}).length * 3 + (d.xp || 0) / 10;
+      if (score > bestScore) { bestScore = score; best = d; }
+    }
+    return bestScore > 0 ? best : null;
+  }
+
+  async function pull() {
+    const c = getClient(); if (!c || !user) return null;
+    try {
+      const { data, error } = await c.from('user_progress')
+        .select('data, updated_at').eq('user_id', user.id).maybeSingle();
+      if (error) { console.warn('[cloud] pull', error.message); return null; }
+      return data;
+    } catch (e) { console.warn('[cloud] pull ex', e); return null; }
+  }
+
+  async function pushData(dataObj) {
+    const c = getClient(); if (!c || !user || !dataObj) return false;
+    try {
+      const { error } = await c.from('user_progress').upsert({
+        user_id: user.id,
+        display_name: displayName(user),
+        data: dataObj,
+        updated_at: new Date(dataObj.updatedAt || Date.now()).toISOString()
+      }, { onConflict: 'user_id' });
+      if (error) { console.warn('[cloud] push', error.message); return false; }
+      return true;
+    } catch (e) { console.warn('[cloud] push ex', e); return false; }
+  }
+
+  let dirty = false;
+  function schedulePush() {
+    if (!enabled() || !user) return;
+    dirty = true;
+    clearTimeout(pushTimer);
+    pushTimer = setTimeout(flush, 2000);
+  }
+  // Envoie la dernière version si nécessaire ; garde `dirty` si l'envoi échoue
+  // (hors-ligne) pour réessayer au retour du réseau / à la fermeture de l'onglet.
+  async function flush() {
+    if (!dirty || !user || !State.data) return;
+    if (!navigator.onLine) return;
+    clearTimeout(pushTimer);
+    const ok = await pushData(State.data);
+    if (ok) dirty = false;
+  }
+
+  // « Quantité » de progression d'un jeu de données (pour ne jamais écraser
+  // une vraie progression par un compte vide).
+  function activityScore(d) {
+    if (!d || !d.questionStats) return 0;
+    let s = 0;
+    Object.values(d.questionStats).forEach(q => { s += (q.seen || 0); });
+    s += (d.examSessions || []).length * 5 + (d.revisionSessions || []).length * 2;
+    s += Object.keys(d.lessonsRead || {}).length * 2 + Object.keys(d.casDone || {}).length * 3;
+    s += (d.xp || 0) / 10;
+    return s;
+  }
+
+  // Réconcilie local ↔ cloud AVANT que les pages n'appellent State.init().
+  // Règle : on garde TOUJOURS la progression la plus fournie ; à activité égale,
+  // le plus récent (updatedAt) gagne. Un cloud vide n'écrase jamais un local rempli.
+  async function reconcile() {
+    const key = Profiles.dataKey(user.id);
+    let local = readLocal(user.id);
+
+    const cloud = await pull();
+    const cloudHasData = !!(cloud && cloud.data && cloud.data.questionStats && activityScore(cloud.data) > 0);
+
+    // Compte cloud neuf + progression déjà sur cet appareil → proposer l'import (avec consentement,
+    // pour ne pas aspirer par erreur les données d'un autre profil sur un appareil partagé).
+    if (activityScore(local) === 0 && !cloudHasData) {
+      const legacy = richestLocalData(user.id);
+      if (legacy && activityScore(legacy) > 0 &&
+          confirm('Une progression existe déjà sur cet appareil. L\'importer dans ce compte pour la synchroniser ?')) {
+        local = legacy;
+      }
+    }
+    const cloudData = (cloud && cloud.data && cloud.data.questionStats) ? cloud.data : null;
+
+    const ls = activityScore(local), cs = activityScore(cloudData);
+    let winner;
+    if (cs > 0 && ls === 0) winner = cloudData;            // seul le cloud a de la progression
+    else if (ls > 0 && cs === 0) winner = local;           // seul le local en a → on migre
+    else if (cs > 0 && ls > 0) {                           // les deux : le plus récent gagne
+      winner = ((cloudData.updatedAt || 0) >= ((local && local.updatedAt) || 0)) ? cloudData : local;
+    } else winner = cloudData || local;                    // les deux vides
+
+    if (winner) localStorage.setItem(key, JSON.stringify(winner));
+    if (winner && winner !== cloudData) await pushData(winner);  // pousser ce qui vient du local
+  }
+
+  let _onAuth = null;
+  function bindAuthEvents() {
+    if (bound) return; bound = true;
+    const c = getClient(); if (!c) return;
+    c.auth.onAuthStateChange((event) => {
+      if (event === 'SIGNED_OUT') {
+        try { sessionStorage.removeItem(ACTIVE_KEY); } catch (e) {}
+        location.reload();
+      } else if (event === 'PASSWORD_RECOVERY' && _onAuth) {
+        renderAuth(_onAuth, { mode: 'reset' });   // filet : lien « mot de passe oublié » ouvert
+      }
+    });
+    // Fiabilité de la sync : pousse les changements en attente au bon moment.
+    window.addEventListener('online', flush);
+    document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'hidden') flush(); });
+    window.addEventListener('pagehide', flush);
+  }
+
+  async function signOut() {
+    const c = getClient();
+    try { if (c) await c.auth.signOut(); } catch (e) {}
+    try { sessionStorage.removeItem(ACTIVE_KEY); } catch (e) {}
+    location.reload();
+  }
+
+  async function updatePassword(pw) {
+    const c = getClient(); if (!c) return { error: { message: 'Cloud indisponible' } };
+    return c.auth.updateUser({ password: pw });
+  }
+
+  function translateErr(ex) {
+    const m = (ex && ex.message) || '';
+    if (/invalid login|invalid credentials/i.test(m)) return 'E-mail ou mot de passe incorrect.';
+    if (/already registered|already been registered|user already exists/i.test(m)) return 'Un compte existe déjà avec cet e-mail.';
+    if (/email.*invalid|invalid.*email/i.test(m)) return 'Adresse e-mail invalide.';
+    if (/password/i.test(m)) return 'Mot de passe trop court (6 caractères minimum).';
+    if (/network|fetch/i.test(m)) return 'Problème de connexion. Vérifie ton accès Internet.';
+    return m || 'Une erreur est survenue. Réessaie.';
+  }
+
+  // ───────── Écran d'authentification cloud (4 modes) ─────────
+  //  'signin' · 'signup' · 'forgot' (envoi du lien) · 'reset' (nouveau mdp)
+  function renderAuth(onAuth, opts) {
+    opts = opts || {};
+    document.body.classList.add('app-locked');
+    let screen = document.getElementById('lock-screen');
+    if (!screen) { screen = document.createElement('div'); screen.id = 'lock-screen'; screen.className = 'lock-screen'; document.body.appendChild(screen); }
+    let mode = opts.mode || 'signin';
+
+    const SUB = {
+      signin: 'Connecte-toi pour retrouver ta progression sur tous tes appareils.',
+      signup: 'Crée ton compte — ta progression te suivra partout.',
+      forgot: 'Saisis ton e-mail : on t\'envoie un lien pour réinitialiser ton mot de passe.',
+      reset:  'Choisis ton nouveau mot de passe.'
+    };
+    const CTA = { signin: 'Se connecter', signup: 'Créer mon compte', forgot: 'Envoyer le lien', reset: 'Enregistrer' };
+
+    function done(u) {
+      screen.classList.add('unlocking');
+      setTimeout(() => { screen.remove(); document.body.classList.remove('app-locked'); }, 250);
+    }
+
+    function paint() {
+      const tabs = (mode === 'signin' || mode === 'signup') ? `
+        <div class="cloud-tabs" role="tablist">
+          <button type="button" class="cloud-tab ${mode === 'signin' ? 'active' : ''}" data-go="signin">Se connecter</button>
+          <button type="button" class="cloud-tab ${mode === 'signup' ? 'active' : ''}" data-go="signup">Créer un compte</button>
+        </div>` : '';
+
+      const pwField = `
+        <div class="pw-field">
+          <input type="password" id="cl-pw" placeholder="${mode === 'reset' ? 'Nouveau mot de passe' : 'Mot de passe'}" autocomplete="${mode === 'signin' ? 'current-password' : 'new-password'}" />
+          <button type="button" class="pw-toggle" id="cl-toggle" aria-label="Afficher le mot de passe">${icon('eye')}</button>
+        </div>`;
+
+      let fields;
+      if (mode === 'forgot') fields = `<input type="email" id="cl-email" placeholder="Adresse e-mail" autocomplete="email" inputmode="email" />`;
+      else if (mode === 'reset') fields = pwField;
+      else fields = `
+        ${mode === 'signup' ? `<input type="text" id="cl-name" placeholder="Ton prénom" autocomplete="given-name" maxlength="40" />` : ''}
+        <input type="email" id="cl-email" placeholder="Adresse e-mail" autocomplete="email" inputmode="email" />
+        ${pwField}
+        ${mode === 'signin' ? `<button type="button" class="lock-forgot" id="cl-forgot">Mot de passe oublié ?</button>` : ''}`;
+
+      const back = (mode === 'forgot' || mode === 'reset')
+        ? `<button class="lock-add" id="cl-back">${icon('arrow-left')} Retour à la connexion</button>` : '';
+
+      screen.innerHTML = `
+        <div class="lock-card cloud-auth">
+          <div class="lock-logo">${icon('leaf')}</div>
+          <h1 class="lock-title">NaturoApp</h1>
+          <p class="lock-sub">${SUB[mode]}</p>
+          ${tabs}
+          <form class="lock-form" id="cloud-form">
+            ${fields}
+            <div class="lock-error" id="cl-error"></div>
+            <button class="btn btn-primary btn-lg w-full" type="submit" id="cl-submit">${CTA[mode]}</button>
+          </form>
+          ${back}
+          <div class="cloud-note">${icon('lock')} Progression sauvegardée et synchronisée sur tous tes appareils.</div>
+        </div>`;
+      hydrateIcons(screen);
+      wire();
+    }
+
+    function setMode(m) { mode = m; paint(); }
+
+    function wire() {
+      screen.querySelectorAll('.cloud-tab').forEach(b => b.addEventListener('click', () => setMode(b.dataset.go)));
+      const back = screen.querySelector('#cl-back'); if (back) back.addEventListener('click', () => setMode('signin'));
+      const forgot = screen.querySelector('#cl-forgot'); if (forgot) forgot.addEventListener('click', () => setMode('forgot'));
+      const toggle = screen.querySelector('#cl-toggle');
+      if (toggle) toggle.addEventListener('click', () => { const i = screen.querySelector('#cl-pw'); i.type = i.type === 'password' ? 'text' : 'password'; i.focus(); });
+
+      const form = screen.querySelector('#cloud-form');
+      const err = screen.querySelector('#cl-error');
+      const submitBtn = screen.querySelector('#cl-submit');
+
+      form.addEventListener('submit', async e => {
+        e.preventDefault();
+        err.textContent = ''; err.classList.remove('ok');
+        const emailEl = screen.querySelector('#cl-email');
+        const pwEl = screen.querySelector('#cl-pw');
+        const nameEl = screen.querySelector('#cl-name');
+        const email = emailEl ? emailEl.value.trim() : '';
+        const pw = pwEl ? pwEl.value : '';
+        const name = nameEl ? nameEl.value.trim() : '';
+        const c = getClient();
+        const reset = () => { submitBtn.disabled = false; submitBtn.textContent = CTA[mode]; };
+
+        try {
+          if (mode === 'forgot') {
+            if (!email) { err.textContent = 'Indique ton e-mail.'; return; }
+            if (!navigator.onLine) { err.textContent = 'Connexion Internet requise.'; return; }
+            submitBtn.disabled = true; submitBtn.textContent = 'Envoi…';
+            const { error } = await c.auth.resetPasswordForEmail(email, { redirectTo: location.origin + location.pathname });
+            if (error) throw error;
+            err.classList.add('ok'); err.textContent = 'E-mail envoyé ! Ouvre le lien reçu pour choisir un nouveau mot de passe.';
+            reset(); return;
+          }
+          if (mode === 'reset') {
+            if (pw.length < 6) { err.textContent = 'Mot de passe : 6 caractères minimum.'; return; }
+            submitBtn.disabled = true; submitBtn.textContent = 'Enregistrement…';
+            const { data, error } = await c.auth.updateUser({ password: pw });
+            if (error) throw error;
+            try { history.replaceState(null, '', location.pathname + location.search); } catch (e) {}
+            submitBtn.textContent = 'Synchronisation…';
+            await onAuth(data.user); done(); return;
+          }
+          // signin / signup
+          if (!email || !pw) { err.textContent = 'E-mail et mot de passe requis.'; return; }
+          if (mode === 'signup' && !name) { err.textContent = 'Indique ton prénom.'; return; }
+          if (mode === 'signup' && pw.length < 6) { err.textContent = 'Mot de passe : 6 caractères minimum.'; return; }
+          if (!navigator.onLine) { err.textContent = 'Connexion Internet requise pour la première connexion sur cet appareil.'; return; }
+          submitBtn.disabled = true; submitBtn.textContent = '…';
+          let res;
+          if (mode === 'signup') {
+            res = await c.auth.signUp({ email, password: pw, options: { data: { display_name: name } } });
+            if (res.error) throw res.error;
+            if (!res.data.session) {   // « Confirm email » activé côté Supabase
+              err.classList.add('ok'); err.textContent = 'Compte créé ! Confirme via l\'e-mail reçu, puis connecte-toi.';
+              reset(); return;
+            }
+          } else {
+            res = await c.auth.signInWithPassword({ email, password: pw });
+            if (res.error) throw res.error;
+          }
+          submitBtn.textContent = 'Synchronisation…';
+          await onAuth(res.data.user);   // ensureLocalProfile + reconcile + fireReady
+          done();
+        } catch (ex) {
+          reset();
+          err.classList.remove('ok'); err.textContent = translateErr(ex);
+        }
+      });
+
+      setTimeout(() => { const el = screen.querySelector('#cl-name') || screen.querySelector('#cl-email') || screen.querySelector('#cl-pw'); if (el) el.focus(); }, 60);
+    }
+
+    paint();
+  }
+
+  // Point d'entrée : appelé par boot() quand le cloud est activé.
+  async function start(done) {
+    // Capturé AVANT la création du client (supabase-js nettoie le hash en parsant l'URL).
+    const hadRecovery = /type=recovery/.test(location.hash || '');
+    const c = getClient(); if (!c) { done(); return; }
+
+    const onAuth = async (u) => {
+      user = u;
+      ensureLocalProfile(u);
+      try { await reconcile(); } catch (e) { console.warn('[cloud] reconcile', e); }
+      done();
+    };
+    _onAuth = onAuth;
+    bindAuthEvents();
+
+    // Retour d'un lien « mot de passe oublié » → écran de nouveau mot de passe
+    if (hadRecovery) { renderAuth(onAuth, { mode: 'reset' }); return; }
+
+    let session = null;
+    try { session = (await c.auth.getSession()).data.session; } catch (e) {}
+    if (session && session.user) {
+      await onAuth(session.user);
+    } else {
+      renderAuth(onAuth);
+    }
+  }
+
+  return { enabled, start, signOut, updatePassword, schedulePush, currentUser };
+})();
+
 // ── Bootstrap commun à toutes les pages ──────────────────────────
 function boot() {
   migrateLegacy();
@@ -2742,9 +3130,18 @@ function boot() {
 
   // Bouton de verrouillage / changement de compte (si présent dans la nav)
   const lockBtn = document.getElementById('nav-lock');
-  if (lockBtn) lockBtn.addEventListener('click', () => { Profiles.clearActive(); location.reload(); });
+  if (lockBtn) lockBtn.addEventListener('click', () => {
+    if (Cloud.enabled()) { Cloud.signOut(); }            // déconnexion du compte cloud
+    else { Profiles.clearActive(); location.reload(); }  // verrouillage local (PIN)
+  });
 
-  // 1) Code d'accès global (1re fois sur l'appareil), 2) puis comptes
+  // Cloud activé → connexion e-mail/mot de passe (multi-appareils).
+  if (Cloud.enabled()) {
+    Cloud.start(fireReady);
+    return;
+  }
+
+  // Sinon : 1) code d'accès global (1re fois sur l'appareil), 2) puis comptes locaux
   if (isAccessGranted()) {
     afterAccess();
   } else {
@@ -3082,7 +3479,7 @@ window.APP = {
   State, QUESTIONS, BADGES, shuffle, getQuestionsByDay, formatTime, getScoreColor, getGrade,
   answerKey, isMultiAnswer, isSelectionCorrect, getDailyChallenge,
   icon, hydrateIcons, escapeHtml,
-  Profiles, onReady, currentProfile,
+  Profiles, Cloud, onReady, currentProfile,
   applyTheme, toggleTheme, setTheme, getThemePref, sfx, tts, stt,
   courseToFlashcards, gardenSVG, searchAll, openSearch,
   AI_PROVIDERS, getAIProvider, setAIProvider, getAIProviderConfig,
