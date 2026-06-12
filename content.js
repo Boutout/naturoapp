@@ -16,7 +16,7 @@
 //    sections:  [ { titre:'...', contenu:'...' }, ... ],   // corps du cours
 //    pointsCles:[ '...', '...' ],     // à retenir (optionnel)
 //    definitions:[ { terme:'...', def:'...' } ],           // optionnel
-//    questionIds:[ 1, 2 ]             // QCM liés → bouton « S'entraîner »
+//    questionIds: []             // QCM liés → bouton « S'entraîner »
 //  }
 //
 //  Le `contenu` des sections accepte un sous-ensemble de mise en forme :
@@ -64,7 +64,7 @@ window.NATURO_CONTENT = {
         { terme: 'Homéopathie', def: 'Approche utilisant des dilutions infinitésimales de substances.' },
         { terme: 'Oligothérapie', def: "Apport d'oligo-éléments (zinc, cuivre, sélénium…) à visée physiologique." }
       ],
-      questionIds: [1]
+      questionIds: []
     },
 
     {
@@ -140,7 +140,7 @@ window.NATURO_CONTENT = {
         { terme: 'Causalisme', def: "Chercher la cause profonde d'un trouble, pas seulement à en supprimer le symptôme." },
         { terme: 'Holisme', def: "Considérer la personne dans sa globalité (physique, psychique, environnement)." }
       ],
-      questionIds: [82]
+      questionIds: []
     },
 
     {
@@ -170,7 +170,7 @@ window.NATURO_CONTENT = {
         { terme: 'Drainage', def: 'Stimulation des émonctoires pour favoriser l\'élimination.' },
         { terme: 'Déchets colloïdaux', def: 'Déchets « colles » issus des graisses et féculents, éliminés par le foie et le gros intestin.' }
       ],
-      questionIds: [81]
+      questionIds: []
     },
 
     {
@@ -200,7 +200,7 @@ window.NATURO_CONTENT = {
         { terme: 'Pléthore', def: 'Excès, surcharge — tendance du sanguin (trop de sang, de richesse alimentaire).' },
         { terme: 'Atrabile', def: 'Autre nom de la bile noire, associée au tempérament nerveux/mélancolique.' }
       ],
-      questionIds: [83]
+      questionIds: []
     },
 
     {
@@ -228,7 +228,7 @@ window.NATURO_CONTENT = {
         { terme: 'Sympathicotonie', def: 'Dominance du système sympathique.' },
         { terme: 'Nerf vague', def: 'Principal nerf du parasympathique ; sa stimulation favorise détente et digestion.' }
       ],
-      questionIds: [26]
+      questionIds: []
     },
 
     {
@@ -288,7 +288,7 @@ window.NATURO_CONTENT = {
         { terme: 'Vasodilatation', def: 'Élargissement des vaisseaux sanguins.' },
         { terme: 'Jet écossais', def: 'Alternance de jets chaud et froid pour stimuler la circulation (on termine par le froid).' }
       ],
-      questionIds: [84]
+      questionIds: []
     },
 
     {
@@ -346,7 +346,7 @@ window.NATURO_CONTENT = {
         { terme: 'Cétones (HE)', def: 'Molécules mucolytiques/cicatrisantes, neurotoxiques et abortives à doses élevées.' },
         { terme: 'Esters (HE)', def: 'Molécules apaisantes et antispasmodiques, bien tolérées (ex : lavande vraie).' }
       ],
-      questionIds: [27]
+      questionIds: []
     },
 
     {
@@ -428,7 +428,7 @@ window.NATURO_CONTENT = {
         { terme: 'Cortisol', def: 'Hormone du stress, élevée en cas de stress chronique.' },
         { terme: 'Adaptogène', def: "Plante qui aide l'organisme à mieux s'adapter au stress et à récupérer (rhodiola, ashwagandha, ginseng)." }
       ],
-      questionIds: [26]
+      questionIds: []
     },
 
     {

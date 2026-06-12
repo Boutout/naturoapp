@@ -281,15 +281,15 @@
       <div style="margin-bottom:24px;">
         <label style="font-size:13px;font-weight:600;display:block;margin-bottom:8px;">Jour spécifique :</label>
         <select id="day-select" style="max-width:280px;">
-          <option value="">— Choisir un jour —</option>
-          <option value="1">Jour 1 — Bases fondamentales (Q1–10)</option>
-          <option value="2">Jour 2 — Plantes & allergie (Q11–20)</option>
-          <option value="3">Jour 3 — Peau & hormones (Q21–30)</option>
-          <option value="4">Jour 4 — Gynéco & pancréas (Q31–40)</option>
-          <option value="5">Jour 5 — Nutrition & oméga (Q41–50)</option>
-          <option value="6">Jour 6 — Microbiote & régimes (Q51–60)</option>
-          <option value="7">Jour 7 — Revitalisation & digestion (Q61–70)</option>
-          <option value="8">Jour 8 — Neuro & prébiotiques (Q71–80)</option>
+          <option value="">— Choisir une série —</option>
+          <option value="1">Série 1 (Q1–10)</option>
+          <option value="2">Série 2 (Q11–20)</option>
+          <option value="3">Série 3 (Q21–30)</option>
+          <option value="4">Série 4 (Q31–40)</option>
+          <option value="5">Série 5 (Q41–50)</option>
+          <option value="6">Série 6 (Q51–60)</option>
+          <option value="7">Série 7 (Q61–70)</option>
+          <option value="8">Série 8 (Q71–80)</option>
         </select>
       </div>
 
@@ -441,7 +441,7 @@ let qcmMulti = false;
 
 // ── SIDEBAR DAYS ────────────────────────────────────────────
 const sidebarDays = document.getElementById('sidebar-days');
-const DAY_LABELS = ['Bases fondamentales','Plantes & allergie','Peau & hormones','Gynéco & pancréas','Nutrition & oméga','Microbiote & régimes','Revital. & digestion','Neuro & prébiotiques'];
+const DAY_LABELS = ['Série 1','Série 2','Série 3','Série 4','Série 5','Série 6','Série 7','Série 8'];
 
 function buildSidebarDays() {
   sidebarDays.innerHTML = '';
@@ -451,7 +451,7 @@ function buildSidebarDays() {
     btn.dataset.day = d;
     const p = State.getProgressByDay()[d] || { total: 10, seen: 0 };
     const pct = Math.round((p.seen / p.total) * 100);
-    btn.innerHTML = `<span>J${d} — ${DAY_LABELS[d-1].slice(0,20)}…</span><span style="font-size:11px;color:var(--c-mid)">${pct}%</span>`;
+    btn.innerHTML = `<span>${DAY_LABELS[d-1]} (Q${(d-1)*10+1}–${d*10})</span><span style="font-size:11px;color:var(--c-mid)">${pct}%</span>`;
     btn.onclick = () => { closeDrawer(); startSession('day', d); };
     sidebarDays.appendChild(btn);
   }
@@ -579,8 +579,8 @@ function renderQCMQuestion() {
 
   const optGrid = document.getElementById('qcm-options');
   optGrid.innerHTML = '';
-  const letters = ['A', 'B', 'C', 'D'];
-  const idxs = shuffle([0,1,2,3].slice(0, q.options.length));
+  const letters = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H'];
+  const idxs = shuffle(q.options.map((_, i) => i));
 
   idxs.forEach((optIdx, pos) => {
     const btn = document.createElement('button');

@@ -13,1433 +13,803 @@ const APP_VERSION = '2.0.0';
 const QUESTIONS = [
   {
     id: 1, jour: 1,
-    categorie: "Concepts fondamentaux",
-    sujet: "Lithothérapie",
-    question: "Qu'est-ce que la lithothérapie ?",
-    options: [
-      "Le soin par le biais de cristaux et de pierres",
-      "Une technique de massage par pression",
-      "Une forme d'homéopathie utilisant des minéraux dilués",
-      "Un traitement à base de plantes médicinales"
-    ],
-    bonne: 0,
-    explication: "La lithothérapie vient du grec 'lithos' (pierre). Elle utilise les cristaux et pierres comme support de soin énergétique. À ne pas confondre avec l'homéopathie (dilutions) ni la phytothérapie (plantes).",
-    piege: "Ne pas confondre avec l'homéopathie qui utilise aussi des minéraux mais sous forme de dilutions infinitésimales.",
-    mnemo: "LITHO = pierre en grec. Lithothérapie = thérapie par la pierre.",
-    tags: ["bases", "définitions"]
+    categorie: "Examen blanc",
+    sujet: "Lithothérapie en dehors des pratiques de type…",
+    question: "Qu'est ce que la lithothérapie en dehors des pratiques de type homéopathique ?",
+    options: ["le soin par les micro-nutriments", "le soin par les oligo-éléments", "le soin par le biais de cristaux", "le soin par l'argile"],
+  bonne: 2,
+    explication: "Bonne réponse : le soin par le biais de cristaux.",
+    tags: ["examen"]
   },
   {
     id: 2, jour: 1,
-    categorie: "Biochimie",
-    sujet: "Acide gras insaturé",
-    question: "Quelle est la caractéristique d'un acide gras insaturé ?",
-    options: [
-      "Il ne possède que des liaisons simples carbone-carbone",
-      "Il comporte au moins une double liaison carbone-carbone (C=C)",
-      "Il est toujours d'origine animale",
-      "Il est solide à température ambiante"
-    ],
-    bonne: 1,
-    explication: "Un acide gras insaturé possède AU MOINS UNE double liaison C=C. Mono-insaturé = 1 liaison (oméga 9). Poly-insaturé = plusieurs (oméga 3, 6). Le fichier original disait 'plusieurs' — c'est une imprécision corrigée ici.",
-    piege: "CORRECTION : le cours original dit 'plusieurs doubles liaisons' mais un MUFA (oméga 9) n'en a qu'une seule. Un acide gras SATURÉ n'a que des liaisons simples.",
-    mnemo: "inSATURÉ = S'est SATURÉ de liaisons doubles. Au moins une. Saturé = aucune double liaison.",
-    tags: ["biochimie", "lipides", "correction"],
-    correction: true
+    categorie: "Examen blanc",
+    sujet: "Un acide gras insaturés",
+    question: "Un acide gras insaturés",
+    options: ["c'est un acide gras mort", "comporte plusieurs double liaisons carbone -carbone", "ils ont tendance à être solide en température ambiante", "se retrouve dans l'huile de palme"],
+  bonne: 1,
+    explication: "Bonne réponse : comporte plusieurs double liaisons carbone -carbone.",
+    tags: ["examen"]
   },
   {
     id: 3, jour: 1,
-    categorie: "Concepts fondamentaux",
+    categorie: "Examen blanc",
     sujet: "Homéostasie",
-    question: "L'homéostasie désigne :",
-    options: [
-      "Un état figé et immuable de l'organisme",
-      "Une maladie chronique de régulation",
-      "La capacité de l'organisme à maintenir son équilibre intérieur et ses paramètres physico-chimiques cellulaires",
-      "La réponse immunitaire face aux agents pathogènes"
-    ],
-    bonne: 2,
-    explication: "L'homéostasie est une régulation DYNAMIQUE (pas figée) : température, pH, eau, minéraux, paramètres cellulaires. L'organisme ajuste en permanence pour maintenir la stabilité interne.",
-    piege: "Attention : l'homéostasie est dynamique et non statique. Ce n'est pas une maladie mais un mécanisme de régulation.",
-    mnemo: "HOMÉO = pareil + STASIE = état → maintenir le même état intérieur, en ajustant constamment.",
-    tags: ["bases", "physiologie"]
+    question: "Qu'est ce que l'homéostasie ?",
+    options: ["C'est la capacité de l'organisme à conserver son équilibre", "C'est la dégradation du terrain par une baisse de l'immunité", "D'après Claude Bernard le germe a une plus grande importance que le terrain", "C'est l'équilibre des paramètres physico-chimiques et biologique de nos cellules", "La régulation de l'homéostasie se fait par le système nerveux central"],
+  bonnes: [0, 3],
+    explication: "Bonnes réponses : C'est la capacité de l'organisme à conserver son équilibre · C'est l'équilibre des paramètres physico-chimiques et biologique de nos cellules.",
+    tags: ["examen"]
   },
   {
     id: 4, jour: 1,
-    categorie: "Naturopathie / Terrain",
-    sujet: "Élimination des acides et des colles",
-    question: "Quelle est la bonne association entre déchets et organes éliminateurs ?",
-    options: [
-      "Colles → reins et poumons | Acides → foie et gros intestin",
-      "Colles → foie et gros intestin | Acides → reins et poumons",
-      "Acides et colles → tous éliminés par les reins",
-      "Colles → peau | Acides → foie uniquement"
-    ],
-    bonne: 1,
-    explication: "Distinction fondamentale en naturopathie : déchets COLLOÏDAUX (colles) = voie hépato-intestinale (foie + gros intestin). Déchets ACIDES = voie rénale + pulmonaire.",
-    piege: "L'inversion foie/reins est le piège classique. Mémoriser : COLLES → côlon/foie (même consistance 'collante') | ACIDES → reins/poumons (élimination gazeuse et urinaire).",
-    mnemo: "COLLE colle au foie et au côlon. Les ACIDES s'évaporent par les poumons et sont filtrés par les reins.",
-    tags: ["terrain", "drainage", "naturopathie"]
+    categorie: "Examen blanc",
+    sujet: "Sont éliminés les acides et les colles",
+    question: "Comment sont éliminés les acides et les colles ?",
+    options: ["Les colles sont éliminées par le foie et gros intestin", "Les colles sont éliminées par les reins et les poumons", "Les acides sont éliminés par les reins et les poumons", "Les acides sont éliminés par le foie et gros intestin"],
+  bonnes: [0, 2],
+    explication: "Bonnes réponses : Les colles sont éliminées par le foie et gros intestin · Les acides sont éliminés par les reins et les poumons.",
+    tags: ["examen"]
   },
   {
     id: 5, jour: 1,
-    categorie: "Cures naturopathiques",
-    sujet: "Cure de revitalisation",
-    question: "La cure de revitalisation consiste en :",
-    options: [
-      "Un drainage intensif des toxines par les émonctoires",
-      "Un jeûne thérapeutique prolongé",
-      "Une cure de vitamines et minéraux adaptée aux carences de l'organisme",
-      "Une cure de plantes dépuratives"
-    ],
-    bonne: 2,
-    explication: "La cure de revitalisation RECONSTRUIT et COMBLE les carences. Elle apporte ce qui manque (vitamines, minéraux) et rééquilibre l'alimentation. Elle ne draine pas.",
-    piege: "Ne pas confondre avec la cure DÉTOX (drainage des toxines) ou la cure DÉPURATIVE. La revitalisation = remplir, pas vider.",
-    mnemo: "REVITALISER = remettre de la VIE = apporter des nutriments manquants.",
-    tags: ["cures", "naturopathie"]
+    categorie: "Examen blanc",
+    sujet: "Qu'est ce qu'une cure de revitalisation",
+    question: "Qu'est ce qu'une cure de revitalisation ?",
+    options: ["une cure de vitamines et minéraux adaptés aux carences de l'organisme", "une cure pour éliminer les toxines", "une cure permettant de vérifier l'harmonisation globale des équilibres", "une cure de prévention"],
+  bonne: 0,
+    explication: "Bonne réponse : une cure de vitamines et minéraux adaptés aux carences de l'organisme.",
+    tags: ["examen"]
   },
   {
     id: 6, jour: 1,
-    categorie: "Phytothérapie",
-    sujet: "Plantes hépato-stimulantes",
-    question: "Quelles plantes stimulent le foie ?",
-    options: [
-      "Camomille, mélisse, lavande",
-      "Artichaut, radis noir, pissenlit",
-      "Passiflore, valériane, aubépine",
-      "Echinacea, thym, sarriette"
-    ],
-    bonne: 1,
-    explication: "Le trio hépatique classique : Artichaut (cynaropicrine → cholagogue/cholérétique), Radis noir (glucosinolates → drainant hépatique), Pissenlit (amers → stimulant hépatobiliaire).",
-    piege: "Camomille/mélisse = digestif/calmant. Passiflore/valériane = sommeil. Echinacea/thym = immunité/respiratoire.",
-    mnemo: "A-R-P = Artichaut, Radis noir, Pissenlit → ARPège hépatique !",
-    tags: ["phytothérapie", "foie", "drainage"]
+    categorie: "Examen blanc",
+    sujet: "Plantes peut-on utiliser pour stimuler le foie",
+    question: "Quelles plantes peut-on utiliser pour stimuler le foie ?",
+    options: ["eucalyptus, bouillon blanc, lierre terrestre", "artichaut, radis noir, pissenlit", "queue de cerise, busserole, reine des prés", "bourdaine, son d'avoine, pruneaux"],
+  bonne: 1,
+    explication: "Bonne réponse : artichaut, radis noir, pissenlit.",
+    tags: ["examen"]
   },
   {
     id: 7, jour: 1,
-    categorie: "Cures naturopathiques",
-    sujet: "Durée d'une cure détox",
-    question: "Quelle est la durée recommandée d'une cure détox ?",
-    options: [
-      "3 jours maximum, sinon dangereux",
-      "3 semaines dans l'idéal, maximum 6 semaines",
-      "3 mois minimum pour être efficace",
-      "La durée importe peu, on peut la faire toute l'année"
-    ],
-    bonne: 1,
-    explication: "3 semaines = durée idéale pour agir sans épuiser. Maximum 6 semaines. En dessous = insuffisant pour agir. Au-delà = risque d'effets indésirables (fatigue, carences).",
-    piege: "Mémoriser les deux chiffres : 3 semaines (idéal) et 6 semaines (maximum). Ni trop court, ni trop long.",
-    mnemo: "3 et 6 : comme le permis de conduire, 3 essais, 6 points max à ne pas dépasser.",
-    tags: ["cures", "détox", "chiffres"]
+    categorie: "Examen blanc",
+    sujet: "Est la durée d'une cure détox",
+    question: "Quelle est la durée d'une cure détox ?",
+    options: ["Il faut drainer en continu", "Pas plus d'une semaine", "3 semaines dans l'idéal avec un maximum de 6 semaines", "Entre 5 et 8 semaines"],
+  bonne: 2,
+    explication: "Bonne réponse : 3 semaines dans l'idéal avec un maximum de 6 semaines.",
+    tags: ["examen"]
   },
   {
     id: 8, jour: 1,
-    categorie: "Histoire / Théories",
-    sujet: "Théorie des humeurs d'Hippocrate",
-    question: "Concernant la théorie des humeurs selon Hippocrate, quelles propositions sont correctes ?",
-    options: [
-      "Les humeurs sont au nombre de 3 ; la bile jaune vient de la vésicule",
-      "Les humeurs sont au nombre de 5 ; le sang vient du cœur",
-      "Les humeurs sont au nombre de 4 ; la bile jaune vient du foie ; l'atrabile vient de la rate",
-      "Les humeurs sont au nombre de 4 ; la bile jaune vient de la rate ; l'atrabile vient du foie"
-    ],
-    bonne: 2,
-    explication: "4 humeurs : Sang (cœur), Phlegme (cerveau/poumons), Bile jaune (foie), Bile noire/Atrabile (rate). Mémoriser les 4 et leurs organes d'origine.",
-    piege: "Le piège est d'inverser foie et rate pour bile jaune et atrabile. Bile JAUNE = FOIE (couleur du foie). Atrabile = bile NOIRE = RATE.",
-    mnemo: "SANG-PHLEGME-BILE JAUNE(foie)-ATRABILE(rate). Le Foie est Jaune d'or. La Rate est noircie = atrabile.",
-    tags: ["histoire", "théories", "chiffres"]
+    categorie: "Examen blanc",
+    sujet: "La théorie des humeurs selon Hippocrate",
+    question: "La théorie des humeurs selon Hippocrate :",
+    options: ["La lymphe est rattachée au cœur", "Les humeurs sont au nombre de 4", "Les humeurs sont au nombre de 3", "La bile jaune vient du foie", "Le sang produit par le cœur est reçu par le foie", "L'atrabile vient de la rate"],
+  bonnes: [1, 3, 5],
+    explication: "Bonnes réponses : Les humeurs sont au nombre de 4 · La bile jaune vient du foie · L'atrabile vient de la rate.",
+    tags: ["examen"]
   },
   {
     id: 9, jour: 1,
-    categorie: "Phytothérapie",
-    sujet: "Plante carminative",
-    question: "Une plante carminative est utilisée pour :",
-    options: [
-      "Améliorer le sommeil et réduire l'anxiété",
-      "Stimuler le système immunitaire",
-      "Réduire les ballonnements et les gaz intestinaux",
-      "Soulager les douleurs articulaires"
-    ],
-    bonne: 2,
-    explication: "Carminatif = qui aide à expulser les gaz et réduit les ballonnements. Exemples : fenouil, anis, carvi, gingembre. Ce terme vient du latin 'carminare' = peigner, évacuer.",
-    piege: "Carminatif ≠ sédatif, ≠ immunostimulant, ≠ anti-inflammatoire. C'est exclusivement lié aux gaz digestifs.",
-    mnemo: "CARMINATIF = CAR les gaz partent dans les MINutes (car-min-atif). Ballonnements → dehors !",
-    tags: ["phytothérapie", "digestion", "définitions"]
+    categorie: "Examen blanc",
+    sujet: "Une plante carminative a un intérêt…",
+    question: "Une plante carminative a un intérêt principalement sur :",
+    options: ["les nausées", "la constipation", "les vomissements", "les ballonnements", "la diarrhée"],
+  bonne: 3,
+    explication: "Bonne réponse : les ballonnements.",
+    tags: ["examen"]
   },
   {
     id: 10, jour: 1,
-    categorie: "Phytothérapie",
-    sujet: "Lithiases et coliques biliaires",
-    question: "Concernant les lithiases et coliques biliaires, quelles propositions représentent des ERREURS ? (plusieurs réponses)",
-    options: [
-      "Les plantes cholagogues et cholérétiques apportent un soulagement",
-      "La douleur siège dans l'hypochondre droit",
-      "Une alimentation riche en graisses peut déclencher une crise",
-      "Les antibiotiques sont le seul traitement efficace"
-    ],
-    bonnes: [0, 3],
-    explication: "Deux erreurs. (1) ⚠️ En cas de lithiase biliaire (calculs), les plantes cholagogues et cholérétiques sont CONTRE-INDIQUÉES : en stimulant la contraction de la vésicule et l'écoulement de la bile, elles peuvent mobiliser un calcul et provoquer une obstruction (colique hépatique, voire complications). (2) Les antibiotiques ne traitent pas les calculs. En revanche, la douleur de l'hypochondre droit et le repas gras déclencheur sont exacts.",
-    piege: "Il y a DEUX erreurs : surtout, ne JAMAIS donner de cholagogues/cholérétiques quand il y a des calculs (risque de migration et d'obstruction).",
-    mnemo: "Calculs biliaires = PAS de cholagogue/cholérétique (risque d'obstruction). Antibiotiques ≠ traitement des calculs.",
-    tags: ["phytothérapie", "digestion", "sécurité"],
-    important: true
+    categorie: "Examen blanc",
+    sujet: "Lithiases biliaires et les coliques biliaires",
+    question: "Concernant les lithiases biliaires et les coliques biliaires :",
+    options: ["Les plantes cholagogues et cholérétiques apportent un soulagement", "Une compresse chaude sur le foie est indiquée", "Le signe de Murphy est positif", "Les coliques biliaires provoquent en général des douleurs en « coup de poignard » vers l'épaule droite", "Les calculs sont souvent composés de cholestérol"],
+  bonne: 0,
+    explication: "Bonne réponse : Les plantes cholagogues et cholérétiques apportent un soulagement.",
+    tags: ["examen"]
   },
   {
     id: 11, jour: 2,
-    categorie: "Phytothérapie",
-    sujet: "Intrus parmi les plantes drainantes",
-    question: "Parmi ces plantes, laquelle est l'INTRUS (n'est pas drainante/diurétique) ?",
-    options: [
-      "Pissenlit",
-      "Orthosiphon (thé de Java)",
-      "Passiflore",
-      "Chiendent"
-    ],
-    bonne: 2,
-    explication: "La Passiflore est une plante calmante, anxiolytique et favorisant le sommeil. Elle n'a pas d'action drainante ou diurétique significative. Les 3 autres sont bien diurétiques/drainantes.",
-    piege: "La Passiflore peut sembler 'naturelle' donc potentiellement drainante. Son action principale est sédative/anxiolytique.",
-    mnemo: "PassiFLORE = fleur de la passion = calme, sérénité, sommeil. Pas de drainage.",
-    tags: ["phytothérapie", "drainage", "intrus"]
+    categorie: "Examen blanc",
+    sujet: "Trouvez l'intrus parmi les plantes typiquement…",
+    question: "Trouvez l'intrus parmi les plantes typiquement drainantes et diurétiques suivantes :",
+    options: ["Orthosiphon", "Piloselle", "Bouleau", "Passiflore", "Thé vert"],
+  bonne: 3,
+    explication: "Bonne réponse : Passiflore.",
+    tags: ["examen"]
   },
   {
     id: 12, jour: 2,
-    categorie: "Biochimie",
+    categorie: "Examen blanc",
     sujet: "Radicaux libres",
-    question: "Les radicaux libres sont :",
-    options: [
-      "Des vitamines antioxydantes bénéfiques",
-      "Des hormones de stress produites par les surrénales",
-      "Des molécules toxiques dérivées de l'oxygène provenant de la respiration, du tabac, de la pollution",
-      "Des minéraux essentiels à la santé cellulaire"
-    ],
-    bonne: 2,
-    explication: "Les radicaux libres (ERO = Espèces Réactives de l'Oxygène) sont des molécules instables avec un électron non apparié. Sources : respiration cellulaire, tabac, pollution, UV, stress. Ils oxydent les cellules.",
-    piege: "Ne pas confondre radicaux libres (toxiques) avec antioxydants (protecteurs). Les vitamines C, E, bêta-carotène NEUTRALISENT les radicaux libres.",
-    mnemo: "Radical LIBRE = molécule qui fait ce qu'elle veut (détruire). L'antioxydant = le gendarme qui l'arrête.",
-    tags: ["biochimie", "antioxydants", "oxydation"]
+    question: "Qu'est ce que les radicaux libres ?",
+    options: ["Ce sont des molécules anti-oxydantes", "Des molécules toxiques dérivées de l'oxygène provenant de la respiration, tabac, pollution..", "Ce sont des molécules qui protègent nos cellules contre le stress oxydatif"],
+  bonne: 1,
+    explication: "Bonne réponse : Des molécules toxiques dérivées de l'oxygène provenant de la respiration, tabac, pollution...",
+    tags: ["examen"]
   },
   {
     id: 13, jour: 2,
-    categorie: "Micronutrition",
-    sujet: "Supplémentation en fer",
-    question: "Quel oligo-élément ne doit jamais être supplémenté sans bilan sanguin préalable ?",
-    options: [
-      "Le magnésium",
-      "Le zinc",
-      "Le fer",
-      "Le sélénium"
-    ],
-    bonne: 2,
-    explication: "Le fer en excès est pro-oxydant (réaction de Fenton → production de radicaux libres), hépatotoxique, et peut masquer une pathologie sous-jacente (cancer digestif). Le dosage sanguin (ferritine, fer sérique) est INDISPENSABLE avant toute supplémentation.",
-    piege: "Le magnésium et le zinc sont généralement bien tolérés. Le fer, lui, est dangereux en excès et contre-indiqué dans certaines conditions (hémochromatose, cancer).",
-    mnemo: "FER = métal lourd et dangereux en excès. Toujours FERRITINE avant FER.",
-    tags: ["micronutrition", "minéraux", "sécurité"]
+    categorie: "Examen blanc",
+    sujet: "Oligo-élément ne doit pas être supplémenté sans…",
+    question: "Quel oligo-élément ne doit pas être supplémenté sans prise de sang ?",
+    options: ["le fer", "le zinc", "le magnésium"],
+  bonne: 0,
+    explication: "Bonne réponse : le fer.",
+    tags: ["examen"]
   },
   {
     id: 14, jour: 2,
-    categorie: "Biochimie",
-    sujet: "Chondrocytes",
-    question: "Les chondrocytes produisent :",
-    options: [
-      "L'insuline et le glucagon",
-      "La kératine et la mélanine",
-      "Le collagène et l'acide hyaluronique",
-      "La testostérone et les œstrogènes"
-    ],
-    bonne: 2,
-    explication: "Les chondrocytes sont les cellules du cartilage. Ils produisent : le collagène de type II (résistance) et l'acide hyaluronique (lubrification et amortissement). Ces deux molécules constituent la matrice cartilagineuse.",
-    piege: "Insuline/glucagon = pancréas. Kératine/mélanine = peau. Hormones sexuelles = gonades. Seul le cartilage = chondrocytes.",
-    mnemo: "CHONDRO = cartilage. Cartilage = COLLAGÈNE + ACIDE HYALURONIQUE. Les deux font briller les articulations.",
-    tags: ["biochimie", "articulations", "chondrocytes"]
+    categorie: "Examen blanc",
+    sujet: "Trouvez 2 éléments produits par les chondrocytes",
+    question: "Trouvez 2 éléments produits par les chondrocytes :",
+    options: ["Le collagène", "L'acide lactique", "L'acide hyaluronique", "Les ostéocytes", "Le périoste"],
+  bonnes: [0, 2],
+    explication: "Bonnes réponses : Le collagène · L'acide hyaluronique.",
+    tags: ["examen"]
   },
   {
     id: 15, jour: 2,
-    categorie: "Micronutrition",
-    sujet: "Vitamine D",
-    question: "Concernant la vitamine D, quelles propositions sont correctes ?",
-    options: [
-      "La D2 est mieux biodisponible que la D3 ; elle diminue l'absorption du calcium",
-      "D3 et D2 ont exactement la même biodisponibilité",
-      "La D3 a une meilleure biodisponibilité que la D2 ; elle favorise l'absorption du calcium alimentaire",
-      "La vitamine D n'a aucun lien avec le métabolisme calcique"
-    ],
-    bonne: 2,
-    explication: "D3 (cholécalciférol, source animale/soleil) > D2 (ergocalciférol, source végétale) en biodisponibilité. La vitamine D active (calcitriol) favorise l'absorption intestinale du calcium et du phosphore.",
-    piege: "Le piège est d'inverser D2 et D3. D3 = meilleure. Et la vitamine D EST liée au calcium (rôle central dans l'ostéoporose).",
-    mnemo: "D3 = la meilleure car 3 > 2. Vitamine D + Calcium = os en BÉTON.",
-    tags: ["micronutrition", "vitamines", "calcium"]
+    categorie: "Examen blanc",
+    sujet: "Au sujet de la vitamine D",
+    question: "Au sujet de la vitamine D :",
+    options: ["La vitamine D3 a une meilleure biodisponibilité que la vitamine D2", "Les individus à peau mate en produisent plus facilement avec le soleil", "Elle n'est pas stockée au niveau du corps", "Elle est hydrosoluble", "Elle favorise l'absorption du calcium de l'alimentation"],
+  bonnes: [0, 4],
+    explication: "Bonnes réponses : La vitamine D3 a une meilleure biodisponibilité que la vitamine D2 · Elle favorise l'absorption du calcium de l'alimentation.",
+    tags: ["examen"]
   },
   {
     id: 16, jour: 2,
-    categorie: "Micronutrition / Rhumatologie",
-    sujet: "Arthrite et polyarthrite rhumatoïde",
-    question: "Concernant la polyarthrite rhumatoïde :",
-    options: [
-      "Elle touche uniquement les petites articulations des mains",
-      "C'est une maladie infectieuse bactérienne",
-      "Elle touche les articulations dans tout le corps ; les oméga 3 sont intéressants pour réduire l'inflammation",
-      "Les oméga 6 sont recommandés en priorité dans cette maladie"
-    ],
-    bonne: 2,
-    explication: "La polyarthrite rhumatoïde (PR) est une maladie auto-immune inflammatoire qui peut toucher toutes les articulations. Les oméga 3 (EPA, DHA) réduisent l'inflammation via les prostaglandines de série 3.",
-    piege: "Ne pas limiter la PR aux mains. Les oméga 6 (en excès) sont pro-inflammatoires. Ce sont les oméga 3 qui sont bénéfiques.",
-    mnemo: "Poly = plusieurs. Arthrite = inflammation articulaire. Oméga 3 = ANTI-inflammatoire.",
-    tags: ["rhumatologie", "oméga 3", "auto-immune"]
+    categorie: "Examen blanc",
+    sujet: "Arthrite",
+    question: "Concernant l'arthrite :",
+    options: ["La goutte correspond à un taux élevé d'urée dans le sang", "Il est préférable de bouger lors des poussées d'arthrite", "L'arthritisme est rattaché aux \"sanguino-pléthoriques\" en naturopathie", "La polyarthrite rhumatoïde concerne des articulations dans tout le corps", "Les omega 3 présentent un intérêt dans le traitement de l'arthrite"],
+  bonnes: [3, 4],
+    explication: "Bonnes réponses : La polyarthrite rhumatoïde concerne des articulations dans tout le corps · Les omega 3 présentent un intérêt dans le traitement de l'arthrite.",
+    tags: ["examen"]
   },
   {
     id: 17, jour: 2,
-    categorie: "Réglementation",
-    sujet: "Plantes en vente libre (tisanes)",
-    question: "Combien de plantes sont autorisées en vente libre pour les tisanes en France ?",
-    options: [
-      "42 plantes",
-      "96 plantes",
-      "148 plantes",
-      "250 plantes"
-    ],
-    bonne: 2,
-    explication: "148 plantes sont sur la liste officielle autorisée en vente libre pour les tisanes en France (liste des plantes médicinales de la Pharmacopée française, partie V). Chiffre à mémoriser tel quel.",
-    piege: "Question de mémoire pure. Pas de logique derrière le nombre 148 — il faut le mémoriser.",
-    mnemo: "148 = 1-4-8. Je mange UNE salade QUATRE fois par HUIT plantes... ou plus simple : mémoriser 148 ≈ 150.",
-    tags: ["réglementation", "chiffres", "mémorisation"]
+    categorie: "Examen blanc",
+    sujet: "Est le nombre de plantes en vente libre pour les…",
+    question: "Quel est le nombre de plantes en vente libre pour les tisanes ?",
+    options: ["178 plantes", "300 plantes", "348 plantes", "148 plantes"],
+  bonne: 3,
+    explication: "Bonne réponse : 148 plantes.",
+    tags: ["examen"]
   },
   {
     id: 18, jour: 2,
-    categorie: "Psychologie / Développement",
-    sujet: "Attachement de l'enfant",
-    question: "Quels comportements favorisent l'attachement du nourrisson ?",
-    options: [
-      "Parler, marcher, saisir des objets avec précision",
-      "Il sourit / Il suce ou pleure / Il s'accroche et suit du regard",
-      "Lire, écrire, dessiner",
-      "Raisonner, argumenter, mémoriser"
-    ],
-    bonne: 1,
-    explication: "Bowlby identifie des comportements d'attachement innés : le sourire (signal social), la succion/pleurs (signaux de besoin), l'agrippement et le suivi visuel (maintien de la proximité). Ces comportements assurent la survie.",
-    piege: "Les comportements complexes (langage, écriture, raisonnement) ne sont pas des comportements d'attachement primaires du nourrisson.",
-    mnemo: "SOURIRE + PLEURER + S'ACCROCHER + SUIVRE DU REGARD = les 4 liens du bébé avec sa figure d'attachement.",
-    tags: ["psychologie", "développement", "attachement"]
+    categorie: "Examen blanc",
+    sujet: "Compétences de l'enfant pour s'attacher, selon la…",
+    question: "Quelles sont les compétences de l'enfant pour s'attacher, selon la théorie de l'attachement ?",
+    options: ["Il sourit", "Il a peur, il urine", "Succion, il pleure,", "Il crache, il bave", "Il s'accroche, il suit du regard"],
+  bonnes: [0, 2, 4],
+    explication: "Bonnes réponses : Il sourit · Succion, il pleure, · Il s'accroche, il suit du regard.",
+    tags: ["examen"]
   },
   {
     id: 19, jour: 2,
-    categorie: "Psychologie",
-    sujet: "Variétés de dysthymies",
-    question: "Quelles sont les variétés de dysthymies ?",
-    options: [
-      "Euphorie normale et tristesse passagère",
-      "Indifférence affective et euphorie morbide",
-      "Anxiété et phobies",
-      "Dépression et manie"
-    ],
-    bonne: 1,
-    explication: "La dysthymie est un trouble chronique de l'humeur. Ses deux variantes : l'indifférence affective (émoussement des émotions, anhédonie) et l'euphorie morbide (bonne humeur inadaptée à la situation réelle).",
-    piege: "Dépression/manie = trouble bipolaire (non dysthymie). Anxiété/phobies = troubles anxieux. La dysthymie = perturbation durable de la tonalité émotionnelle.",
-    mnemo: "DYS-THYMIE = DYSfonction de l'humeur. Pas assez d'émotions (indifférence) OU trop d'humeur illégitime (euphorie morbide).",
-    tags: ["psychologie", "humeur", "psychiatrie"]
+    categorie: "Examen blanc",
+    sujet: "Parmi ces propositions les principales variétés…",
+    question: "Quels sont parmi ces propositions les principales variétés de dysthymies ?",
+    options: ["L'indifférence affective", "L'euphorie morbide", "La peur", "La colère", "L'angoisse"],
+  bonnes: [0, 1],
+    explication: "Bonnes réponses : L'indifférence affective · L'euphorie morbide.",
+    tags: ["examen"]
   },
   {
     id: 20, jour: 2,
-    categorie: "Phytothérapie",
-    sujet: "Plantes anti-allergiques",
-    question: "Quelles plantes sont utilisées en cas de terrain allergique ?",
-    options: [
-      "Valériane et passiflore",
-      "Thym et eucalyptus",
-      "Plantain et cassis",
-      "Artichaut et radis noir"
-    ],
-    bonne: 2,
-    explication: "Le Plantain (antihistaminique naturel, antiallergique) et le Cassis (feuilles riches en flavonoïdes, action anti-inflammatoire et antiallergique) sont les deux plantes retenues pour le terrain allergique.",
-    piege: "Valériane/passiflore = sommeil. Thym/eucalyptus = voies respiratoires infectieuses. Artichaut/radis noir = foie.",
-    mnemo: "PLANTAIN + CASSIS = la haie du jardin qui combat les allergies (plantes humbles mais efficaces).",
-    tags: ["phytothérapie", "allergie", "antihistaminique"]
+    categorie: "Examen blanc",
+    sujet: "Trouvez dans cette liste les 2 plantes…",
+    question: "Trouvez dans cette liste les 2 plantes typiquement utilisées en cas d'allergie :",
+    options: ["Mélisse", "Thym", "Plantain", "Aigremoine", "Cassis"],
+  bonnes: [2, 4],
+    explication: "Bonnes réponses : Plantain · Cassis.",
+    tags: ["examen"]
   },
   {
     id: 21, jour: 3,
-    categorie: "Anatomie / Dermatologie",
-    sujet: "Structure de la peau",
-    question: "Quelles propositions sur la structure de la peau sont correctes ?",
-    options: [
-      "L'hypoderme est riche en fibres élastiques ; les glandes sébacées sont dans l'épiderme",
-      "L'épiderme contient les adipocytes ; les glandes sudoripares sont dans l'hypoderme uniquement",
-      "L'hypoderme est riche en cellules adipeuses ; les glandes sébacées sont dans le derme avec sécrétions vers l'épiderme",
-      "Le derme ne contient aucune glande ; toutes les glandes sont dans l'épiderme"
-    ],
-    bonne: 2,
-    explication: "Structure peau (de profond à superficiel) : HYPODERME (adipocytes, graisses, vaisseaux) → DERME (glandes sébacées, glandes sudoripares, follicules pileux, collagène, élastine) → ÉPIDERME (kératinocytes, mélanocytes). Le sébum est produit dans le derme et remonte vers la surface.",
-    piege: "Ne pas placer les glandes sébacées dans l'épiderme. L'hypoderme = graisses, pas fibres élastiques.",
-    mnemo: "HyPODerme = le PODe (pied) profond = GRAISSE. Derme = le milieu = glandes. Épiderme = surface visible.",
-    tags: ["anatomie", "peau", "dermatologie"]
+    categorie: "Examen blanc",
+    sujet: "Trouvez les 2 propositions correctes",
+    question: "Trouvez les 2 propositions correctes :",
+    options: ["L'hypoderme comporte de nombreuses cellules adipeuses", "La cellulite est une inflammation des glandes sudoripares", "Les glandes sébacées se situent au niveau du derme et les sécrétions aboutissent au niveau de l'épiderme", "Le derme et l'épiderme sont richement vascularisés", "L'hypoderme correspond à environ 5% du poids corporel en général"],
+  bonnes: [0, 2],
+    explication: "Bonnes réponses : L'hypoderme comporte de nombreuses cellules adipeuses · Les glandes sébacées se situent au niveau du derme et les sécrétions aboutissent au niveau de l'épiderme.",
+    tags: ["examen"]
   },
   {
     id: 22, jour: 3,
-    categorie: "Phytothérapie / Aromathérapie",
-    sujet: "Traitement des hématomes",
-    question: "Quels remèdes sont indiqués pour les hématomes ?",
-    options: [
-      "Lavande et camomille",
-      "Hélichryse italienne et arnica",
-      "Millepertuis et valériane",
-      "Gingembre et curcuma"
-    ],
-    bonne: 1,
-    explication: "Hélichryse italienne (HE italidione) = l'huile essentielle des hématomes par excellence, résorbante et cicatrisante. Arnica (teinture mère ou gel) = anti-ecchymotique classique, accélère la résorption des bleus.",
-    piege: "Lavande = cicatrisant/calmant mais pas spécifique hématomes. Millepertuis/valériane = dépression/anxiété. Gingembre/curcuma = anti-inflammatoire articulaire.",
-    mnemo: "HÉLICHRYSE + ARNICA = le duo 'anti-bleus'. Hélichryse = soleil doré qui efface les bleus.",
-    tags: ["phytothérapie", "aromathérapie", "traumatologie"]
+    categorie: "Examen blanc",
+    sujet: "Trouvez 2 huiles/huiles essentielles typiquement…",
+    question: "Trouvez 2 huiles/huiles essentielles typiquement efficaces en cas d'hématome :",
+    options: ["Myrte", "Hélichryse italienne", "Tea tree", "Plantain", "Arnica"],
+  bonnes: [1, 4],
+    explication: "Bonnes réponses : Hélichryse italienne · Arnica.",
+    tags: ["examen"]
   },
   {
     id: 23, jour: 3,
-    categorie: "Gemmothérapie",
-    sujet: "Posologie des macérats glycérinés",
-    question: "Quelle est la posologie standard des macérats glycérinés mère (gemmothérapie) ?",
-    options: [
-      "1 fois 50 gouttes par jour",
-      "2 fois 3 gouttes par jour",
-      "3 fois 5 à 15 gouttes par jour",
-      "5 fois 20 gouttes par jour"
-    ],
-    bonne: 2,
-    explication: "La posologie type des macérats glycérinés (bourgeons et jeunes pousses) est de 3 prises par jour de 5 à 15 gouttes chacune, à diluer dans un peu d'eau. Chiffre à mémoriser tel quel pour l'examen.",
-    piege: "Question de mémorisation pure. 3 fois/jour, 5 à 15 gouttes = la posologie standard de la gemmothérapie.",
-    mnemo: "3 × 5-15 gouttes. Trois fois par jour comme les repas. Entre 5 et 15 = toujours dans la quinzaine.",
-    tags: ["gemmothérapie", "posologie", "chiffres"]
+    categorie: "Examen blanc",
+    sujet: "Est la posologie courante des macérats glycérinés…",
+    question: "Quelle est la posologie courante des macérats glycérinés mère ?",
+    options: ["3 fois 1 goutte par jour", "3 fois 5 à 15 gouttes par jour", "3 fois 50 gouttes par jour", "3 fois 100 gouttes par jour"],
+  bonne: 1,
+    explication: "Bonne réponse : 3 fois 5 à 15 gouttes par jour.",
+    tags: ["examen"]
   },
   {
     id: 24, jour: 3,
-    categorie: "Micronutrition",
-    sujet: "Apport en magnésium",
-    question: "Quel est l'apport journalier recommandé en magnésium pour un adulte ?",
-    options: [
-      "50 à 100 mg/jour",
-      "150 à 200 mg/jour",
-      "300 à 400 mg/jour",
-      "600 à 800 mg/jour"
-    ],
-    bonne: 2,
-    explication: "L'AJR en magnésium est de 300-400 mg/jour pour un adulte (légèrement plus élevé chez l'homme). Le magnésium intervient dans plus de 300 réactions enzymatiques. Déficit très fréquent en France.",
-    piege: "Ne pas confondre avec le calcium (1000 mg/j) ou le zinc (10 mg/j). 300-400 mg = magnésium.",
-    mnemo: "MAGnésium = 300-400 MG (les initiales MG restent dans MAGnésium). 300-400 comme une voiture sportive.",
-    tags: ["micronutrition", "minéraux", "chiffres"]
+    categorie: "Examen blanc",
+    sujet: "Est l'apport journalier en magnésium recommandé…",
+    question: "Quel est l'apport journalier en magnésium recommandé en moyenne chez un adulte?",
+    options: ["3 à 4 g/jour", "1 à 2 g/jour", "200 à 300 mg/jour", "100 à 200 mg/jour", "300 à 400 mg/jour"],
+  bonne: 4,
+    explication: "Bonne réponse : 300 à 400 mg/jour.",
+    tags: ["examen"]
   },
   {
     id: 25, jour: 3,
-    categorie: "Phytothérapie",
-    sujet: "Mucuna pruriens (Pois mascate)",
-    question: "Quelles sont les propriétés du Mucuna pruriens ?",
-    options: [
-      "Riche en tryptophane ; intérêt contre la dépression",
-      "Riche en mélatonine ; aide à l'endormissement",
-      "Riche en L-Dopa ; intérêt contre le syndrome des jambes sans repos",
-      "Riche en tyramine ; stimulant cardiovasculaire"
-    ],
-    bonne: 2,
-    explication: "Mucuna pruriens = source naturelle de L-Dopa (précurseur de la dopamine). Utilisé pour le syndrome des jambes sans repos (lié à une carence dopaminergique) et parfois comme support dans la maladie de Parkinson.",
-    piege: "NE PAS CONFONDRE : Mucuna = DOPAMINE (via L-Dopa). Griffonia/Tryptophane = SÉROTONINE. Ce sont deux neurotransmetteurs différents.",
-    mnemo: "MuCUna = cuMiné de DOPA. Mucuna → L-DOPA → Dopamine. Jambes sans repos = manque de dopamine.",
-    tags: ["phytothérapie", "neurotransmetteurs", "dopamine"],
-    important: true
+    categorie: "Examen blanc",
+    sujet: "Le pois mascate (Mucuna pruriens)",
+    question: "Le pois mascate (Mucuna pruriens) :",
+    options: ["est riche en L-Tyrosine", "est riche en L-Glycine", "est riche en L-Dopa", "diminue les envies suicidaires et le passage à l'acte", "présente un intérêt contre les jambes sans repos"],
+  bonnes: [2, 4],
+    explication: "Bonnes réponses : est riche en L-Dopa · présente un intérêt contre les jambes sans repos.",
+    tags: ["examen"]
   },
   {
     id: 26, jour: 3,
-    categorie: "Naturopathie / Typologies",
-    sujet: "Profil vagotonique",
-    question: "Le profil vagotonique de base se caractérise par :",
-    options: [
-      "Transit intestinal ralenti et dominance du cerveau gauche (logique)",
-      "Péristaltisme intestinal augmenté et dominance du cerveau droit (intuition)",
-      "Hypertension chronique et pensée analytique",
-      "Constipation chronique et anxiété généralisée"
-    ],
-    bonne: 1,
-    explication: "Profil vagotonique = dominance parasympathique (nerf vague = vagus). Conséquences : péristaltisme augmenté (intestin réactif), tendance aux émotions, créativité, intuition, utilisation préférentielle du cerveau droit.",
-    piege: "Vagotonique ≠ sympathicotonique. Le sympathique = stress, accélération, cerveau gauche. Le parasympathique (nerf vague) = repos, digestion, créativité.",
-    mnemo: "VAGO-TONIQUE = TONUS du nerf VAGUE dominant. Vague comme la mer = fluide, intuitif, intestin actif.",
-    tags: ["typologies", "terrain", "neurologie"]
+    categorie: "Examen blanc",
+    sujet: "Le vagotonique de base",
+    question: "Le vagotonique de base :",
+    options: ["présente une grande capacité de travail", "présente presque toujours un syndrome métabolique", "a un péristaltisme intestinal augmenté", "se sert beaucoup de son cerveau droit", "souffre souvent de goutte et d'hypertension"],
+  bonnes: [2, 3],
+    explication: "Bonnes réponses : a un péristaltisme intestinal augmenté · se sert beaucoup de son cerveau droit.",
+    tags: ["examen"]
   },
   {
     id: 27, jour: 3,
-    categorie: "Aromathérapie",
-    sujet: "Propriétés des cétones (arômes)",
-    question: "Quelles propriétés peut-on attribuer aux cétones en aromathérapie ?",
-    options: [
-      "Antiseptique puissant, antiviral, immunostimulant",
-      "Cicatrisant, stimulant respiratoire, anti-hématomes, cholérétique et cholagogue",
-      "Hypotenseur, sédatif, anxiolytique",
-      "Aphrodisiaque, tonique général, anti-âge"
-    ],
-    bonne: 1,
-    explication: "Les cétones (ex : camphre, menthone, thuyone) ont des propriétés spécifiques retenues : cicatrisation, stimulation respiratoire (mucolytique), action sur les hématomes, et effet cholérétique/cholagogue (bile). Attention : neurotoxiques à doses élevées.",
-    piege: "Les cétones ne sont pas principalement antiseptiques (= phénols/alcools). Pas sédatifs (= esters). Mémoriser leurs 4 propriétés spécifiques.",
-    mnemo: "Cétone = CICA + RESPI + BLEUS + BILE. Quatre actions, une famille.",
-    tags: ["aromathérapie", "biochimie aromatique"]
+    categorie: "Examen blanc",
+    sujet: "Propriétés générales possibles des cétones",
+    question: "Quelles sont les propriétés générales possibles des cétones ?",
+    options: ["Cicatrisant", "Stimulant respiratoire", "Anti hématomes", "Cholérétique et cholagogue", "Stimule le pancréas endocrine"],
+  bonnes: [0, 1, 2, 3],
+    explication: "Bonnes réponses : Cicatrisant · Stimulant respiratoire · Anti hématomes · Cholérétique et cholagogue.",
+    tags: ["examen"]
   },
   {
     id: 28, jour: 3,
-    categorie: "Phytochimie",
-    sujet: "Furocoumarines",
-    question: "Quel est l'effet principal des furocoumarines ?",
-    options: [
-      "Effet sédatif et anxiolytique",
-      "Effet antispasmodique digestif",
-      "Effet photosensibilisant",
-      "Effet antihistaminique"
-    ],
-    bonne: 2,
-    explication: "Les furocoumarines (bergaptène dans la bergamote, psoralène dans le céleri, angélicine...) provoquent une PHOTOSENSIBILISATION : réaction cutanée (érythème, brûlures, pigmentation) lors d'exposition au soleil. Danger en été.",
-    piege: "Le piège est de chercher un effet thérapeutique. Les furocoumarines sont surtout connues pour leur DANGER (photosensibilisation) plutôt que leur bénéfice.",
-    mnemo: "FuroCoumarine + SOLEIL = BRÛLURE. Furocoumarines = Fuyez du Soleil !",
-    tags: ["phytochimie", "effets secondaires", "sécurité"]
+    categorie: "Examen blanc",
+    sujet: "Est l'effet secondaire principal des Furocoumarines",
+    question: "Quel est l'effet secondaire principal des Furocoumarines ?",
+    options: ["Allergisantes", "Neurotoxiques", "Photosensibilisantes", "Irritantes"],
+  bonne: 2,
+    explication: "Bonne réponse : Photosensibilisantes.",
+    tags: ["examen"]
   },
   {
     id: 29, jour: 3,
-    categorie: "Endocrinologie / Gynécologie",
-    sujet: "Hyperoestrogénie relative",
-    question: "Dans quelles situations observe-t-on une hyperoestrogénie relative ?",
-    options: [
-      "Grossesse et allaitement",
-      "Andropause et ménopause confirmée",
-      "Début de la puberté chez la jeune fille et préménopause",
-      "Post-ménopause et sénescence"
-    ],
-    bonne: 2,
-    explication: "L'hyperoestrogénie RELATIVE signifie que les oestrogènes ne sont pas nécessairement élevés en valeur absolue, mais qu'ils sont en excès PAR RAPPORT à la progestérone. Cela survient : à la puberté (cycles irréguliers) et en préménopause (baisse de progestérone avant baisse des oestrogènes).",
-    piege: "Hyperoestrogénie relative ≠ excès absolu d'oestrogènes. C'est un déséquilibre de rapport. La ménopause confirmée = carence des DEUX hormones.",
-    mnemo: "RELATIVE = par rapport à la progestérone. Puberté + Préménopause = les deux 'PRÉ' = manque de progestérone.",
-    tags: ["endocrinologie", "gynécologie", "hormones"]
+    categorie: "Examen blanc",
+    sujet: "On constate typiquement une hyperoestrogénie…",
+    question: "On constate typiquement une hyperoestrogénie relative :",
+    options: ["Pendant la grossesse", "Au début de la puberté chez la jeune fille", "En période de préménopause", "Pendant l'allaitement"],
+  bonnes: [1, 2],
+    explication: "Bonnes réponses : Au début de la puberté chez la jeune fille · En période de préménopause.",
+    tags: ["examen"]
   },
   {
     id: 30, jour: 3,
-    categorie: "Endocrinologie / Gynécologie",
-    sujet: "Rôles de la progestérone",
-    question: "Quels sont les rôles de la progestérone ?",
-    options: [
-      "Elle baisse la température basale ; elle favorise l'interruption de grossesse",
-      "Elle stimule l'ovulation et augmente les oestrogènes",
-      "Elle augmente la température basale du corps ; elle est favorable au maintien de la grossesse",
-      "Elle est sécrétée par les ovaires en phase folliculaire uniquement"
-    ],
-    bonne: 2,
-    explication: "La progestérone est sécrétée par le corps jaune (phase lutéale). Elle MONTE la température basale (d'où son intérêt dans les courbes de température), prépare l'endomètre et maintient la grossesse (d'où le terme 'pro-gestérone' = pour la gestation).",
-    piege: "La progestérone MONTE la température (opposé des oestrogènes). PRO-gestérone = POUR la grossesse (pas contre).",
-    mnemo: "PRO-gestérone = PRO la grossesse + température qui MONTE. Phase lutéale = après ovulation.",
-    tags: ["endocrinologie", "gynécologie", "hormones"]
+    categorie: "Examen blanc",
+    sujet: "La progestérone",
+    question: "La progestérone :",
+    options: ["Provoque une augmentation de la température du corps", "A un effet androgène-like sur le système pileux et la peau", "Favorise la rétention d'eau", "Induit irritabilité, aggressivité, insomnie", "Est favorable au maintien de la grossesse"],
+  bonnes: [0, 4],
+    explication: "Bonnes réponses : Provoque une augmentation de la température du corps · Est favorable au maintien de la grossesse.",
+    tags: ["examen"]
   },
   {
     id: 31, jour: 4,
-    categorie: "Phytothérapie / Gynécologie",
-    sujet: "Plantes progestérone-like",
-    question: "Quelles plantes ont une activité progestérone-like ?",
-    options: [
-      "Sauge et trèfle rouge (activité oestrogène-like)",
-      "Alchémille et houblon",
-      "Gattilier et yam (igname sauvage)",
-      "Millepertuis et valériane"
-    ],
-    bonne: 2,
-    explication: "Le gattilier (Vitex agnus-castus) et l'igname sauvage (yam, Dioscorea) sont les plantes à action progestérone-like. ⚠️ Le houblon (Humulus lupulus) est au contraire ŒSTROGÈNE-like (phyto-œstrogène), comme la sauge et le trèfle rouge — donc CONTRE-INDIQUÉ en cas de cancer hormono-dépendant. L'alchémille est progestérone-like, mais la proposition « alchémille + houblon » est fausse à cause du houblon.",
-    piege: "Erreur fréquente (et dangereuse) : le houblon n'est PAS progestérone-like mais ŒSTROGÈNE-like → contre-indiqué si cancer hormono-dépendant.",
-    mnemo: "Progestérone-like : Gattilier + Yam. Œstrogène-like : Sauge, Trèfle rouge, Houblon.",
-    tags: ["phytothérapie", "gynécologie", "hormones"], important: true
+    categorie: "Examen blanc",
+    sujet: "Plantes suivantes, deux ont une activité…",
+    question: "Parmi les plantes suivantes, deux ont une activité progestérone-like :",
+    options: ["Sauge", "Alchemille", "Soja", "Achillée", "Houblon"],
+  bonnes: [1, 3],
+    explication: "Bonnes réponses : Alchemille · Achillée.",
+    tags: ["examen"]
   },
   {
     id: 32, jour: 4,
-    categorie: "Gynécologie",
-    sujet: "Symptômes de la ménopause (intrus)",
-    question: "Parmi les propositions suivantes, laquelle est l'INTRUS (n'est pas un symptôme habituel de la ménopause) ?",
-    options: [
-      "Bouffées de chaleur",
-      "Sécheresse vaginale",
-      "Perte de poids significative",
-      "Troubles du sommeil"
-    ],
-    bonne: 2,
-    explication: "La ménopause est associée à une PRISE de poids (baisse du métabolisme, redistribution des graisses), pas une perte. Les bouffées de chaleur, la sécheresse vaginale et les troubles du sommeil sont des symptômes classiques.",
-    piege: "Piège intuitif : certaines femmes perdent du poids à la ménopause, mais c'est atypique. L'association classique est prise de poids. C'est l'INTRUS demandé.",
-    mnemo: "MÉNO = PAUSE du cycle = pause du métabolisme aussi = PRISE de poids. Perte de poids = intrus.",
-    tags: ["gynécologie", "ménopause", "intrus"]
+    categorie: "Examen blanc",
+    sujet: "Troubles liés à la ménopause, trouvez l'intrus",
+    question: "Parmi les troubles liés à la ménopause, trouvez l'intrus :",
+    options: ["Sècheresse des muqueuses, de la peau, des cheveux", "Troubles du sommeil et tendance dépressive", "Risque d'ostéoporose accru", "Palpitations, tachycardie, troubles du rythme cardiaque", "Perte de poids"],
+  bonne: 4,
+    explication: "Bonne réponse : Perte de poids.",
+    tags: ["examen"]
   },
   {
     id: 33, jour: 4,
-    categorie: "Anatomie / Physiologie",
-    sujet: "Pancréas",
-    question: "Concernant le pancréas, quelles propositions sont correctes ?",
-    options: [
-      "Les îlots de Langerhans = sécrétions exocrines (enzymes digestives)",
-      "L'insuline favorise la dégradation du glycogène en glucose",
-      "Les îlots de Langerhans = sécrétions endocrines ; l'insuline favorise le stockage du glucose en glycogène dans le foie, les muscles et le tissu adipeux",
-      "Le glucagon et l'insuline sont sécrétés par les mêmes cellules"
-    ],
-    bonne: 2,
-    explication: "Pancréas ENDOCRINE = îlots de Langerhans (cellules alpha : glucagon ; cellules bêta : insuline). L'insuline = hormone de STOCKAGE : fait entrer le glucose dans les cellules et le convertit en glycogène (foie, muscles) ou en graisses (tissu adipeux).",
-    piege: "Îlots de Langerhans = ENDOCRINE (hormones dans le sang) ≠ EXOCRINE (sucs digestifs dans le duodénum). Insuline = STOCKAGE (hypoglycémiante). Glucagon = DÉSTOCKAGE (hyperglycémiant).",
-    mnemo: "ÎLOTS = ILES dans le pancréas = ENDOCRINE. Insuline = range le sucre (stocke). Glucagon = sort le sucre (déstocke).",
-    tags: ["anatomie", "physiologie", "glycémie", "pancréas"]
+    categorie: "Examen blanc",
+    sujet: "Le pancréas",
+    question: "Le pancréas :",
+    options: ["La somatostatine stimule la production d'insuline et de glucagon", "Les îlots de Langerhans sont responsables des sécrétions endocrines", "Les cellules alpha sécrètent l'insuline", "Le glucagon est une hormone hypoglycémiante, antagoniste de l'insuline", "L'insuline favorise le stockage du glucose sous forme de glycogène dans le foie, les muscles et le tissu adipeux"],
+  bonnes: [1, 4],
+    explication: "Bonnes réponses : Les îlots de Langerhans sont responsables des sécrétions endocrines · L'insuline favorise le stockage du glucose sous forme de glycogène dans le foie, les muscles et le tissu adipeux.",
+    tags: ["examen"]
   },
   {
     id: 34, jour: 4,
-    categorie: "Fleurs de Bach",
-    sujet: "Fleur de Bach : vengeance et rancune",
-    question: "Quelle fleur de Bach correspond aux sentiments de vengeance, jalousie et rancune ?",
-    options: [
-      "Willow (Saule)",
-      "Holly (Houx)",
-      "Chicory (Chicorée)",
-      "Vine (Vigne)"
-    ],
-    bonne: 1,
-    explication: "Holly (Houx) correspond aux émotions négatives intenses dirigées vers autrui : jalousie, haine, envie, désir de vengeance, rancune. C'est la fleur de l'amour conditionnel blessé.",
-    piege: "Willow = amertume/ressentiment passif. Chicory = possessivité/amour conditionnel. Vine = domination/autoritarisme. Holly = vengeance/jalousie = le plus intense.",
-    mnemo: "HOLLY = le HOUX pique ! Jalousie qui pique, vengeance qui pique = HOLLY.",
-    tags: ["fleurs de Bach", "émotions", "psychologie"]
+    categorie: "Examen blanc",
+    sujet: "Fleurs de Bach peut-on recommander pour…",
+    question: "Quelle fleurs de Bach peut-on recommander pour l'affirmation suivante : Je ne lui pardonnerai jamais d'avoir pris ma place, je me vengerai...",
+    options: ["Impatiens", "Water violet", "Vervain", "Holly"],
+  bonne: 3,
+    explication: "Bonne réponse : Holly.",
+    tags: ["examen"]
   },
   {
     id: 35, jour: 4,
-    categorie: "Fleurs de Bach",
-    sujet: "Fleur de Bach : souffrance cachée",
-    question: "Quelle fleur de Bach correspond à une personne qui minimise sa souffrance et cache sa douleur derrière un sourire ?",
-    options: [
-      "Star of Bethlehem (Étoile de Bethléem)",
-      "Agrimony (Aigremoine)",
-      "Centaury (Centaurée)",
-      "Larch (Mélèze)"
-    ],
-    bonne: 1,
-    explication: "Agrimony (Aigremoine) = la fleur du masque joyeux. Ces personnes cachent leurs tourments derrière l'humour, la légèreté et un sourire. En société elles paraissent gaies mais intérieurement souffrent. Séparation vécue mais minimisée.",
-    piege: "Star of Bethlehem = trauma, choc, deuil exprimé. Centaury = incapacité à dire non. Larch = manque de confiance. Agrimony = souffrance CACHÉE.",
-    mnemo: "AGRIMONY = l'AGRIable qui souffre en silence. Agréable en façade, douleur derrière.",
-    tags: ["fleurs de Bach", "émotions", "psychologie"]
+    categorie: "Examen blanc",
+    sujet: "Fleurs de Bach peut-on recommander pour…",
+    question: "Quelle fleurs de Bach peut-on recommander pour l'affirmation suivante : Je viens de me séparer de mon amie, mais ce n'est pas si grave finalement...",
+    options: ["Wild oat", "Willow", "Agrimony", "Honeysuckle"],
+  bonne: 2,
+    explication: "Bonne réponse : Agrimony.",
+    tags: ["examen"]
   },
   {
     id: 36, jour: 4,
-    categorie: "Phytothérapie",
-    sujet: "Plantes anti-inflammatoires / rhumatismes",
-    question: "Quelles plantes sont indiquées pour l'inflammation, les surrénales et les rhumatismes ?",
-    options: [
-      "Valériane et mélisse",
-      "Echinacea et thym",
-      "Gingembre et cassis",
-      "Pissenlit et artichaut"
-    ],
-    bonne: 2,
-    explication: "Gingembre (gingérols = puissants anti-inflammatoires) et Cassis (feuilles de cassis riches en flavonoïdes, stimulent les surrénales et ont une action anti-inflammatoire/anti-rhumatismale reconnue).",
-    piege: "Valériane/mélisse = nerveux/sommeil. Echinacea/thym = immunité/respiratoire. Pissenlit/artichaut = foie/drainage.",
-    mnemo: "GINGEMBRE + CASSIS = le duo enflammé qui calme les articulations. Gingembre chaud + Cassis violet = anti-rhumatismal.",
-    tags: ["phytothérapie", "rhumatologie", "anti-inflammatoire"]
+    categorie: "Examen blanc",
+    sujet: "Plantes ont toutes ces propriétés :…",
+    question: "Quelles plantes ont toutes ces propriétés : anti-inflammatoires, stimulant surrénales, anti-douleurs rhumatismales",
+    options: ["Radis noir", "Plantain", "Coquelicot", "Gingembre", "Cassis"],
+  bonnes: [3, 4],
+    explication: "Bonnes réponses : Gingembre · Cassis.",
+    tags: ["examen"]
   },
   {
     id: 37, jour: 4,
-    categorie: "Phytothérapie",
-    sujet: "Plantes pour spasmes intestinaux",
-    question: "Quelles plantes sont indiquées pour les spasmes intestinaux ?",
-    options: [
-      "Artichaut et radis noir",
-      "Basilic et fenouil",
-      "Gingembre et cassis",
-      "Millepertuis et valériane"
-    ],
-    bonne: 1,
-    explication: "Basilic (eugénol = antispasmodique) et Fenouil (anéthole = antispasmodique et carminatif) sont les deux plantes anti-spasmodiques digestives retenues dans ce cours.",
-    piege: "Artichaut/radis = foie. Gingembre/cassis = anti-inflammatoire. Millepertuis/valériane = psyché. Basilic + Fenouil = ventre qui se détend.",
-    mnemo: "BASILIC + FENOUIL = les deux herbes de cuisine qui détendent les intestins. Un ventre heureux aime la cuisine méditerranéenne.",
-    tags: ["phytothérapie", "digestion", "antispasmodique"]
+    categorie: "Examen blanc",
+    sujet: "Plantes les plus adaptées en cas de spasmes…",
+    question: "Quelles sont les plantes les plus adaptées en cas de spasmes intestinaux ?",
+    options: ["Séné", "basilic", "Fumeterre", "Artichaut", "Fenouil"],
+  bonnes: [1, 4],
+    explication: "Bonnes réponses : basilic · Fenouil.",
+    tags: ["examen"]
   },
   {
     id: 38, jour: 4,
-    categorie: "Phytochimie",
-    sujet: "Plantes à dérivés salicylés",
-    question: "Quelles plantes contiennent des dérivés salicylés (aspirine naturelle) ?",
-    options: [
-      "Arnica et hélichryse italienne",
-      "Saule et reine des prés",
-      "Ortie et prêle",
-      "Rhodiola et ginseng"
-    ],
-    bonne: 1,
-    explication: "Saule (Salix alba : salicine → acide salicylique) et Reine des prés (Filipendula ulmaria : spiréine → aspirine naturelle, d'où le nom ASpIRINE). Ces deux plantes sont à l'origine de la synthèse de l'aspirine.",
-    piege: "Arnica/hélichryse = hématomes. Ortie/prêle = reminéralisant. Rhodiola/ginseng = adaptogènes. Saule + Reine des prés = SALICYLÉS = anti-douleur/fièvre.",
-    mnemo: "SAULE + REINE DES PRÉS = le duo ASPIRIN naturel. La REINE est la mère de l'ASpirine (ASpiRIN vient de la REINE des prés).",
-    tags: ["phytochimie", "anti-inflammatoire", "analgésique"]
+    categorie: "Examen blanc",
+    sujet: "Plantes contiennent des dérivés salicylés",
+    question: "Quelles plantes contiennent des dérivés salicylés ?",
+    options: ["Camomille", "Consoude", "Saule", "Aubépine", "Reine des prés"],
+  bonnes: [2, 4],
+    explication: "Bonnes réponses : Saule · Reine des prés.",
+    tags: ["examen"]
   },
   {
     id: 39, jour: 4,
-    categorie: "Nutrition",
-    sujet: "Acide aminé limitant des légumineuses",
-    question: "Quel est l'acide aminé limitant des légumineuses (légumes secs) ?",
-    options: [
-      "Tryptophane",
-      "Lysine",
-      "Méthionine",
-      "Glutamine"
-    ],
-    bonne: 2,
-    explication: "Les légumineuses (lentilles, pois, haricots...) sont riches en lysine mais PAUVRES en méthionine. Les céréales, elles, sont riches en méthionine mais pauvres en lysine. D'où l'intérêt de les associer (riz + lentilles = protéines complètes).",
-    piege: "Piège : les légumineuses CONTIENNENT de la lysine (ce n'est pas leur acide aminé limitant). Leur DÉFICIT est en méthionine.",
-    mnemo: "LÉGumineuse manque de MÉTHIONINE. Céréale manque de Lysine. Ensemble = COMPLETS. Riz-lentilles = gagnants !",
-    tags: ["nutrition", "protéines", "végétarien"]
+    categorie: "Examen blanc",
+    sujet: "Est l'acide aminé limitant dans les légumes secs",
+    question: "Quel est l'acide aminé limitant dans les légumes secs ?",
+    options: ["La Lysine", "La Méthionine", "La Glycine", "La Tyrosine", "La Glutamine"],
+  bonne: 1,
+    explication: "Bonne réponse : La Méthionine.",
+    tags: ["examen"]
   },
   {
     id: 40, jour: 4,
-    categorie: "Nutrition",
-    sujet: "Enzymes protéolytiques en fin de repas",
-    question: "Quel fruit pris en fin de repas aide à la digestion des protéines (protéolyse) ?",
-    options: [
-      "Ananas",
-      "Kiwi",
-      "Papaye",
-      "Citron"
-    ],
-    bonne: 2,
-    explication: "La Papaye contient de la PAPAÏNE (enzyme protéolytique puissante). Elle aide à digérer les protéines. L'ananas contient de la bromélaïne (aussi protéolytique), mais le cours retient la papaye pour cette question.",
-    piege: "L'ananas (bromélaïne) est aussi une réponse possible dans la littérature, mais le cours retient la PAPAYE. Mémoriser papaye = papaïne = protéines.",
-    mnemo: "PAPAye → PAPAïne → digère les PROtéines. Papa mange la papaye après le repas.",
-    tags: ["nutrition", "enzymes", "digestion"]
+    categorie: "Examen blanc",
+    sujet: "Fruit peut-on conseiller en fin de repas pour…",
+    question: "Quel fruit peut-on conseiller en fin de repas pour aider à la protéolyse ?",
+    options: ["La fraise", "La pomme", "La figue", "L'abricot", "La papaye"],
+  bonne: 4,
+    explication: "Bonne réponse : La papaye.",
+    tags: ["examen"]
   },
   {
     id: 41, jour: 5,
-    categorie: "Biochimie / Neurotransmetteurs",
-    sujet: "Précurseur de la sérotonine",
-    question: "Quel acide aminé est le précurseur de la sérotonine ?",
-    options: [
-      "Tyrosine",
-      "Phénylalanine",
-      "Tryptophane",
-      "Méthionine"
-    ],
-    bonne: 2,
-    explication: "Voie de synthèse : Tryptophane → 5-HTP (5-hydroxy-tryptophane) → Sérotonine. La tyrosine est le précurseur de la dopamine (tyrosine → DOPA → dopamine). Ces deux voies sont distinctes et importantes à ne pas confondre.",
-    piege: "CONFUSION FRÉQUENTE : Tryptophane = sérotonine. Tyrosine = dopamine. Ce sont deux voies totalement distinctes.",
-    mnemo: "TRYPtophane → SéROTonine. TYROSINE → DOPAMINE. TRY = séROTonine. TYR = DOpamine.",
-    tags: ["neurotransmetteurs", "biochimie", "important"],
-    important: true
+    categorie: "Examen blanc",
+    sujet: "Acide aminé peut être utilisé en complément…",
+    question: "Quel acide aminé peut être utilisé en complément alimentaire pour la fabrication de la Sérotonine",
+    options: ["Le Tryptophane", "L'Isoleucine", "La Cystéine", "La Phénylalanine", "La Methionine"],
+  bonne: 0,
+    explication: "Bonne réponse : Le Tryptophane.",
+    tags: ["examen"]
   },
   {
     id: 42, jour: 5,
-    categorie: "Biochimie / Chrono-nutrition",
-    sujet: "Fabrication de la mélatonine",
-    question: "À partir de quelle heure la production de mélatonine débute-t-elle ?",
-    options: [
-      "À partir de 21h-22h",
-      "À partir de 18h",
-      "Uniquement après minuit",
-      "En continu tout au long de la journée"
-    ],
-    bonne: 1,
-    explication: "Selon ce cours, la fabrication de mélatonine (hormone du sommeil) débute dès 18h avec la diminution de la lumière. Elle est produite par la glande pinéale (épiphyse) à partir de la sérotonine. Son pic est vers 2h-3h du matin.",
-    piege: "La réponse habituelle en chronobiologie est plutôt 21h, mais CE COURS retient 18h. Mémoriser la réponse du cours : 18h.",
-    mnemo: "MÉLATONINE dès 18H = heure de fermeture des bureaux. Le corps ferme ses bureaux à 18h et prépare le sommeil.",
-    tags: ["biochimie", "sommeil", "mélatonine", "chiffres"]
+    categorie: "Examen blanc",
+    sujet: "A quelle heure est fabriquée la mélatonine",
+    question: "A quelle heure est fabriquée la mélatonine ?",
+    options: ["A partir de 12h", "Dès 18h", "A 16h", "Dès 8h"],
+  bonne: 1,
+    explication: "Bonne réponse : Dès 18h.",
+    tags: ["examen"]
   },
   {
     id: 43, jour: 5,
-    categorie: "Nutrition / Lipides",
-    sujet: "Acides gras mono-insaturés",
-    question: "Les acides gras mono-insaturés appartiennent à quelle famille d'oméga ?",
-    options: [
-      "Oméga 3",
-      "Oméga 6",
-      "Oméga 9",
-      "Oméga 12"
-    ],
-    bonne: 2,
-    explication: "Oméga 9 = acides gras MONO-insaturés (une seule double liaison). Exemple : acide oléique dans l'huile d'olive. Oméga 3 et 6 = POLY-insaturés (plusieurs doubles liaisons) et ESSENTIELS (l'organisme ne peut pas les fabriquer).",
-    piege: "À RETENIR : Oméga 9 = mono-insaturé (non essentiel, l'organisme peut en fabriquer). Oméga 3/6 = poly-insaturés essentiels.",
-    mnemo: "Oméga 9 = huile d'olive = 1 seule double liaison. UN seul C=C = MONO. Oméga 3 et 6 = nombreuses = POLY.",
-    tags: ["nutrition", "lipides", "oméga", "important"],
-    important: true
+    categorie: "Examen blanc",
+    sujet: "Les acides gras mono-insaturés proviennent de…",
+    question: "Les acides gras mono-insaturés proviennent de quelle série d'oméga ?",
+    options: ["Oméga 6", "Oméga 9", "Oméga 3"],
+  bonne: 1,
+    explication: "Bonne réponse : Oméga 9.",
+    tags: ["examen"]
   },
   {
     id: 44, jour: 5,
-    categorie: "Nutrition / Lipides",
-    sujet: "Prévention des carences en AGE",
-    question: "Pour éviter les carences en acides gras essentiels (AGE), il faut :",
-    options: [
-      "Utiliser l'huile d'arachide pour toutes les cuissons et éviter les poissons gras",
-      "Éviter l'huile d'arachide en friture à >170°C, apporter EPA/DHA, respecter le rapport oméga 6/oméga 3",
-      "Prioriser les graisses saturées et limiter tous les oméga",
-      "Ne consommer que de l'huile de coco et éviter les huiles végétales"
-    ],
-    bonne: 1,
-    explication: "Trois axes pour éviter les carences en AGE : 1) Qualité de cuisson (l'huile d'arachide se dégrade à >170°C → acides gras trans toxiques). 2) Apporter EPA/DHA (poissons gras ou compléments). 3) Rééquilibrer le ratio oméga 6/oméga 3 (idéal : 4/1, occidental actuel : 15-20/1).",
-    piege: "L'huile d'arachide est à éviter en FRITURE FORTE (>170°C), pas à bannir totalement. Le ratio oméga 6/3 est crucial : trop d'oméga 6 = inflammation.",
-    mnemo: "3 règles AGE : PAS d'ARACHIDE en FRITURE, EPA/DHA dans l'assiette, RATIO 6/3 équilibré.",
-    tags: ["nutrition", "lipides", "oméga", "cuisson"]
+    categorie: "Examen blanc",
+    sujet: "Conseils alimentaires peut-on donner pour ne pas…",
+    question: "Quels conseils alimentaires peut-on donner pour ne pas être carencé en acides gras essentiels au quotidien ?",
+    options: ["Eviter au maximum l'huile d'arachide pour la friture à + de 170°", "Utiliser surtout l'huile de tournesol", "Apporter des EPA/DHA", "Respecter le rapport omega 6/ omega 3", "Apporter à l'alimentation beaucoup d'acide gras saturés", "Utiliser du beurre de préférence cuit et bio"],
+  bonnes: [0, 2, 3],
+    explication: "Bonnes réponses : Eviter au maximum l'huile d'arachide pour la friture à + de 170° · Apporter des EPA/DHA · Respecter le rapport omega 6/ omega 3.",
+    tags: ["examen"]
   },
   {
     id: 45, jour: 5,
-    categorie: "Micronutrition / Cardiovasculaire",
-    sujet: "Hypertension et minéraux",
-    question: "Quel minéral doit être limité en cas d'hypertension artérielle ?",
-    options: [
-      "Potassium",
-      "Magnésium",
-      "Sodium",
-      "Calcium"
-    ],
-    bonne: 2,
-    explication: "Le SODIUM (sel) favorise la rétention d'eau et augmente la volémie (volume sanguin), ce qui élève la pression artérielle. À l'inverse, le potassium et le magnésium sont bénéfiques pour abaisser la TA.",
-    piege: "Piège : le potassium et le magnésium sont cardiovasculo-protecteurs. Ce sont des alliés contre l'hypertension. Seul le SODIUM est à limiter.",
-    mnemo: "SODIUM (sel) = HYPERTENSION. POTASSIUM = contre-équilibre le sodium. Moins de sel = moins de pression.",
-    tags: ["micronutrition", "cardiovasculaire", "minéraux"]
+    categorie: "Examen blanc",
+    sujet: "Minéral faudrait-il limiter en cas d'hypertension",
+    question: "Quel minéral faudrait-il limiter en cas d'hypertension ?",
+    options: ["Le Sodium", "Magnésium", "Calcium", "Fer"],
+  bonne: 0,
+    explication: "Bonne réponse : Le Sodium.",
+    tags: ["examen"]
   },
   {
     id: 46, jour: 5,
-    categorie: "Micronutrition",
-    sujet: "Vitamine B1 et sucres rapides",
-    question: "Quelle vitamine voit ses besoins augmenter lors d'une consommation excessive de sucres rapides ?",
-    options: [
-      "Vitamine A",
-      "Vitamine B1 (thiamine)",
-      "Vitamine C",
-      "Vitamine E"
-    ],
-    bonne: 1,
-    explication: "La Vitamine B1 (thiamine) est un co-enzyme INDISPENSABLE du métabolisme glucidique (cycle de Krebs, pyruvate déshydrogénase). Plus on consomme de sucres, plus on consomme de B1. Carence → béribéri, troubles neurologiques.",
-    piege: "B1 est la vitamine du SUCRE. Plus de sucre = plus de B1 nécessaire. C'est pour ça que les gros consommateurs de sucre/alcool sont souvent carencés en B1.",
-    mnemo: "B1 = la VITAMINE des GLUCIDES. B1 = Burn 1 glucose à la fois. Sucres rapides consomment la B1 très rapidement.",
-    tags: ["micronutrition", "vitamines B", "glucides"]
+    categorie: "Examen blanc",
+    sujet: "Vitamine peut avoir des besoins augmentés en cas…",
+    question: "Quelle vitamine peut avoir des besoins augmentés en cas de consommation de sucres rapides ?",
+    options: ["La vitamine C", "La vitamine B1", "La vitamine A", "La vitamine E"],
+  bonne: 1,
+    explication: "Bonne réponse : La vitamine B1.",
+    tags: ["examen"]
   },
   {
     id: 47, jour: 5,
-    categorie: "Micronutrition / Gynécologie",
-    sujet: "Vitamine essentielle avant la grossesse",
-    question: "Quelle vitamine est indispensable pour une femme désirant concevoir un enfant ?",
-    options: [
-      "Vitamine D",
-      "Vitamine B12",
-      "Vitamine B9 (acide folique / folates)",
-      "Vitamine K"
-    ],
-    bonne: 2,
-    explication: "La Vitamine B9 (folates/acide folique) est INDISPENSABLE avant la conception et les 3 premiers mois de grossesse pour prévenir les malformations du tube neural (spina bifida, anencéphalie). Supplémentation recommandée : 400 µg/jour.",
-    piege: "La vitamine D est aussi importante en grossesse mais la B9 est LA vitamine préconceptionnelle. La B12 est à supplémenter chez les végétaliennes enceintes.",
-    mnemo: "B9 = Bébé 9 mois = vitamine de la GROSSESSE. B9 → BÉBÉ en bonne santé. Folates = fondations du tube neural.",
-    tags: ["micronutrition", "gynécologie", "grossesse", "important"]
+    categorie: "Examen blanc",
+    sujet: "Vitamine est préconisée pour toutes femmes…",
+    question: "Quelle vitamine est préconisée pour toutes femmes désirant avoir un enfant",
+    options: ["La vitamine A", "La vitamine E", "La vitamine B9", "La vitamine C"],
+  bonne: 2,
+    explication: "Bonne réponse : La vitamine B9.",
+    tags: ["examen"]
   },
   {
     id: 48, jour: 5,
-    categorie: "Naturopathie / Terrain",
-    sujet: "Terrain baso-colitique",
-    question: "Quelle prise en charge naturopathique convient au terrain baso-colitique ?",
-    options: [
-      "Plantes respiratoires et cures de vitamine C",
-      "Plantes dermatologiques et acides gras essentiels",
-      "Plantes de l'appareil digestif et pro/prébiotiques",
-      "Plantes cardiovasculaires et magnésium"
-    ],
-    bonne: 2,
-    explication: "Le terrain BASO-COLITIQUE (baso = tendance acide/base + colitique = colon irritable) cible l'intestin. Soutien via plantes digestives (fenouil, basilic, mélisse) et pro/prébiotiques pour rééquilibrer le microbiote.",
-    piege: "Baso-colitique ≠ terrain respiratoire, ≠ terrain cutané, ≠ terrain cardiovasculaire. Le 'colitique' pointe vers le côlon.",
-    mnemo: "COLITIQUE = CÔLON. Pour le côlon : PLANTES DIGESTIVES + PRO/PRÉBIOTIQUES. Le microbiote vit dans le côlon.",
-    tags: ["terrain", "naturopathie", "microbiote"]
+    categorie: "Examen blanc",
+    sujet: "Conseiller à une personne ayant un terrain…",
+    question: "Que peut-on conseiller à une personne ayant un terrain baso-colitique ?",
+    options: ["Plantes de l'appareil digestif", "La vitamine D est prioritaire parmi les vitamines", "Plantes pour la détoxication rénale", "Les oligo éléments les plus importants sont cuivre or argent", "Pro et prébiotique"],
+  bonnes: [0, 4],
+    explication: "Bonnes réponses : Plantes de l'appareil digestif · Pro et prébiotique.",
+    tags: ["examen"]
   },
   {
     id: 49, jour: 5,
-    categorie: "Naturopathie / Classification",
-    sujet: "Classification de Marchesseau — terrain intoxiqué",
-    question: "Dans la classification de Marchesseau, à quel stade correspond le terrain intoxiqué ?",
-    options: [
-      "Stade 1",
-      "Stade 2",
-      "Stade 3",
-      "Stade 4"
-    ],
-    bonne: 1,
-    explication: "Classification de Marchesseau : Stade 1 = carencé. Stade 2 = intoxiqué. Stade 3 = dystonique. Stade 4 = dysorganique (le plus grave). Terrain intoxiqué = stade 2.",
-    piege: "Question de mémorisation pure. Retenir l'ordre : 1=carencé, 2=intoxiqué, 3=dystonique, 4=dysorganique.",
-    mnemo: "1-CARENCE, 2-INTOXIQUÉ, 3-DYSTONE, 4-DYSORGANIQUE. 1,2,3,4 = de moins grave au plus grave.",
-    tags: ["terrain", "naturopathie", "classification", "chiffres"]
+    categorie: "Examen blanc",
+    sujet: "Le terrain Intoxiqué en micronutrition correspond…",
+    question: "Le terrain Intoxiqué en micronutrition correspond à quel stade chez Marchesseau ?",
+    options: ["Stade 3", "Stade 1", "Stade 2", "Stade 4"],
+  bonne: 2,
+    explication: "Bonne réponse : Stade 2.",
+    tags: ["examen"]
   },
   {
     id: 50, jour: 5,
-    categorie: "Naturopathie / Terrain",
-    sujet: "Terrain C carencé en vitamine F",
-    question: "Quelles manifestations entraîne un terrain de type C carencé en vitamine F ?",
-    options: [
-      "Troubles cardiovasculaires et hypertension",
-      "Problèmes osseux et crampes musculaires",
-      "Baisse immunitaire, troubles cutanés et asthme",
-      "Troubles digestifs et colites chroniques"
-    ],
-    bonne: 2,
-    explication: "La vitamine F = acides gras essentiels (AGE). Une carence en vitamine F affecte : l'immunité (les AGE sont précurseurs de prostaglandines immunomodulatrices), la peau (membrane cellulaire lipidique), et les voies respiratoires (terrain asthmatique, inflammation).",
-    piege: "Vitamine F ≠ vitamine C. Vitamine F = acides Gras essentiels. Leur carence touche immunité, peau et respiration.",
-    mnemo: "Vitamine F = Fat (gras) = acides Gras essentiels. Manque de gras = peau sèche + immuno faible + asthme.",
-    tags: ["terrain", "naturopathie", "lipides", "vitamines"]
+    categorie: "Examen blanc",
+    sujet: "Signes cliniques d'un terrain C = carencé en…",
+    question: "Quels sont les signes cliniques d'un terrain C = carencé en vitamine F en micronutrition ?",
+    options: ["Baisse immunitaire", "Ostéoporose", "Maux de tête", "Troubles cutanées", "Asthme"],
+  bonnes: [0, 3, 4],
+    explication: "Bonnes réponses : Baisse immunitaire · Troubles cutanées · Asthme.",
+    tags: ["examen"]
   },
   {
     id: 51, jour: 6,
-    categorie: "Nutrition / Biochimie",
-    sujet: "Réaction de Maillard",
-    question: "La réaction de Maillard est favorisée par :",
-    options: [
-      "Le froid et l'absence de sucre",
-      "Les sucres, le stockage à température ambiante et les températures élevées de cuisson",
-      "L'humidité et les températures modérées",
-      "La congélation et les acides organiques"
-    ],
-    bonne: 1,
-    explication: "La réaction de Maillard = réaction non-enzymatique entre sucres réducteurs et acides aminés sous l'effet de la chaleur → brunissement des aliments, arômes (croûte du pain, viande rôtie). Favorisée par : sucres + chaleur + stockage à température ambiante. Produit des AGE (Advanced Glycation End-products) = glycotoxines.",
-    piege: "La réaction de Maillard ≠ caramélisation (qui ne nécessite pas de protéines). Elle est favorisée par le CHAUD et le SUCRE, pas par le froid.",
-    mnemo: "Maillard = MAILLOT de bain en été = CHALEUR + SUCRE = brunissement. Réaction de BRUNISSEMENT non enzymatique.",
-    tags: ["nutrition", "biochimie", "cuisson"]
+    categorie: "Examen blanc",
+    sujet: "Affirmations sont justes concernant la réaction…",
+    question: "Quelles affirmations sont justes concernant la réaction de Maillard ?",
+    options: ["La présence de sucre favorise cette réaction.", "Réaction stimulée par des températures basses", "Le pH du milieu augmente lors de sa réaction", "Réaction stimulée pendant le stockage à température ambiante", "Cette réaction ne modifie pas le goût des aliments", "Réaction stimulée lors de températures élevées"],
+  bonnes: [0, 3, 5],
+    explication: "Bonnes réponses : La présence de sucre favorise cette réaction. · Réaction stimulée pendant le stockage à température ambiante · Réaction stimulée lors de températures élevées.",
+    tags: ["examen"]
   },
   {
     id: 52, jour: 6,
-    categorie: "Microbiote",
-    sujet: "Vitamines synthétisées par les probiotiques",
-    question: "Quelles vitamines les bactéries probiotiques (flore intestinale) peuvent-elles synthétiser ?",
-    options: [
-      "Vitamine A, D, E",
-      "Vitamine C, B1, B2",
-      "Vitamine K, B12, B9",
-      "Vitamine B6, B3, D"
-    ],
-    bonne: 2,
-    explication: "Le microbiote intestinal synthétise : Vitamine K (K2, coagulation), Vitamine B12 (mais peu absorbée dans le côlon) et Vitamine B9 (folates). Ces vitamines sont partiellement d'origine bactérienne.",
-    piege: "Les vitamines A, D, E sont liposolubles et non synthétisées par les bactéries. La B12 et B9 sont bien synthétisées mais leur absorption colique est limitée.",
-    mnemo: "K + B12 + B9 = le trio bactérien. K pour coaguler, B12 pour les neurones, B9 pour diviser les cellules.",
-    tags: ["microbiote", "vitamines", "probiotiques"]
+    categorie: "Examen blanc",
+    sujet: "Vitamines sont fabriquées par les bactéries…",
+    question: "Quelles vitamines sont fabriquées par les bactéries probiotiques parmi les suivantes ?",
+    options: ["Vitamine E", "Vitamine C", "Vitamine K", "Vitamine B12", "Vitamine A", "Vitamine B9"],
+  bonnes: [2, 3, 5],
+    explication: "Bonnes réponses : Vitamine K · Vitamine B12 · Vitamine B9.",
+    tags: ["examen"]
   },
   {
     id: 53, jour: 6,
-    categorie: "Microbiote / Pédiatrie",
-    sujet: "Probiotique pour eczéma atopique du nourrisson",
-    question: "Quelle souche probiotique est spécifiquement retenue pour l'eczéma atopique du nouveau-né ?",
-    options: [
-      "Lactobacillus acidophilus",
-      "Bifidobacterium longum",
-      "Lactobacillus rhamnosus GG",
-      "Saccharomyces boulardii"
-    ],
-    bonne: 2,
-    explication: "Lactobacillus rhamnosus GG (LGG) est la souche probiotique la mieux documentée pour la prévention et le traitement de l'eczéma atopique chez le nourrisson. Mémoriser le nom complet avec 'GG'.",
-    piege: "La souche GG est importante à retenir précisément. L. acidophilus = digestion générale. B. longum = gros intestin. S. boulardii = diarrhée du voyageur.",
-    mnemo: "LGG = L pour L'eczéma. GG comme un bébé qui a la peau irritée et dit 'GG aide !' Lactobacillus rhamnosus GG.",
-    tags: ["microbiote", "probiotiques", "pédiatrie", "mémorisation"]
+    categorie: "Examen blanc",
+    sujet: "Bactéries en particulier sont utilisées pour…",
+    question: "Quelles bactéries en particulier sont utilisées pour diminuer l'eczema atopique du nouveau-né ?",
+    options: ["bifidobactéries", "Lactobacillus casei cerela", "Lactobacillus rhamnosus GG", "Saccharomyces boulardii"],
+  bonne: 2,
+    explication: "Bonne réponse : Lactobacillus rhamnosus GG.",
+    tags: ["examen"]
   },
   {
     id: 54, jour: 6,
-    categorie: "Nutrition / Microbiote",
-    sujet: "Fermentation vs putréfaction intestinale",
-    question: "Concernant la fermentation et la putréfaction intestinale :",
-    options: [
-      "Les deux processus sont néfastes ; la diarrhée aggrave la putréfaction",
-      "Les acides de fermentation sont non néfastes ; les protéines se dégradent dans le côlon descendant ; la constipation = produits de putréfaction absorbés",
-      "La fermentation ne se produit que dans l'intestin grêle",
-      "La putréfaction est bénéfique pour le microbiote"
-    ],
-    bonne: 1,
-    explication: "FERMENTATION (sucres) = acides organiques courts (AGCC) → NON néfastes, nutritifs pour les colonocytes. PUTRÉFACTION (protéines) = amines, phénols, ammoniac → dans le côlon DESCENDANT. Constipation = les produits de putréfaction sont réabsorbés et atteignent le foie → intoxication.",
-    piege: "Les acides de fermentation ne sont PAS tous néfastes (le butyrate est même bénéfique). La putréfaction, elle, est nocive. Et la constipation aggrave la putréfaction (pas la diarrhée).",
-    mnemo: "FERMENTATION = sucres = acides BONS. PUTRÉFACTION = protéines = TOXINES. CONSTIPATION = les toxines de putréfaction retournent au foie.",
-    tags: ["microbiote", "digestion", "nutrition"]
+    categorie: "Examen blanc",
+    sujet: "Affirmations sont vraies",
+    question: "Quelles affirmations sont vraies ?",
+    options: ["Les acides formés par la fermentation ne sont pas néfastes pour la muqueuse intestinale", "Les protéines sont dégradées dans le côlon descendant", "En cas de constipation, les produits de putréfaction sont absorbés par la muqueuse intestinale et parviennent au foie", "La fermentation est responsable de l'odeur des selles ou des gaz", "Les protéines sont dégradées dans le côlon ascendant"],
+  bonnes: [0, 1, 2],
+    explication: "Bonnes réponses : Les acides formés par la fermentation ne sont pas néfastes pour la muqueuse intestinale · Les protéines sont dégradées dans le côlon descendant · En cas de constipation, les produits de putréfaction sont absorbés par la muqueuse intestinale et parviennent au foie.",
+    tags: ["examen"]
   },
   {
     id: 55, jour: 6,
-    categorie: "Régimes / Nutrition",
-    sujet: "Méthode Kousmine : température de cuisson",
-    question: "Selon la méthode Kousmine, à quelle température maximale doit-on cuire les aliments ?",
-    options: [
-      "Moins de 40°C",
-      "Moins de 60°C",
-      "Moins de 100°C",
-      "Moins de 120°C"
-    ],
-    bonne: 2,
-    explication: "La méthode du Dr Kousmine préconise une cuisson DOUCE, inférieure à 100°C (ébullition), pour préserver les nutriments, enzymes et vitamines thermosensibles. À distinguer du crudivorisme (<42°C).",
-    piege: "Ne pas confondre Kousmine (<100°C) avec Crudivorisme (<42°C). Kousmine autorise la cuisson mais douce. Crudivorisme = tout cru ou très peu chauffé.",
-    mnemo: "KOUSMINE = comme bouillir doucement. En dessous de 100°C = pas d'ébullition violente. 100°C = seuil de l'eau qui bout.",
-    tags: ["régimes", "cuisson", "chiffres"],
-    important: true
+    categorie: "Examen blanc",
+    sujet: "D'après Kousmine la température de cuisson des…",
+    question: "D'après Kousmine la température de cuisson des aliments doit être inférieure à :",
+    options: ["50°", "110°", "100°", "120°"],
+  bonne: 2,
+    explication: "Bonne réponse : 100°.",
+    tags: ["examen"]
   },
   {
     id: 56, jour: 6,
-    categorie: "Physiologie digestive",
-    sujet: "Durée de la digestion gastrique",
-    question: "Quelle est la durée de digestion d'un repas équilibré dans l'estomac ?",
-    options: [
-      "15 à 30 minutes",
-      "1 à 2 heures",
-      "Environ 4 heures",
-      "8 à 12 heures"
-    ],
-    bonne: 2,
-    explication: "D'après le cours (temps de transit), les aliments restent en moyenne 4 heures dans l'estomac. Le transit complet dure environ 24 h : quelques secondes dans l'œsophage, ~4 h dans l'estomac, ~4 h dans l'intestin grêle, puis le gros intestin pour le reste du temps.",
-    piege: "Le temps gastrique moyen est d'environ 4 h — ne pas le confondre avec le transit digestif complet (~24 h).",
-    mnemo: "Estomac ≈ 4 h ; intestin grêle ≈ 4 h ; transit total ≈ 24 h.",
-    tags: ["physiologie", "digestion", "chiffres"]
+    categorie: "Examen blanc",
+    sujet: "Le temps de digestion d'un repas équilibré dans…",
+    question: "Le temps de digestion d'un repas équilibré dans l'estomac varie entre ?",
+    options: ["1-2 heures", "4-5 heures", "7-9 heures", "6-7 heures"],
+  bonne: 1,
+    explication: "Bonne réponse : 4-5 heures.",
+    tags: ["examen"]
   },
   {
     id: 57, jour: 6,
-    categorie: "Régimes",
-    sujet: "Régime Seignalet : aliments interdits",
-    question: "Quels aliments sont interdits dans le régime Seignalet ?",
-    options: [
-      "Riz, quinoa, légumes et poisson",
-      "Seigle, lait de chèvre, épeautre et bière",
-      "Huile d'olive, fruits et légumes",
-      "Viandes blanches, oeufs et légumineuses"
-    ],
-    bonne: 1,
-    explication: "Le régime Seignalet (hypotoxique) interdit : les laits animaux (TOUS : vache, chèvre, brebis) et les céréales mutées/glutineuses (blé, seigle, épeautre, kamut, orge). La bière = dérivé de céréale (orge/seigle). Autorisé : riz, sarrasin, fruits, légumes, viande, poisson.",
-    piege: "Le lait de CHÈVRE est interdit chez Seignalet (tous les laits animaux). La bière est interdite car faite à partir de céréales à gluten. Épeautre = ancêtre du blé, interdit.",
-    mnemo: "SEIGNALET = régime HYPOtoxique (on réduit les toxines). Interdit : LAIT (toutes espèces) + CÉRÉALES À GLUTEN (seigle, épeautre, blé) + BIÈRE. Autorisé : riz, légumes, fruits, viandes.",
-    tags: ["régimes", "Seignalet", "alimentation"],
-    important: true
+    categorie: "Examen blanc",
+    sujet: "Aliments interdits dans le Régime Seignalet",
+    question: "Quels sont les aliments interdits dans le Régime Seignalet ?",
+    options: ["moutarde", "Le seigle", "le lait de chèvre", "Amandes", "l'épeautre", "Bière", "Pomme de terre", "café"],
+  bonnes: [1, 2, 4, 5],
+    explication: "Bonnes réponses : Le seigle · le lait de chèvre · l'épeautre · Bière.",
+    tags: ["examen"]
   },
   {
     id: 58, jour: 6,
-    categorie: "Prévention cardiovasculaire",
-    sujet: "Micronutriments anti-artériosclérose",
-    question: "Quels micronutriments participent à la prévention de l'artériosclérose ?",
-    options: [
-      "Sodium, chlore, fer",
-      "Zinc, silicium, magnésium + vitamine C + vitamines B1 et B3",
-      "Vitamine A, D, E",
-      "Iode, sélénium, chrome"
-    ],
-    bonne: 1,
-    explication: "La prévention de l'artériosclérose requiert : Zinc (antioxydant), Silicium (souplesse artérielle), Magnésium (cardioprotecteur), Vitamine C (synthèse collagène vasculaire, antioxydant), B1 et B3 (métabolisme énergétique des cellules musculaires).",
-    piege: "Le sodium est à ÉVITER dans ce contexte. Les vitamines A, D, E ont d'autres fonctions. Ce sont zinc/silicium/magnésium + C + B1/B3 le bon trio.",
-    mnemo: "Artères = ZinCSiMag + C + B1B3. ZinC-Si-Mag comme des matériaux de construction pour les artères.",
-    tags: ["cardiovasculaire", "prévention", "micronutrition"]
+    categorie: "Examen blanc",
+    sujet: "Vitamines et minéraux peut-on proposer pour la…",
+    question: "Quels vitamines et minéraux peut-on proposer pour la prévention de l'artériosclérose ?",
+    options: ["Zinc, silicium, magnésium", "Chrome", "Vitamine C", "cuivre, molybdène", "Vitamine B1 et B3"],
+  bonnes: [0, 2, 4],
+    explication: "Bonnes réponses : Zinc, silicium, magnésium · Vitamine C · Vitamine B1 et B3.",
+    tags: ["examen"]
   },
   {
     id: 59, jour: 6,
-    categorie: "Régimes",
-    sujet: "Régime excluant les laits animaux",
-    question: "Quel régime exclut spécifiquement tous les laits animaux ?",
-    options: [
-      "Régime Atkins",
-      "Méthode Kousmine",
-      "Régime du Dr Seignalet",
-      "Régime paléo"
-    ],
-    bonne: 2,
-    explication: "Le régime hypotoxique du Dr Seignalet exclut TOUS les laits animaux et produits laitiers (vache, chèvre, brebis, jument...) ainsi que les céréales mutées. Il autorise en revanche le riz, le sarrasin, les légumes, fruits, viandes et poissons.",
-    piege: "Atkins = supprime les féculents. Kousmine = cuisson <100°C. Seignalet = interdit laits ET céréales à gluten.",
-    mnemo: "SEIGNAlet = SEIGNe les laits = les EXclut tous. Seignalet = allergique aux laits animaux.",
-    tags: ["régimes", "Seignalet", "laits"]
+    categorie: "Examen blanc",
+    sujet: "Régime exclut les laits animaux",
+    question: "Quel régime exclut les laits animaux",
+    options: ["Le régime du Dr Kousmine", "Le régime Paléolithique", "Le régime du Dr Seignalet"],
+  bonne: 2,
+    explication: "Bonne réponse : Le régime du Dr Seignalet.",
+    tags: ["examen"]
   },
   {
     id: 60, jour: 6,
-    categorie: "Régimes",
-    sujet: "Crudivorisme et véganisme",
-    question: "Concernant le crudivorisme-véganisme :",
-    options: [
-      "Autoriser la cuisson jusqu'à 80°C ; manger principalement des viandes crues",
-      "Manger des aliments crus ou chauffés à moins de 42°C maximum",
-      "Cuire à la vapeur à 120°C et éviter les produits laitiers uniquement",
-      "Suivre un régime à base de poissons crus uniquement"
-    ],
-    bonne: 1,
-    explication: "Le crudivorisme préconise de ne pas chauffer au-delà de 42°C (pour préserver les enzymes naturelles des aliments). Le véganisme exclut tous les produits d'origine animale. Combinés : aliments d'origine végétale, crus ou très peu chauffés (<42°C).",
-    piege: "Ne pas confondre le seuil de Kousmine (<100°C) et le seuil du crudivorisme (<42°C). Le crudivorisme est beaucoup plus restrictif.",
-    mnemo: "CRUDIVORISME : tout cru ou presque. Seuil = 42°C (on ne chauffe pas plus que la chaleur du vivant).",
-    tags: ["régimes", "crudivorisme", "véganisme", "chiffres"]
+    categorie: "Examen blanc",
+    sujet: "Crudivorisme-véganisme",
+    question: "Qu'est ce que le crudivorisme-véganisme ?",
+    options: ["il consiste à ne pas chauffer la nourriture à plus de 40°C", "il consiste à manger des aliments crus", "il consiste à ne pas chauffer la nourriture à plus de 95°C", "Il consiste à manger des légumes et fruits cuits"],
+  bonnes: [0, 1],
+    explication: "Bonnes réponses : il consiste à ne pas chauffer la nourriture à plus de 40°C · il consiste à manger des aliments crus.",
+    tags: ["examen"]
   },
   {
     id: 61, jour: 7,
-    categorie: "Cures naturopathiques",
-    sujet: "Objectifs d'une cure de revitalisation",
-    question: "Qu'est-ce qu'une cure de revitalisation permet d'accomplir ?",
-    options: [
-      "Drainer les toxines et vider les émonctoires",
-      "Corriger les carences micronutritionnelles, rééquilibrer l'alimentation et reconsolider les réserves minérales",
-      "Perdre du poids rapidement en restricant l'apport calorique",
-      "Stimuler le foie et les reins pour éliminer les déchets"
-    ],
-    bonne: 1,
-    explication: "La cure de revitalisation a 3 objectifs : 1) Corriger les carences en micronutriments (vitamines, minéraux, oligo-éléments). 2) Rééquilibrer l'alimentation globalement. 3) Reconstituer/consolider les réserves minérales de l'organisme.",
-    piege: "Revitalisation ≠ cure détox/drainage (qui vide). Revitalisation = CONSTRUCTION = remplir les réserves.",
-    mnemo: "Revitalisation = 3R : Reconstituer + Rééquilibrer + Reminéraliser.",
-    tags: ["cures", "naturopathie", "revitalisation"]
+    categorie: "Examen blanc",
+    sujet: "La cure de revitalisation permet",
+    question: "La cure de revitalisation permet :",
+    options: ["De corriger les carences micronutritionnelles", "De drainer l'organisme", "De proposer un rééquilibrage alimentaire adapté à la personne", "De mettre au repos ses fonctions digestives à l'aide d'un jeûne", "De reconsolider les réserves minérales"],
+  bonnes: [0, 2, 4],
+    explication: "Bonnes réponses : De corriger les carences micronutritionnelles · De proposer un rééquilibrage alimentaire adapté à la personne · De reconsolider les réserves minérales.",
+    tags: ["examen"]
   },
   {
     id: 62, jour: 7,
-    categorie: "Pathologies",
-    sujet: "Diabète — types et facteurs",
-    question: "Concernant le diabète, quelles propositions sont correctes ?",
-    options: [
-      "Le type 1 survient après 60 ans ; le type 2 est toujours d'origine génétique",
-      "Le type 1 est lié à la sédentarité ; le type 2 est auto-immun",
-      "Le type 1 est parfois consécutif à une maladie auto-immune ; le type 2 survient généralement après 45 ans ; la sédentarité est un facteur de risque",
-      "Les deux types se traitent uniquement par l'insuline"
-    ],
-    bonne: 2,
-    explication: "Diabète type 1 : destruction auto-immune des cellules bêta, souvent avant 30 ans, insulinodépendant. Diabète type 2 : résistance à l'insuline, généralement après 45 ans, lié au mode de vie (sédentarité, surpoids, alimentation). Sédentarité = facteur de risque majeur du T2.",
-    piege: "Ne pas inverser les types. T1 = auto-immun/jeune. T2 = mode de vie/45+. La sédentarité concerne le TYPE 2.",
-    mnemo: "T1 = auto-Immun (I comme Insuline manquante). T2 = mode de vie après 45 ans (deux = deux fois plus de graisse = surpoids).",
-    tags: ["pathologies", "diabète", "métabolisme"]
+    categorie: "Examen blanc",
+    sujet: "D'après vos cours quelles affirmations sont…",
+    question: "D'après vos cours quelles affirmations sont vraies sur le diabète :",
+    options: ["Le diabète de type 1 se déclare parfois suite à une maladie auto-immune", "Le diabète de type 2 se déclare en général après 45 ans", "Le diabète de type 1 se déclare en général après 45 ans", "Le diabète de type 2 est insulino dépendant", "Le diabète de type 2 est appelé le diabète juvénile", "Le manque d'activité physique peut être un facteur de risque du diabète"],
+  bonnes: [0, 1, 5],
+    explication: "Bonnes réponses : Le diabète de type 1 se déclare parfois suite à une maladie auto-immune · Le diabète de type 2 se déclare en général après 45 ans · Le manque d'activité physique peut être un facteur de risque du diabète.",
+    tags: ["examen"]
   },
   {
     id: 63, jour: 7,
-    categorie: "Nutrition / Pathologies",
-    sujet: "Alimentation bénéfique pour le diabète",
-    question: "Quels aliments faut-il favoriser en cas de diabète ?",
-    options: [
-      "Pain blanc, riz blanc, pommes de terre",
-      "Jus de fruits, miel, dattes",
-      "Ail, citron, légumes et crudités",
-      "Viandes grasses, fromages, charcuteries"
-    ],
-    bonne: 2,
-    explication: "Ail (allicine → effet hypoglycémiant), Citron (index glycémique bas, acidifiant bénéfique), Légumes et crudités (fibres → ralentissent l'absorption du glucose, index glycémique bas). Ces aliments stabilisent la glycémie.",
-    piege: "Pain blanc, riz blanc, pommes de terre = IG élevé = à éviter. Jus de fruits = sucres rapides. Viandes grasses = risque cardiovasculaire.",
-    mnemo: "Diabète = AIL + CITRON + LÉGUMES = la salade du diabétique modèle. Pas de sucres rapides.",
-    tags: ["nutrition", "diabète", "alimentation"]
+    categorie: "Examen blanc",
+    sujet: "Aliments sont à favoriser en cas de diabète",
+    question: "Quels aliments sont à favoriser en cas de diabète ?",
+    options: ["L'ail", "Le citron", "Les fruits secs", "Le seigle", "Légumes et crudités", "Le pain blanc"],
+  bonnes: [0, 1, 4],
+    explication: "Bonnes réponses : L'ail · Le citron · Légumes et crudités.",
+    tags: ["examen"]
   },
   {
     id: 64, jour: 7,
-    categorie: "Physiologie digestive",
-    sujet: "Causes de dysfonctionnement digestif",
-    question: "Quelles sont les principales causes de dysfonctionnement digestif ?",
-    options: [
-      "Trop de fruits et légumes, excès d'eau",
-      "Antibiotiques, manque de mastication, café au lait",
-      "Excès de fibres, trop de probiotiques",
-      "Carence en vitamine D et excès de magnésium"
-    ],
-    bonne: 1,
-    explication: "Trois causes majeures : Antibiotiques (détruisent le microbiote), Manque de mastication (charge excessive pour l'estomac et les enzymes), Café au lait (l'acidité du café coagule les protéines du lait → bolus indigeste).",
-    piege: "L'association café + lait est un piège alimentaire souvent ignoré. Le café précipite les caséines du lait, formant un coagulum difficile à digérer.",
-    mnemo: "3 ennemis de la digestion : ANTIBIO (détruit microbiote) + PAS MASTIQUER + CAFÉ AU LAIT (coagule).",
-    tags: ["digestion", "physiologie", "microbiote"]
+    categorie: "Examen blanc",
+    sujet: "Peuvent être les causes d'un dysfonctionnement…",
+    question: "Quelles peuvent être les causes d'un dysfonctionnement digestif ?",
+    options: ["Les antibiotiques", "Les probiotiques", "Manger lentement", "Le manque de mastication", "Le café au lait"],
+  bonnes: [0, 3, 4],
+    explication: "Bonnes réponses : Les antibiotiques · Le manque de mastication · Le café au lait.",
+    tags: ["examen"]
   },
   {
     id: 65, jour: 7,
-    categorie: "Nutrition",
-    sujet: "Aliments générateurs de gaz",
-    question: "Quels aliments sont connus pour produire des gaz intestinaux ?",
-    options: [
-      "Riz, carottes, betteraves",
-      "Poulet, poisson, oeufs",
-      "Tomate, choux, melon",
-      "Huile d'olive, noix, amandes"
-    ],
-    bonne: 2,
-    explication: "Tomate (acides organiques + fermentation), Choux (glucosinolates fermentescibles, soufre), Melon (sucres fermentescibles rapidement, surtout si mal combiné) sont les trois aliments identifiés dans ce cours comme générateurs de gaz.",
-    piege: "Les graisses ne génèrent pas de gaz (elles ne fermentent pas). Riz et carottes sont bien tolérés. Choux et légumes crucifères sont les plus connus pour les flatulences.",
-    mnemo: "ToCheMe = TOmate + CHOux + MElon = trio gazeux. ToCheMe fait TOC-TOC dans le ventre.",
-    tags: ["nutrition", "digestion", "ballonnements"]
+    categorie: "Examen blanc",
+    sujet: "Aliments favorisent les gaz intestinaux",
+    question: "Quels aliments favorisent les gaz intestinaux ?",
+    options: ["La tomate", "Le fenouil", "Les choux", "L'ananas", "La carotte", "Le melon"],
+  bonnes: [0, 2, 5],
+    explication: "Bonnes réponses : La tomate · Les choux · Le melon.",
+    tags: ["examen"]
   },
   {
     id: 66, jour: 7,
-    categorie: "Nutrition / Combinaisons alimentaires",
-    sujet: "Aliments à consommer seuls",
-    question: "Quels aliments doivent être consommés seuls ou 4h après un repas ?",
-    options: [
-      "Pain complet, riz brun, pâtes intégrales",
-      "Beurre, fromage, crème fraîche",
-      "Yaourt, melon, miel",
-      "Viandes blanches, poisson, légumineuses"
-    ],
-    bonne: 2,
-    explication: "Yaourt (fermentation lente, perturbe les autres digestions), Melon (fructose qui fermente vite, idéal seul), Miel (sucres simples très fermentescibles) → ces trois aliments sont à consommer à distance des repas (4h après) pour ne pas perturber la digestion globale.",
-    piege: "Ces aliments ne sont pas 'dangereux' en soi, mais leur fermentation rapide perturbe la digestion des autres aliments si consommés ensemble.",
-    mnemo: "YAOURT + MELON + MIEL = les 3 solitaires. Ils préfèrent être seuls. 4h après le repas ou rien.",
-    tags: ["nutrition", "combinaisons", "digestion"]
+    categorie: "Examen blanc",
+    sujet: "Manger certains aliments seuls, au moins 4 h…",
+    question: "Il est conseillé de manger certains aliments seuls, au moins 4 h après le repas, lesquels ?",
+    options: ["La carotte", "Le yaourt", "Le melon", "Le miel", "La papaye"],
+  bonnes: [1, 2, 3],
+    explication: "Bonnes réponses : Le yaourt · Le melon · Le miel.",
+    tags: ["examen"]
   },
   {
     id: 67, jour: 7,
-    categorie: "Nutrition / Hygiène alimentaire",
-    sujet: "Erreurs alimentaires à éviter",
-    question: "Quelles habitudes alimentaires sont des erreurs à ne pas commettre ?",
-    options: [
-      "Boire de l'eau pendant les repas et manger des légumes",
-      "Melon en entrée, jus d'orange au petit-déjeuner, dessert à chaque repas",
-      "Manger des protéines le midi et des glucides le soir",
-      "Consommer des oméga 3 régulièrement et éviter le sucre raffiné"
-    ],
-    bonne: 1,
-    explication: "Trois erreurs classiques : 1) Melon en entrée (doit être consommé seul → fermentation en début de repas gêne la suite). 2) Jus d'orange au petit-dej (acidité + sucres rapides à jeun = pic glycémique + irritation gastrique). 3) Dessert systématique (sucres après protéines/graisses = fermentation).",
-    piege: "Ces habitudes semblent 'saines' ou 'normales' culturellement. Mais en hygiène alimentaire naturopathe, ce sont des erreurs.",
-    mnemo: "3 ERREURS : MELON pas en entrée + JUS d'orange PAS le matin + DESSERT pas systématique.",
-    tags: ["nutrition", "hygiène alimentaire", "erreurs"]
+    categorie: "Examen blanc",
+    sujet: "La liste ci-dessous quelles sont les erreurs à ne…",
+    question: "Parmi la liste ci-dessous quelles sont les erreurs à ne pas faire ?",
+    options: ["Crudités en début de repas", "Epices à chaque accompagnement", "Melon en entrée", "1 jus d'orange au petit déjeuner", "2-3 fruits crus par jour", "Dessert à chaque repas"],
+  bonnes: [2, 3, 5],
+    explication: "Bonnes réponses : Melon en entrée · 1 jus d'orange au petit déjeuner · Dessert à chaque repas.",
+    tags: ["examen"]
   },
   {
     id: 68, jour: 7,
-    categorie: "Physiologie / Sport",
-    sujet: "Ischémie-reperfusion",
-    question: "L'ischémie-reperfusion est associée à quel type de trouble selon ce cours ?",
-    options: [
-      "Un trouble cardiovasculaire",
-      "Un trouble neurologique",
-      "Un trouble digestif",
-      "Un trouble musculaire"
-    ],
-    bonne: 2,
-    explication: "Dans CE COURS, l'ischémie-reperfusion est associée à un trouble digestif. Note : médicalement, l'ischémie-reperfusion est un mécanisme général (cardiovasculaire, rénale, cérébrale...) mais le contexte du cours la place dans le cadre digestif/sportif.",
-    piege: "Cette réponse est spécifique au cours. Dans la littérature médicale générale, l'ischémie-reperfusion est un phénomène multi-systémique. Pour l'examen, retenir : trouble digestif.",
-    mnemo: "Pour CE COURS : ischémie-reperfusion = trouble DIGESTIF. Mémoriser la réponse du cours, pas la définition médicale générale.",
-    tags: ["physiologie", "sport", "correction"]
+    categorie: "Examen blanc",
+    sujet: "Phénomène d'ischémie-reperfusion",
+    question: "Qu'est ce que le phénomène d'ischémie-reperfusion ?",
+    options: ["une forme de rhumatisme", "un trouble du système nerveux", "un trouble digestif", "une infection urinaire"],
+  bonne: 2,
+    explication: "Bonne réponse : un trouble digestif.",
+    tags: ["examen"]
   },
   {
     id: 69, jour: 7,
-    categorie: "Micronutrition / Sport",
-    sujet: "Récupération après compétition",
-    question: "Pour une bonne récupération après une compétition sportive, il faut apporter :",
-    options: [
-      "Uniquement des protéines en grande quantité",
-      "Uniquement de l'eau et des électrolytes",
-      "Zinc + vitamines B6/B1, magnésium + fer, protéines + glucides",
-      "Antioxydants uniquement (C, E, sélénium)"
-    ],
-    bonne: 2,
-    explication: "Récupération complète en 3 axes : 1) Zinc + B6/B1 (réparation enzymatique). 2) Magnésium + fer (reconstitution minérale et oxygénation). 3) Protéines + glucides (reconstruction musculaire et reconstitution des réserves glycogéniques).",
-    piege: "La récupération sportive est multifactorielle. Protéines seules ou eau seule = insuffisant. Il faut les 3 axes ensemble.",
-    mnemo: "RÉCUP = Zinc+B / Mg+Fer / Protéines+Glucides = 3 paires de champions. Comme 3 podiums à remonter.",
-    tags: ["sport", "micronutrition", "récupération"]
+    categorie: "Examen blanc",
+    sujet: "Après une compétition, le sportif a besoin de…",
+    question: "Après une compétition, le sportif a besoin de nutriments pour la récupération des tissus et la restauration de l'équilibre physiologique lesquels ?",
+    options: ["les glucides et lipides", "Zinc et vitamine B6, B1", "Manganèse et cobalt", "Vitamine E et A", "Magnésium et fer", "les protéines et glucides"],
+  bonnes: [1, 4, 5],
+    explication: "Bonnes réponses : Zinc et vitamine B6, B1 · Magnésium et fer · les protéines et glucides.",
+    tags: ["examen"]
   },
   {
     id: 70, jour: 7,
-    categorie: "Micronutrition",
-    sujet: "Rôles de la L-Glutamine",
-    question: "Quels sont les rôles de la L-Glutamine ?",
-    options: [
-      "Précurseur de la sérotonine, améliore le sommeil",
-      "Renouvellement de la muqueuse intestinale, synthèse du glutathion intestinal, activation de la synthèse protéique",
-      "Stimulant cardio-vasculaire et vasodilatateur",
-      "Précurseur de la dopamine, améliore la motivation"
-    ],
-    bonne: 1,
-    explication: "La L-Glutamine est le carburant préféré des entérocytes (cellules de l'intestin). Ses 3 rôles clés : 1) Renouvellement rapide de la muqueuse intestinale. 2) Synthèse du glutathion intestinal (antioxydant majeur). 3) Activation de la synthèse protéique générale.",
-    piege: "Glutamine ≠ sérotonine (tryptophane). Glutamine ≠ dopamine (tyrosine/Mucuna). Glutamine = intestin + protéines + glutathion.",
-    mnemo: "GLUTAMINE = Glu-AMINE des intestins. G = Gut (intestin) + Glutathion + Growth (synthèse protéique).",
-    tags: ["micronutrition", "digestion", "intestin"]
+    categorie: "Examen blanc",
+    sujet: "Est le rôle de la L-glutamine",
+    question: "Quel est le rôle de la L-glutamine ?",
+    options: ["Permet le renouvellement rapide de la muqueuse", "Elle est très efficace pour traiter les rhumes", "Elle est très importante dans la création de la carnitine", "favorise la synthèse instestinale de glutathion", "Active la synthèse protéique"],
+  bonnes: [0, 3, 4],
+    explication: "Bonnes réponses : Permet le renouvellement rapide de la muqueuse · favorise la synthèse instestinale de glutathion · Active la synthèse protéique.",
+    tags: ["examen"]
   },
   {
     id: 71, jour: 8,
-    categorie: "Phytothérapie / Neurotransmetteurs",
-    sujet: "Plante source de L-DOPA",
-    question: "Quelle plante est une source naturelle de L-Dopa ?",
-    options: [
-      "Griffonia simplicifolia",
-      "Millepertuis (Hypericum perforatum)",
-      "Mucuna pruriens",
-      "Valériane officinale"
-    ],
-    bonne: 2,
-    explication: "Mucuna pruriens (Pois mascate, Pois à gratter) est la plante riche en L-Dopa (précurseur de la dopamine). Griffonia = 5-HTP (précurseur sérotonine). Millepertuis = inhibiteur recapture sérotonine. Ces associations sont fondamentales.",
-    piege: "TABLEAU CLÉS : Mucuna = DOPA/Dopamine. Griffonia = 5-HTP/Sérotonine. Millepertuis = inhibiteur recapture sérotonine. Ne jamais les mélanger.",
-    mnemo: "MUCUNA = MOTIVATION = Dopamine. Griffonia = GAITÉ = Sérotonine. Millepertuis = MOrale = sérotonine aussi.",
-    tags: ["phytothérapie", "neurotransmetteurs", "dopamine", "important"],
-    important: true
+    categorie: "Examen blanc",
+    sujet: "Plantes contient naturellement de la DOPA…",
+    question: "Quelles plantes contient naturellement de la DOPA précurseur de la dopamine ?",
+    options: ["Le Griffonia", "La Maca", "l'eleuthérocoque", "La mucuna pruriens"],
+  bonne: 3,
+    explication: "Bonne réponse : La mucuna pruriens.",
+    tags: ["examen"]
   },
   {
     id: 72, jour: 8,
-    categorie: "Phytothérapie / Neurotransmetteurs",
-    sujet: "Plantes pour la carence en sérotonine",
-    question: "Quelles plantes sont indiquées en cas de carence en sérotonine ?",
-    options: [
-      "Mucuna pruriens et valériane",
-      "Griffonia et millepertuis",
-      "Ginseng et rhodiola",
-      "Maca et ashwagandha"
-    ],
-    bonne: 1,
-    explication: "Griffonia simplicifolia (graines riches en 5-HTP, précurseur direct de la sérotonine) et Millepertuis (Hypericum : hyperforine inhibe la recapture de sérotonine, dopamine et noradrénaline). Les deux agissent sur la voie sérotoninergique.",
-    piege: "PIÈGE MAJEUR : Mucuna = DOPAMINE (pas sérotonine). Pour la sérotonine : Griffonia + Millepertuis.",
-    mnemo: "GRIFFONIA + MILLEPERTUIS = le duo du SOURIRE (sérotonine = hormone du bonheur). GriFFonia = 5HtP → sérotonine.",
-    tags: ["phytothérapie", "neurotransmetteurs", "sérotonine", "important"],
-    important: true
+    categorie: "Examen blanc",
+    sujet: "Proposer comme plantes en cas de carence en…",
+    question: "Que peut-on proposer comme plantes en cas de carence en Sérotonine ?",
+    options: ["Aubépine", "Eleuthérocoque", "chicorée", "Griffonia", "Millepertuis"],
+  bonnes: [3, 4],
+    explication: "Bonnes réponses : Griffonia · Millepertuis.",
+    tags: ["examen"]
   },
   {
     id: 73, jour: 8,
-    categorie: "Nutrition / Microbiote",
-    sujet: "Aliments prébiotiques",
-    question: "Quels aliments sont de bonnes sources de prébiotiques ?",
-    options: [
-      "Yaourt, kéfir, choucroute (probiotiques vivants)",
-      "Artichaut, oignon, lait maternel, chicorée",
-      "Viande rouge, oeufs, poisson",
-      "Pain blanc, riz blanc, pâtes blanches"
-    ],
-    bonne: 1,
-    explication: "Les prébiotiques sont des fibres non digestibles (FOS, inuline, GOS) qui nourrissent les bactéries bénéfiques. Riches en prébiotiques : Artichaut (inuline), Oignon (FOS), Chicorée (inuline), Lait maternel (GOS/HMO = Human Milk Oligosaccharides).",
-    piege: "NE PAS CONFONDRE : Prébiotiques (fibres = substrats) ≠ Probiotiques (bactéries vivantes = yaourt, kéfir). Ce sont des concepts OPPOSÉS mais complémentaires.",
-    mnemo: "PRÉbiotiques = avant les bactéries = nourriture POUR les bactéries. PRObiotiques = bactéries elles-mêmes. PRÉ = l'herbe, PRO = les vaches qui mangent l'herbe.",
-    tags: ["microbiote", "prébiotiques", "nutrition"],
-    important: true
+    categorie: "Examen blanc",
+    sujet: "Dans quels aliments peut-on trouver des prébiotiques",
+    question: "Dans quels aliments peut-on trouver des prébiotiques ?",
+    options: ["Artichaut", "oignon", "viande", "lait maternel", "Chicorée", "œuf"],
+  bonnes: [0, 1, 3, 4],
+    explication: "Bonnes réponses : Artichaut · oignon · lait maternel · Chicorée.",
+    tags: ["examen"]
   },
   {
     id: 74, jour: 8,
-    categorie: "Nutrition / Anthropométrie",
-    sujet: "Classification de l'IMC",
-    question: "Un IMC compris entre 25 et 30 correspond à :",
-    options: [
-      "Un poids normal",
-      "Un surpoids",
-      "Une obésité modérée",
-      "Une obésité morbide"
-    ],
-    bonne: 1,
-    explication: "Classification OMS de l'IMC : <18,5 = insuffisance pondérale. 18,5-24,9 = poids normal. 25-29,9 = SURPOIDS. 30-34,9 = obésité grade 1. 35-39,9 = obésité grade 2. ≥40 = obésité massive.",
-    piege: "IMC 25-30 = SURPOIDS (pas obésité). L'obésité commence à 30. Mémoriser les seuils 25 et 30.",
-    mnemo: "25-30 = SURPOIDS = sur-25. L'obésité c'est sur-30. 30 = le seuil de l'obésité.",
-    tags: ["nutrition", "anthropométrie", "chiffres"]
+    categorie: "Examen blanc",
+    sujet: "L'IMC entre 25 et 30 est considéré comme",
+    question: "L'IMC entre 25 et 30 est considéré comme :",
+    options: ["Obésité modérée", "Maigreur", "Normal", "Surpoids"],
+  bonne: 3,
+    explication: "Bonne réponse : Surpoids.",
+    tags: ["examen"]
   },
   {
     id: 75, jour: 8,
-    categorie: "Régimes",
-    sujet: "Régime Atkins",
-    question: "Le régime Atkins préconise :",
-    options: [
-      "Favoriser les glucides complexes et limiter les graisses",
-      "Favoriser les protéines, supprimer les féculents, autoriser les corps gras",
-      "Régime végétalien sans produits animaux",
-      "Jeûne intermittent 16/8 heures"
-    ],
-    bonne: 1,
-    explication: "Le régime Atkins est un régime CÉTOGÈNE/LOW-CARB : Favorise les protéines (viandes, poissons, oeufs), supprime les féculents/glucides, et autorise les graisses (beurre, huiles, avocats). But : déclencher la cétose pour brûler les graisses.",
-    piege: "Atkins ≠ régime hypocalorique classique. Atkins autorise les graisses (contrairement aux régimes classiques) mais supprime les glucides.",
-    mnemo: "ATKINS = AS many proteins and fats you want, KILL the carbs. Protéines + graisses = OUI. Féculents = NON.",
-    tags: ["régimes", "Atkins", "cétogène"]
+    categorie: "Examen blanc",
+    sujet: "Est la particularité du régime Atkins",
+    question: "Quel est la particularité du régime Atkins ?",
+    options: ["Favoriser les féculents", "Favoriser les protéines", "Supprimer les protéines", "Supprimer les féculents", "Autoriser les corps gras", "Supprimer les corps gras"],
+  bonnes: [1, 3, 4],
+    explication: "Bonnes réponses : Favoriser les protéines · Supprimer les féculents · Autoriser les corps gras.",
+    tags: ["examen"]
   },
   {
     id: 76, jour: 8,
-    categorie: "Micronutrition / Sport",
-    sujet: "Récupération sportive (mécanismes biochimiques)",
-    question: "Concernant la récupération sportive, quelles affirmations sont correctes ?",
-    options: [
-      "Il faut éviter le sel après une compétition ; la B1 dégrade les protéines",
-      "Saler après la compétition reconstitue le capital hydrique ; B1 recycle l'acide lactique ; B6 élimine les protéines endommagées",
-      "Le magnésium est contre-indiqué après l'effort",
-      "Les glucides sont à éviter pour ne pas regonfler les adipocytes"
-    ],
-    bonne: 1,
-    explication: "Trois mécanismes : 1) Sel (sodium) après compétition = compense les pertes sodées par la sueur, reconstitue le capital hydrique. 2) B1 (thiamine) = co-enzyme du cycle de l'acide lactique (pyruvate déshydrogénase). 3) B6 (pyridoxine) = co-enzyme du métabolisme des acides aminés, élimine les protéines musculaires dégradées.",
-    piege: "Le SEL après l'effort est BÉNÉFIQUE (à l'inverse du régime pauvre en sel conseillé en cas d'hypertension). La B1 agit sur le LACTATE (pas sur les protéines). La B6 agit sur les PROTÉINES endommagées.",
-    mnemo: "SEL = hydratation. B1 = lactate. B6 = protéines. Sel-B1-B6 = le trio de récupération.",
-    tags: ["sport", "micronutrition", "récupération"]
+    categorie: "Examen blanc",
+    sujet: "Affirmations sont vraies pour la récupération du…",
+    question: "Quelles affirmations sont vraies pour la récupération du sportif",
+    options: ["Il ne faut pas donner de glucides au moment de la récupération", "Les protéines de récupérations doivent être administrées 8h après la compétition", "Il ne faut pas donner de boissons contenant du sodium après l'effort", "Saler les aliments des repas après la compétition permet de reconstituer son capital hydrique", "La vitamine B1 permet le recyclage de l'acide lactique", "La vitamine B6 contribue à l'élimination des protéines endommagées"],
+  bonnes: [3, 4, 5],
+    explication: "Bonnes réponses : Saler les aliments des repas après la compétition permet de reconstituer son capital hydrique · La vitamine B1 permet le recyclage de l'acide lactique · La vitamine B6 contribue à l'élimination des protéines endommagées.",
+    tags: ["examen"]
   },
   {
     id: 77, jour: 8,
-    categorie: "Micronutrition",
-    sujet: "Compulsions sucrées",
-    question: "Quels micronutriments aident à réduire les compulsions sucrées ?",
-    options: [
-      "Vitamine A, D, E, K",
-      "Zinc, cuivre, iode, sélénium",
-      "Lithium, vitamine C, chrome, magnésium",
-      "Sodium, potassium, chlore, phosphore"
-    ],
-    bonne: 2,
-    explication: "Quatre micronutriments contre les compulsions sucrées : Chrome (améliore la sensibilité à l'insuline, régule la glycémie), Magnésium (stabilise la glycémie, réduit le stress/envies), Vitamine C (co-enzyme, anti-stress), Lithium (équilibre émotionnel, souvent impliqué dans les compulsions).",
-    piege: "Ce sont 4 éléments très spécifiques à retenir ensemble. Le chrome est le plus important pour la glycémie.",
-    mnemo: "Li-C-Cr-Mg = LiCCrMg = LICK (lécher) du sucre = à éviter grâce à ces 4 micronutriments. Lithium, C, Chrome, Magnésium.",
-    tags: ["micronutrition", "glycémie", "comportement alimentaire"]
+    categorie: "Examen blanc",
+    sujet: "La gestion des compulsions sucrées",
+    question: "Que peut-on proposer pour la gestion des compulsions sucrées ?",
+    options: ["Le lithium", "La vitamine C", "Le cobalt", "Le chrome", "Le magnésium"],
+  bonnes: [0, 1, 3, 4],
+    explication: "Bonnes réponses : Le lithium · La vitamine C · Le chrome · Le magnésium.",
+    tags: ["examen"]
   },
   {
     id: 78, jour: 8,
-    categorie: "Biochimie",
-    sujet: "Acide aminé le plus abondant",
-    question: "Quel est l'acide aminé libre le plus abondant dans l'organisme ?",
-    options: [
-      "Tryptophane",
-      "Méthionine",
-      "Leucine",
-      "Glutamine"
-    ],
-    bonne: 3,
-    explication: "La GLUTAMINE est l'acide aminé libre le plus abondant dans le plasma et les muscles squelettiques (représente 60% du pool d'acides aminés musculaires). Elle est conditionnellement essentielle (indispensable en situations de stress, maladie, effort intense).",
-    piege: "Le tryptophane est l'acide aminé le plus RARE (et précurseur de la sérotonine). La glutamine est le plus ABONDANT.",
-    mnemo: "GLUTAMINE = GLUtonné d'acides aminés = le plus abondant. Glut = glucose, comme si le corps en faisait le plein.",
-    tags: ["biochimie", "acides aminés"]
+    categorie: "Examen blanc",
+    sujet: "Est l'acide aminé le plus abondant dans l'organisme",
+    question: "Quel est l'acide aminé le plus abondant dans l'organisme ?",
+    options: ["La Tyrosine", "La glutamine", "La Méthionine", "La Lysine"],
+  bonne: 1,
+    explication: "Bonne réponse : La glutamine.",
+    tags: ["examen"]
   },
   {
     id: 79, jour: 8,
-    categorie: "Microbiote",
+    categorie: "Examen blanc",
     sujet: "Rôles des prébiotiques",
-    question: "Quels sont les rôles des prébiotiques ?",
-    options: [
-      "Ils introduisent des bactéries vivantes dans l'intestin",
-      "Ils diminuent les lipides sanguins, augmentent l'absorption des minéraux dans le côlon, luttent contre la constipation",
-      "Ils détruisent les bactéries pathogènes",
-      "Ils remplacent les probiotiques en cas d'intolérance"
-    ],
-    bonne: 1,
-    explication: "Les prébiotiques (fibres fermentescibles) ont 3 rôles métaboliques : 1) Diminuent les lipides sanguins (les bactéries les fermentent → AGCC → modifient le métabolisme hépatique). 2) Augmentent l'absorption des minéraux dans le côlon (calcium, magnésium via acidification locale). 3) Luttent contre la constipation (fermentation → augmentation du bol fécal).",
-    piege: "Prébiotiques ≠ probiotiques. Les prébiotiques ne sont pas des bactéries vivantes, ce sont des fibres qui NOURRISSENT les bactéries existantes.",
-    mnemo: "3 rôles PRÉbiotiques : Lipides BAS + Minéraux ABSORBÉS + Constipation COMBATTU.",
-    tags: ["microbiote", "prébiotiques", "rôles"]
+    question: "Rôles des prébiotiques ?",
+    options: ["Diminuent le taux de lipides sanguins", "Augmentent l'absorption des minéraux dans le côlon", "Diminuent l'absorption des minéraux dans le côlon", "Augmentent le taux de lipides sanguins", "Lutte contre la constipation"],
+  bonnes: [0, 1, 4],
+    explication: "Bonnes réponses : Diminuent le taux de lipides sanguins · Augmentent l'absorption des minéraux dans le côlon · Lutte contre la constipation.",
+    tags: ["examen"]
   },
   {
     id: 80, jour: 8,
-    categorie: "Pathologies",
-    sujet: "Candidose",
-    question: "La candidose est :",
-    options: [
-      "Une infection bactérienne causée par Candida",
-      "Une infection virale respiratoire",
-      "Une infection fongique (champignon/levure : Candida albicans)",
-      "Une infection parasitaire intestinale"
-    ],
-    bonne: 2,
-    explication: "Candida albicans est un CHAMPIGNON / LEVURE (fungi). La candidose est donc une mycose (infection fongique). Elle touche muqueuses buccales, intestinales, vaginales. Terrain à risque : prise d'antibiotiques, immunodépression, alimentation riche en sucres.",
-    piege: "Piège fréquent : confondre Candida avec une bactérie car souvent traité avec des antifongiques ressemblant à des antibiotiques. Candida = champignon ≠ bactérie.",
-    mnemo: "CANDIDA = CANDIDE comme un champignon blanc innocent. Champignon = FONGIQUE. Candidose = MYCOse.",
-    tags: ["pathologies", "mycologie", "microbiote"]
-  },
-
-  // ═══ Questions complémentaires (fondamentaux naturopathie) ═══
-  {
-    id: 81, jour: 1,
-    categorie: "Concepts fondamentaux",
-    sujet: "Les émonctoires",
-    question: "Parmi ces organes, lesquels sont des émonctoires (portes de sortie des déchets) ?",
-    options: ["Le foie", "Les reins", "La peau", "L'estomac"],
-    bonnes: [0, 1, 2],
-    explication: "Les 5 émonctoires de la naturopathie sont : foie, reins, intestins, poumons et peau. Ils éliminent les déchets de l'organisme. L'estomac est un organe de DIGESTION, pas d'élimination.",
-    piege: "L'estomac digère mais n'élimine pas : ce n'est pas un émonctoire. Ne pas le confondre avec les intestins.",
-    mnemo: "FRIPP : Foie, Reins, Intestins, Poumons, Peau = les 5 émonctoires.",
-    tags: ["émonctoires", "fondamentaux", "drainage"], important: true
-  },
-  {
-    id: 82, jour: 1,
-    categorie: "Concepts fondamentaux",
-    sujet: "Les 3 cures de Marchesseau",
-    question: "Quel est l'ordre logique des trois cures naturopathiques ?",
-    options: [
-      "Désintoxication → Revitalisation → Stabilisation",
-      "Revitalisation → Désintoxication → Stabilisation",
-      "Stabilisation → Revitalisation → Désintoxication",
-      "Revitalisation → Stabilisation → Désintoxication"
-    ],
-    bonne: 0,
-    explication: "P.V. Marchesseau décrit 3 cures : 1) la cure de DÉSINTOXICATION (drainage des émonctoires), 2) la REVITALISATION (recharge en nutriments), 3) la STABILISATION (équilibre durable). On nettoie avant de recharger.",
-    piege: "On draine AVANT de revitaliser : inutile de recharger un organisme encore encrassé.",
-    mnemo: "DRS : on Détoxifie, on Recharge, on Stabilise.",
-    tags: ["cures", "fondamentaux", "vitalisme"]
-  },
-  {
-    id: 83, jour: 3,
-    categorie: "Naturopathie / Typologies",
-    sujet: "Tempéraments hippocratiques",
-    question: "Quels tempéraments font partie de la classification hippocratique des 4 humeurs ?",
-    options: ["Sanguin", "Lymphatique", "Bilieux", "Électrique"],
-    bonnes: [0, 1, 2],
-    explication: "Les 4 tempéraments d'Hippocrate reposent sur 4 humeurs : sanguin (sang), lymphatique/flegmatique (lymphe), bilieux/colérique (bile jaune) et nerveux/mélancolique (bile noire). « Électrique » n'existe pas dans cette classification.",
-    piege: "Le 4e tempérament est le NERVEUX (mélancolique), pas « électrique ».",
-    mnemo: "Sang, Lymphe, Bile, Nerfs = les 4 tempéraments.",
-    tags: ["typologies", "tempéraments", "terrain"]
-  },
-  {
-    id: 84, jour: 1,
-    categorie: "Concepts fondamentaux",
-    sujet: "Hydrothérapie",
-    question: "Que provoque l'application de froid (cryothérapie locale) sur la peau ?",
-    options: [
-      "Une vasoconstriction puis une vasodilatation réactionnelle",
-      "Une vasodilatation immédiate et durable",
-      "Aucun effet circulatoire",
-      "Une baisse définitive de la circulation locale"
-    ],
-    bonne: 0,
-    explication: "Le froid provoque d'abord une VASOCONSTRICTION (les vaisseaux se resserrent), suivie d'une VASODILATATION réactionnelle (afflux de sang) une fois le froid retiré. C'est le principe tonifiant des douches froides et du jet écossais.",
-    piege: "Le froid ne « ferme » pas durablement : la réaction du corps est un afflux de sang (effet tonifiant).",
-    mnemo: "Froid = le corps RÉAGIT en envoyant du sang → effet vivifiant.",
-    tags: ["hydrologie", "techniques", "circulation"]
+    categorie: "Examen blanc",
+    sujet: "Une candidose est principalement",
+    question: "Une candidose est principalement ?",
+    options: ["Une infection fongique", "Un problème dermatologique", "Une inflammation du côlon", "Une maladie auto-immune", "Ce contenu n'est ni rédigé, ni cautionné par Google. - Contacter le propriétaire du formulaire - Conditions", "d'utilisation - Règles de confidentialité", "Ce formulaire vous semble suspect ? Signaler", "Forms"],
+  bonne: 0,
+    explication: "Bonne réponse : Une infection fongique.",
+    tags: ["examen"]
   }
 ];
 

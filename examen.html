@@ -487,7 +487,7 @@ function startExam() {
 
   // Build shuffled option orders
   examQueue.forEach(q => {
-    const idxs = [0, 1, 2, 3].slice(0, q.options.length);
+    const idxs = q.options.map((_, i) => i);
     shuffledOptionsMap[q.id] = shuffleOptions ? shuffle(idxs) : idxs;
   });
 
@@ -579,8 +579,8 @@ function renderExamQ() {
 
   const optGrid = document.getElementById('exam-options');
   optGrid.innerHTML = '';
-  const letters = ['A', 'B', 'C', 'D'];
-  const order = shuffledOptionsMap[q.id] || [0,1,2,3];
+  const letters = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H'];
+  const order = shuffledOptionsMap[q.id] || q.options.map((_, i) => i);
   const sel = examAnswers[q.id];
   const selArr = Array.isArray(sel) ? sel : (sel == null ? [] : [sel]);
 
