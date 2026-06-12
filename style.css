@@ -606,11 +606,15 @@ select:focus, input:focus, textarea:focus {
 @media (max-width: 768px) {
   :root { --nav-h: 58px; }
 
-  .topnav { padding: 0 16px; gap: 10px; }
+  .topnav { padding: 0 12px; gap: 6px; flex-wrap: nowrap; overflow: hidden; }
   .topnav__nav { display: none; }      /* remplacé par la barre inférieure */
-  .topnav__logo-text { font-size: 18px; }
+  .topnav__logo { margin-right: auto; min-width: 0; gap: 8px; }  /* pousse les boutons à droite + évite le débordement */
+  .topnav__logo-icon { width: 34px; height: 34px; border-radius: 11px; }
+  .topnav__logo-text { font-size: 17px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
   .topnav__logo-sub { display: none; }
   .topnav__score { display: none; }
+  .nav-lock { width: 34px; height: 34px; margin-left: 4px; }
+  .nav-lock .app-icon { width: 17px; height: 17px; }
 
   /* espace pour la barre inférieure (+ safe-area iPhone) */
   body { padding-bottom: calc(var(--bottomnav-h) + env(safe-area-inset-bottom)); }
