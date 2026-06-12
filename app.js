@@ -1440,6 +1440,104 @@ const QUESTIONS = [
     piege: "Le froid ne « ferme » pas durablement : la réaction du corps est un afflux de sang (effet tonifiant).",
     mnemo: "Froid = le corps RÉAGIT en envoyant du sang → effet vivifiant.",
     tags: ["hydrologie", "techniques", "circulation"]
+  },
+
+  // ═══ Questions à réponses multiples (cocher TOUTES les bonnes) ═══
+  {
+    id: 85, jour: 5,
+    categorie: "Nutrition / Micronutrition",
+    sujet: "Vitamines liposolubles",
+    question: "Parmi ces vitamines, lesquelles sont liposolubles (stockées dans les graisses) ?",
+    options: ["Vitamine A", "Vitamine D", "Vitamine K", "Vitamine C"],
+    bonnes: [0, 1, 2],
+    explication: "Les vitamines liposolubles sont A, D, E et K : elles se stockent dans les tissus gras. La vitamine C est hydrosoluble : non stockée, elle doit être apportée régulièrement.",
+    piege: "La vitamine C est hydrosoluble, pas liposoluble — elle s'élimine dans les urines.",
+    mnemo: "Liposolubles = ADEK.",
+    tags: ["nutrition", "vitamines", "micronutrition"], important: true
+  },
+  {
+    id: 86, jour: 5,
+    categorie: "Nutrition / Lipides",
+    sujet: "Oméga-3 d'origine végétale",
+    question: "Quelles sont des sources végétales d'oméga-3 (acide alpha-linolénique) ?",
+    options: ["Huile de lin", "Noix", "Graines de chia", "Huile de tournesol"],
+    bonnes: [0, 1, 2],
+    explication: "L'huile de lin, les noix et les graines de chia sont riches en oméga-3 végétaux (ALA). L'huile de tournesol est surtout riche en oméga-6.",
+    piege: "L'huile de tournesol est une source d'oméga-6, pas d'oméga-3.",
+    mnemo: "Lin, Chia, Noix = oméga-3 végétaux.",
+    tags: ["nutrition", "lipides", "oméga"]
+  },
+  {
+    id: 87, jour: 1,
+    categorie: "Concepts fondamentaux",
+    sujet: "Techniques majeures",
+    question: "Quelles sont les techniques dites « majeures » (de première intention) en naturopathie ?",
+    options: ["L'alimentation (bromatologie)", "L'activité physique", "La gestion du psychisme et des émotions", "La chirurgie"],
+    bonnes: [0, 1, 2],
+    explication: "Les 3 techniques majeures de la naturopathie sont l'alimentation, l'exercice physique et la gestion du psychisme (équilibre nerveux). La chirurgie relève de l'allopathie, pas de la naturopathie.",
+    piege: "La chirurgie n'est pas une technique naturopathique.",
+    mnemo: "Manger, Bouger, Gérer ses émotions = les 3 piliers.",
+    tags: ["fondamentaux", "techniques", "hygiène vitale"], important: true
+  },
+  {
+    id: 88, jour: 2,
+    categorie: "Phytothérapie",
+    sujet: "Plantes adaptogènes",
+    question: "Parmi ces plantes, lesquelles sont des adaptogènes (aident à s'adapter au stress) ?",
+    options: ["Rhodiola", "Ashwagandha", "Ginseng", "Belladone"],
+    bonnes: [0, 1, 2],
+    explication: "Rhodiola, ashwagandha, ginseng (et éleuthérocoque) sont des adaptogènes : ils aident l'organisme à mieux résister au stress. La belladone est une plante TOXIQUE (atropine), pas un adaptogène.",
+    piege: "La belladone est toxique : ce n'est pas un adaptogène.",
+    mnemo: "Rhodiola, Ashwagandha, Ginseng = anti-stress adaptogènes.",
+    tags: ["plantes", "phytothérapie", "stress"]
+  },
+  {
+    id: 89, jour: 5,
+    categorie: "Nutrition / Minéraux",
+    sujet: "Sources de magnésium",
+    question: "Quels aliments sont de bonnes sources de magnésium ?",
+    options: ["Chocolat noir", "Amandes", "Légumes verts à feuilles", "Sucre blanc raffiné"],
+    bonnes: [0, 1, 2],
+    explication: "Le magnésium est présent dans le chocolat noir, les oléagineux (amandes), les légumes verts, les légumineuses et les céréales complètes. Le sucre blanc raffiné n'en apporte pas et augmente même les besoins.",
+    piege: "Le sucre raffiné n'apporte pas de magnésium : il favorise au contraire les pertes.",
+    mnemo: "Chocolat noir, amandes, vert foncé = magnésium.",
+    tags: ["nutrition", "minéraux", "micronutrition"]
+  },
+  {
+    id: 90, jour: 8,
+    categorie: "Système nerveux",
+    sujet: "Activation du parasympathique",
+    question: "Qu'est-ce qui favorise l'activation du parasympathique (mode repos-récupération) ?",
+    options: ["La respiration lente et profonde", "La cohérence cardiaque", "Un temps de détente / repos", "Un stress aigu"],
+    bonnes: [0, 1, 2],
+    explication: "Le parasympathique (« repos-digestion ») est stimulé par la respiration lente, la cohérence cardiaque et la détente. Un stress aigu active au contraire le système SYMPATHIQUE (« combat-fuite »).",
+    piege: "Le stress aigu active le sympathique, pas le parasympathique.",
+    mnemo: "Respirer lentement = frein vagal = parasympathique.",
+    tags: ["neuro", "stress", "équilibre nerveux"], important: true
+  },
+  {
+    id: 91, jour: 6,
+    categorie: "Microbiote",
+    sujet: "Aliments fermentés",
+    question: "Lesquels de ces aliments sont fermentés et sources de probiotiques ?",
+    options: ["Choucroute crue (non pasteurisée)", "Kéfir", "Yaourt", "Pain de mie industriel"],
+    bonnes: [0, 1, 2],
+    explication: "La choucroute crue, le kéfir et le yaourt contiennent des ferments vivants (probiotiques). Le pain de mie industriel n'en apporte pas.",
+    piege: "La choucroute en conserve PASTEURISÉE perd ses ferments : il faut la version crue.",
+    mnemo: "Choucroute crue, kéfir, yaourt = ferments vivants.",
+    tags: ["microbiote", "probiotiques", "nutrition"]
+  },
+  {
+    id: 92, jour: 5,
+    categorie: "Nutrition / Micronutrition",
+    sujet: "Vitamines hydrosolubles",
+    question: "Quelles vitamines sont hydrosolubles (non stockées, à apporter régulièrement) ?",
+    options: ["La vitamine C", "Les vitamines du groupe B", "La vitamine D", "La vitamine E"],
+    bonnes: [0, 1],
+    explication: "La vitamine C et les vitamines du groupe B sont hydrosolubles : non stockées, elles s'éliminent dans les urines. Les vitamines D et E sont liposolubles (stockées dans les graisses).",
+    piege: "D et E sont liposolubles : ne pas les confondre avec C et B.",
+    mnemo: "Hydrosolubles = C et B ; liposolubles = ADEK.",
+    tags: ["nutrition", "vitamines", "micronutrition"]
   }
 ];
 

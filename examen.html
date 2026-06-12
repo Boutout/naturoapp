@@ -258,8 +258,8 @@
     <div class="exam-option selected" data-exam="full">
       <div class="exam-option__icon" data-icon="clipboard"></div>
       <div>
-        <div class="exam-option__title">Examen complet — 80 questions</div>
-        <div class="exam-option__desc">Toutes les questions · 80 minutes · Conditions réelles</div>
+        <div class="exam-option__title">Examen complet — toutes les questions</div>
+        <div class="exam-option__desc">Tout le programme · 80 minutes · Conditions réelles</div>
       </div>
     </div>
     <div class="exam-option" data-exam="half">
@@ -586,7 +586,7 @@ function renderExamQ() {
 
   order.forEach((optIdx, pos) => {
     const btn = document.createElement('button');
-    btn.className = 'option-btn';
+    btn.className = 'option-btn' + (multi ? ' multi' : '');
     btn.dataset.optIdx = optIdx;
     if (selArr.includes(optIdx)) btn.classList.add('selected');
     btn.innerHTML = `<span class="option-letter">${letters[pos]}</span><span>${q.options[optIdx]}</span>`;

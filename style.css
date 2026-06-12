@@ -351,6 +351,9 @@ select:focus, input:focus, textarea:focus {
 .option-btn.wrong .option-letter   { background: var(--c-red);   color: #fff; }
 .option-btn.selected .option-letter { background: var(--c-blue);  color: #fff; }
 
+/* QCM à choix multiples : pastille carrée (case à cocher) ≠ choix unique (rond) */
+.option-btn.multi .option-letter { border-radius: 7px; }
+
 /* ── INDICE « réponses multiples » ───────────────────────────── */
 .qcm-multi-hint {
   display: flex; align-items: center; gap: 7px;

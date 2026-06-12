@@ -584,7 +584,7 @@ function renderQCMQuestion() {
 
   idxs.forEach((optIdx, pos) => {
     const btn = document.createElement('button');
-    btn.className = 'option-btn';
+    btn.className = 'option-btn' + (qcmMulti ? ' multi' : '');
     btn.dataset.idx = optIdx;
     btn.innerHTML = `<span class="option-letter">${letters[pos]}</span><span>${q.options[optIdx]}</span>`;
     if (qcmMulti) btn.addEventListener('click', () => toggleMultiOption(btn, optIdx));
