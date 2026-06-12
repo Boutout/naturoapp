@@ -550,7 +550,7 @@ window.NATURO_CONTENT = {
           question: "Quelle plante « progestérone-like » proposer ?",
           options: ['Alchémille', 'Sauge (œstrogène-like)', 'Valériane', 'Artichaut'],
           bonne: 0,
-          explication: "L'alchémille (et le houblon) sont progestérone-like. La sauge et le trèfle rouge sont au contraire œstrogène-like — à ne pas confondre."
+          explication: "L'alchémille est progestérone-like (comme le gattilier et l'igname/yam). ⚠️ Le houblon, lui, est ŒSTROGÈNE-like (phyto-œstrogène) — comme la sauge et le trèfle rouge — donc contre-indiqué en cas de cancer hormono-dépendant."
         },
         {
           question: "Quel signe serait ATYPIQUE et devrait faire consulter ?",
@@ -559,7 +559,7 @@ window.NATURO_CONTENT = {
           explication: "La ménopause s'accompagne plutôt d'une PRISE de poids. Une perte de poids marquée et inexpliquée est atypique → orienter vers le médecin."
         }
       ],
-      synthese: "Pistes : soutenir la progestérone (alchémille, houblon), magnésium et plantes du stress, hygiène de vie. Tout symptôme atypique (perte de poids, saignements anormaux) impose un avis médical."
+      synthese: "Pistes : soutenir la progestérone (alchémille, gattilier), magnésium et plantes du stress, hygiène de vie. ⚠️ Éviter les plantes œstrogène-like (sauge, trèfle rouge, houblon) en cas de cancer hormono-dépendant. Tout symptôme atypique (perte de poids, saignements anormaux) impose un avis médical."
     },
 
     {
@@ -788,7 +788,7 @@ window.NATURO_CONTENT = {
           question: "Quelle plante du terrain ménopausique (œstrogène-like) ?",
           options: ['Sauge / trèfle rouge', 'Alchémille seule', 'Valériane', 'Échinacée'],
           bonne: 0,
-          explication: "La sauge et le trèfle rouge sont œstrogène-like (utiles sur les bouffées). À distinguer de l'alchémille/houblon qui sont progestérone-like."
+          explication: "La sauge, le trèfle rouge et le houblon sont œstrogène-like (utiles sur les bouffées, mais ⚠️ contre-indiqués si cancer hormono-dépendant). À distinguer de l'alchémille et du gattilier, qui sont progestérone-like."
         }
       ],
       synthese: "Pistes : calcium/D/K2/magnésium, activité physique en charge, sauge/trèfle rouge sur les bouffées, hygiène de vie. Suivi médical de l'os indispensable."
@@ -877,7 +877,7 @@ window.NATURO_CONTENT = {
 
     // ── Niveau 2 : intermédiaire / mécanismes ───────────────────
     { niveau: 2, theme: 'Cures', recto: "Les 3 cures de Marchesseau (dans l'ordre)", verso: "1. Désintoxication (drainage) → 2. Revitalisation (recharge) → 3. Stabilisation. On nettoie avant de recharger." },
-    { niveau: 2, theme: 'Phytothérapie', recto: "Cholagogue vs cholérétique", verso: "Cholérétique = stimule la PRODUCTION de bile par le foie. Cholagogue = favorise son ÉVACUATION de la vésicule." },
+    { niveau: 2, theme: 'Phytothérapie', recto: "Cholagogue vs cholérétique", verso: "Cholérétique = stimule la PRODUCTION de bile par le foie. Cholagogue = favorise son ÉVACUATION de la vésicule. ⚠️ Contre-indiqués en cas de lithiase biliaire (calculs) : risque de mobiliser un calcul et de provoquer une obstruction." },
     { niveau: 2, theme: 'Nutrition', recto: "Oméga 3, 6, 9 ?", verso: "Oméga 9 = mono-insaturé (huile d'olive). Oméga 3 et 6 = poly-insaturés ESSENTIELS. Viser un ratio oméga 6/oméga 3 proche de 4/1." },
     { niveau: 2, theme: 'Système nerveux', recto: "Vagotonie vs sympathicotonie", verso: "Vagotonique = dominance parasympathique (péristaltisme ↑, intuition, cerveau droit). Sympathicotonique = dominance orthosympathique (action, tension)." },
     { niveau: 2, theme: 'Micronutrition', recto: "Vitamine D3 vs D2", verso: "La D3 (cholécalciférol, animale/soleil) est mieux biodisponible que la D2 (végétale). Elle favorise l'absorption du calcium." },
@@ -897,7 +897,7 @@ window.NATURO_CONTENT = {
     { niveau: 3, theme: 'Terrain', recto: "Classification de Marchesseau (4 stades)", verso: "1. Carencé · 2. Intoxiqué · 3. Dystonique · 4. Dysorganique (le plus grave)." },
     { niveau: 3, theme: 'Régimes', recto: "Régime Seignalet (hypotoxique)", verso: "Exclut TOUS les laits animaux et les céréales mutées/glutineuses (blé, seigle, épeautre, orge). Autorise riz, sarrasin, fruits, légumes, viande, poisson." },
     { niveau: 3, theme: 'Biochimie', recto: "Réaction de Maillard", verso: "Réaction sucres + acides aminés sous l'effet de la chaleur → brunissement + AGE (glycotoxines / produits de glycation)." },
-    { niveau: 3, theme: 'Gynécologie', recto: "Plantes progestérone-like vs œstrogène-like", verso: "Progestérone-like : alchémille, houblon. Œstrogène-like : sauge, trèfle rouge." },
+    { niveau: 3, theme: 'Gynécologie', recto: "Plantes progestérone-like vs œstrogène-like", verso: "Progestérone-like : alchémille, gattilier, igname (yam). Œstrogène-like : sauge, trèfle rouge, houblon (⚠️ contre-indiqués si cancer hormono-dépendant)." },
     { niveau: 3, theme: 'Terrain', recto: "Terrain baso-colitique : prise en charge", verso: "Cible l'intestin : plantes digestives (fenouil, basilic, mélisse) + pré/probiotiques pour rééquilibrer le microbiote." },
     { niveau: 3, theme: 'Micronutrition', recto: "Rôles de la L-Glutamine", verso: "Carburant des entérocytes : renouvelle la muqueuse intestinale, synthétise le glutathion intestinal, active la synthèse protéique." },
     { niveau: 3, theme: 'Sport', recto: "Récupération sportive : 3 mécanismes", verso: "Sel (reconstitue le capital hydrique), B1 (recycle l'acide lactique), B6 (élimine les protéines musculaires endommagées)." },
@@ -925,7 +925,7 @@ window.NATURO_CONTENT = {
 
     // ── Niveau 3 (compléments) ──────────────────────────────────
     { niveau: 3, theme: 'Aromathérapie', recto: "Propriétés des cétones", verso: "Cicatrisantes, mucolytiques (stimulent la respiration), anti-hématomes, cholérétiques/cholagogues. Mais neurotoxiques à dose élevée." },
-    { niveau: 3, theme: 'Endocrinologie', recto: "Hyperœstrogénie relative : que faire ?", verso: "Soutenir la progestérone (alchémille, houblon) pour rééquilibrer le rapport œstrogènes/progestérone." },
+    { niveau: 3, theme: 'Endocrinologie', recto: "Hyperœstrogénie relative : que faire ?", verso: "Soutenir la progestérone (alchémille, gattilier) pour rééquilibrer le rapport œstrogènes/progestérone. ⚠️ Le houblon est œstrogène-like (à éviter si cancer hormono-dépendant)." },
     { niveau: 3, theme: 'Biochimie', recto: "Acide aminé libre le plus abondant", verso: "La glutamine (≈ 60 % du pool d'acides aminés musculaires) ; conditionnellement essentielle (stress, effort, maladie)." },
     { niveau: 3, theme: 'Régimes', recto: "Régime Atkins", verso: "Cétogène / low-carb : favorise protéines et graisses, supprime les féculents → cétose pour brûler les graisses." },
     { niveau: 3, theme: 'Pathologies', recto: "La candidose", verso: "Mycose (infection fongique) à Candida albicans, une levure. Favorisée par les antibiotiques et une alimentation riche en sucres." },
@@ -947,7 +947,7 @@ window.NATURO_CONTENT = {
     { niveau: 2, theme: 'Microbiote', recto: "Quelle est la différence entre un prébiotique et un probiotique ?", verso: "Un probiotique est un micro-organisme vivant bénéfique (lactobacilles, bifidobactéries) qu'on apporte pour enrichir la flore. Un prébiotique est une fibre non digestible (inuline, FOS) qui sert de nourriture aux bonnes bactéries déjà présentes. On les associe souvent (symbiotique)." },
     { niveau: 2, theme: 'Nutrition', recto: "Qu'est-ce que l'équilibre acido-basique et comment le soutenir ?", verso: "C'est l'équilibre entre apports acidifiants et alcalinisants. Trop d'acidifiants (protéines animales en excès, sucres raffinés, sodas, café, stress, sédentarité) sollicite les réserves minérales. On le soutient avec une assiette très végétale (légumes, fruits, oléagineux), de la mastication, du mouvement et de la respiration, et un bon sommeil." },
     { niveau: 2, theme: 'Hydrologie', recto: "Décrivez l'effet du froid en hydrothérapie.", verso: "Le froid provoque d'abord une vasoconstriction (les vaisseaux se resserrent), puis une vasodilatation réactionnelle au réchauffement (afflux de sang) : c'est l'effet tonifiant et revitalisant, utilisé dans la douche froide ou le jet écossais. On l'applique brièvement et progressivement, en l'adaptant à la vitalité de la personne." },
-    { niveau: 2, theme: 'Gynécologie', recto: "Qu'est-ce que l'hyperœstrogénie relative ? Quand l'observe-t-on ?", verso: "C'est un excès d'œstrogènes par rapport à la progestérone (pas forcément un excès absolu d'œstrogènes). On l'observe à la puberté et surtout en préménopause, quand la progestérone chute avant les œstrogènes, d'où un syndrome prémenstruel accentué. On peut soutenir la progestérone avec l'alchémille ou le houblon (progestérone-like)." },
+    { niveau: 2, theme: 'Gynécologie', recto: "Qu'est-ce que l'hyperœstrogénie relative ? Quand l'observe-t-on ?", verso: "C'est un excès d'œstrogènes par rapport à la progestérone (pas forcément un excès absolu d'œstrogènes). On l'observe à la puberté et surtout en préménopause, quand la progestérone chute avant les œstrogènes, d'où un syndrome prémenstruel accentué. On peut soutenir la progestérone avec l'alchémille ou le gattilier (progestérone-like). ⚠️ Le houblon, lui, est œstrogène-like (à éviter en cas de cancer hormono-dépendant)." },
     { niveau: 3, theme: 'Neuro', recto: "Décrivez la voie de synthèse de la sérotonine et de la mélatonine.", verso: "Le tryptophane est transformé en 5-HTP, puis en sérotonine, elle-même convertie en mélatonine. La sérotonine régule l'humeur et la satiété ; la mélatonine, produite par la glande pinéale dès la baisse de lumière (≈18h, pic vers 2-3h), régule le sommeil. À distinguer de la voie de la dopamine (tyrosine → L-DOPA → dopamine)." },
     { niveau: 3, theme: 'Régimes', recto: "Présentez le régime Seignalet (régime hypotoxique).", verso: "Le régime du Dr Seignalet exclut tous les laits animaux et produits laitiers, ainsi que les céréales mutées et glutineuses (blé, seigle, épeautre, orge). Il privilégie le cru ou la cuisson douce, le riz, le sarrasin, les fruits, légumes, viandes et poissons. Objectif : réduire l'« encrassage » et l'hyperperméabilité intestinale dans certaines pathologies." },
     { niveau: 3, theme: 'Microbiote', recto: "Expliquez la fermentation et la putréfaction intestinales.", verso: "La fermentation concerne les sucres : elle produit des acides organiques courts (AGCC), non néfastes et même nutritifs pour les colonocytes. La putréfaction concerne les protéines : elle produit des amines, phénols et ammoniac, surtout dans le côlon descendant. En cas de constipation, ces produits de putréfaction sont réabsorbés et chargent le foie (auto-intoxication)." },

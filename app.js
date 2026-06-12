@@ -169,19 +169,19 @@ const QUESTIONS = [
     id: 10, jour: 1,
     categorie: "Phytothérapie",
     sujet: "Lithiases et coliques biliaires",
-    question: "Concernant les lithiases et coliques biliaires, quelle proposition représente UNE ERREUR ?",
+    question: "Concernant les lithiases et coliques biliaires, quelles propositions représentent des ERREURS ? (plusieurs réponses)",
     options: [
       "Les plantes cholagogues et cholérétiques apportent un soulagement",
       "La douleur siège dans l'hypochondre droit",
       "Une alimentation riche en graisses peut déclencher une crise",
       "Les antibiotiques sont le seul traitement efficace"
     ],
-    bonne: 3,
-    explication: "Les antibiotiques ne traitent pas les lithiases (calculs). Les plantes cholagogues (évacuent la bile) et cholérétiques (stimulent la production de bile) SOULAGENT bien. L'alimentation grasse est un facteur déclenchant réel.",
-    piege: "PIÈGE DE FORMULATION : la question demande de trouver l'ERREUR. La bonne réponse est donc la proposition fausse (antibiotiques). Ne pas cocher la prop sur les plantes cholagogues comme erreur.",
-    mnemo: "CHOLA-GOGUE = fait aller (gogue) la bile (chol). CHOLA-RÉTIQUE = retient/stimule la bile. Les deux aident. Antibiotiques ≠ traitement des calculs.",
-    tags: ["phytothérapie", "digestion", "piège-formulation"],
-    piege_special: true
+    bonnes: [0, 3],
+    explication: "Deux erreurs. (1) ⚠️ En cas de lithiase biliaire (calculs), les plantes cholagogues et cholérétiques sont CONTRE-INDIQUÉES : en stimulant la contraction de la vésicule et l'écoulement de la bile, elles peuvent mobiliser un calcul et provoquer une obstruction (colique hépatique, voire complications). (2) Les antibiotiques ne traitent pas les calculs. En revanche, la douleur de l'hypochondre droit et le repas gras déclencheur sont exacts.",
+    piege: "Il y a DEUX erreurs : surtout, ne JAMAIS donner de cholagogues/cholérétiques quand il y a des calculs (risque de migration et d'obstruction).",
+    mnemo: "Calculs biliaires = PAS de cholagogue/cholérétique (risque d'obstruction). Antibiotiques ≠ traitement des calculs.",
+    tags: ["phytothérapie", "digestion", "sécurité"],
+    important: true
   },
   {
     id: 11, jour: 2,
@@ -535,11 +535,11 @@ const QUESTIONS = [
       "Gattilier et yam (igname sauvage)",
       "Millepertuis et valériane"
     ],
-    bonne: 1,
-    explication: "Alchémille (Alchemilla vulgaris) et Houblon (Humulus lupulus) sont les deux plantes progestérone-like retenues dans ce cours. Le Gattilier est progestérone-like aussi mais n'est pas dans cette liste. Sauge/trèfle = oestrogène-like.",
-    piege: "Ne pas confondre les plantes oestrogène-like (sauge, trèfle, houblon en partie) et progestérone-like. Pour ce cours : alchémille + houblon = progestérone.",
-    mnemo: "ALChémille + HOublon = ALHO = plantes progestérone. L'ALCHEMY du houblon pour la progestérone.",
-    tags: ["phytothérapie", "gynécologie", "hormones"]
+    bonne: 2,
+    explication: "Le gattilier (Vitex agnus-castus) et l'igname sauvage (yam, Dioscorea) sont les plantes à action progestérone-like. ⚠️ Le houblon (Humulus lupulus) est au contraire ŒSTROGÈNE-like (phyto-œstrogène), comme la sauge et le trèfle rouge — donc CONTRE-INDIQUÉ en cas de cancer hormono-dépendant. L'alchémille est progestérone-like, mais la proposition « alchémille + houblon » est fausse à cause du houblon.",
+    piege: "Erreur fréquente (et dangereuse) : le houblon n'est PAS progestérone-like mais ŒSTROGÈNE-like → contre-indiqué si cancer hormono-dépendant.",
+    mnemo: "Progestérone-like : Gattilier + Yam. Œstrogène-like : Sauge, Trèfle rouge, Houblon.",
+    tags: ["phytothérapie", "gynécologie", "hormones"], important: true
   },
   {
     id: 32, jour: 4,
@@ -946,8 +946,8 @@ const QUESTIONS = [
       "Moins de 120°C"
     ],
     bonne: 2,
-    explication: "La méthode du Dr Kousmine préconise une cuisson DOUCE, inférieure à 100°C (ébullition), pour préserver les nutriments, enzymes et vitamines thermosensibles. À distinguer du crudivorisme (<40°C).",
-    piege: "Ne pas confondre Kousmine (<100°C) avec Crudivorisme (<40°C). Kousmine autorise la cuisson mais douce. Crudivorisme = tout cru ou très peu chauffé.",
+    explication: "La méthode du Dr Kousmine préconise une cuisson DOUCE, inférieure à 100°C (ébullition), pour préserver les nutriments, enzymes et vitamines thermosensibles. À distinguer du crudivorisme (<42°C).",
+    piege: "Ne pas confondre Kousmine (<100°C) avec Crudivorisme (<42°C). Kousmine autorise la cuisson mais douce. Crudivorisme = tout cru ou très peu chauffé.",
     mnemo: "KOUSMINE = comme bouillir doucement. En dessous de 100°C = pas d'ébullition violente. 100°C = seuil de l'eau qui bout.",
     tags: ["régimes", "cuisson", "chiffres"],
     important: true
@@ -960,13 +960,13 @@ const QUESTIONS = [
     options: [
       "15 à 30 minutes",
       "1 à 2 heures",
-      "4 à 6 heures",
+      "Environ 4 heures",
       "8 à 12 heures"
     ],
-    bonne: 1,
-    explication: "Un repas équilibré passe 1 à 2 heures dans l'estomac (chyme). Ensuite : 4-6h dans l'intestin grêle, 12-24h dans le côlon. Les graisses rallongent le temps de vidange gastrique.",
-    piege: "Ne pas confondre le temps gastrique (1-2h) avec le transit complet (24-48h). L'estomac seul : 1-2h.",
-    mnemo: "ESTOMAC = 1-2 HEURES. Comme une réunion de travail. Après, ça part dans les intestins.",
+    bonne: 2,
+    explication: "D'après le cours (temps de transit), les aliments restent en moyenne 4 heures dans l'estomac. Le transit complet dure environ 24 h : quelques secondes dans l'œsophage, ~4 h dans l'estomac, ~4 h dans l'intestin grêle, puis le gros intestin pour le reste du temps.",
+    piege: "Le temps gastrique moyen est d'environ 4 h — ne pas le confondre avec le transit digestif complet (~24 h).",
+    mnemo: "Estomac ≈ 4 h ; intestin grêle ≈ 4 h ; transit total ≈ 24 h.",
     tags: ["physiologie", "digestion", "chiffres"]
   },
   {
@@ -1028,14 +1028,14 @@ const QUESTIONS = [
     question: "Concernant le crudivorisme-véganisme :",
     options: [
       "Autoriser la cuisson jusqu'à 80°C ; manger principalement des viandes crues",
-      "Manger des aliments crus ou chauffés à moins de 40°C maximum",
+      "Manger des aliments crus ou chauffés à moins de 42°C maximum",
       "Cuire à la vapeur à 120°C et éviter les produits laitiers uniquement",
       "Suivre un régime à base de poissons crus uniquement"
     ],
     bonne: 1,
-    explication: "Le crudivorisme préconise de ne pas chauffer au-delà de 40°C (pour préserver les enzymes naturelles des aliments). Le véganisme exclut tous les produits d'origine animale. Combinés : aliments d'origine végétale, crus ou très peu chauffés (<40°C).",
-    piege: "Ne pas confondre le seuil de Kousmine (<100°C) et le seuil du crudivorisme (<40°C). Le crudivorisme est beaucoup plus restrictif.",
-    mnemo: "CRUDIVORISME = CRUD + CRUE. Tout cru ou presque. Seuil : 40°C = température corporelle. Ne pas cuire plus que votre propre corps.",
+    explication: "Le crudivorisme préconise de ne pas chauffer au-delà de 42°C (pour préserver les enzymes naturelles des aliments). Le véganisme exclut tous les produits d'origine animale. Combinés : aliments d'origine végétale, crus ou très peu chauffés (<42°C).",
+    piege: "Ne pas confondre le seuil de Kousmine (<100°C) et le seuil du crudivorisme (<42°C). Le crudivorisme est beaucoup plus restrictif.",
+    mnemo: "CRUDIVORISME : tout cru ou presque. Seuil = 42°C (on ne chauffe pas plus que la chaleur du vivant).",
     tags: ["régimes", "crudivorisme", "véganisme", "chiffres"]
   },
   {
