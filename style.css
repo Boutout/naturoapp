@@ -606,7 +606,8 @@ select:focus, input:focus, textarea:focus {
 @media (max-width: 768px) {
   :root { --nav-h: 58px; }
 
-  .topnav { padding: 0 12px; gap: 6px; flex-wrap: nowrap; overflow: hidden; }
+  /* padding-top = marge de sécurité (encoche / Dynamic Island) — NE PAS remettre à 0 */
+  .topnav { padding: env(safe-area-inset-top) 12px 0; gap: 6px; flex-wrap: nowrap; overflow: hidden; }
   .topnav__nav { display: none; }      /* remplacé par la barre inférieure */
   .topnav__logo { margin-right: auto; min-width: 0; gap: 8px; }  /* pousse les boutons à droite + évite le débordement */
   .topnav__logo-icon { width: 34px; height: 34px; border-radius: 11px; }
