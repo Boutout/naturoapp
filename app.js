@@ -886,7 +886,7 @@ const QUESTIONS = [
     categorie: "Examen blanc",
     sujet: "Une candidose est principalement",
     question: "Une candidose est principalement ?",
-    options: ["Une infection fongique", "Un problème dermatologique", "Une inflammation du côlon", "Une maladie auto-immune", "Ce contenu n'est ni rédigé, ni cautionné par Google. - Contacter le propriétaire du formulaire - Conditions", "d'utilisation - Règles de confidentialité", "Ce formulaire vous semble suspect ? Signaler", "Forms"],
+    options: ["Une infection fongique", "Un problème dermatologique", "Une inflammation du côlon", "Une maladie auto-immune"],
   bonne: 0,
     explication: "Une candidose est avant tout une infection fongique : Candida albicans est une levure (champignon), pas une bactérie.",
     mnemo: "Candida = champignon → infection fongique.",
@@ -2674,6 +2674,58 @@ if (document.readyState === 'loading') {
 }
 
 // ═══════════════════════════════════════════════════════════════
+//  RAPPEL D'INACTIVITÉ — prévient si trop de jours sans exercice
+//  Désactivable par l'utilisateur (Réglages). Réglages device-level.
+// ═══════════════════════════════════════════════════════════════
+const INACTIF_ON   = 'naturoapp_inactif';        // '1' (défaut) | '0'
+const INACTIF_DAYS = 'naturoapp_inactif_days';   // seuil en jours (défaut 3)
+const INACTIF_LAST = 'naturoapp_inactif_last';   // dernier rappel affiché (YYYY-MM-DD)
+
+function reminderOn()    { try { return localStorage.getItem(INACTIF_ON) !== '0'; } catch (e) { return true; } }
+function setReminderOn(b){ try { localStorage.setItem(INACTIF_ON, b ? '1' : '0'); } catch (e) {} }
+function reminderDays()  { const n = parseInt(localStorage.getItem(INACTIF_DAYS) || '3', 10); return (n >= 1 && n <= 30) ? n : 3; }
+function setReminderDays(n){ try { localStorage.setItem(INACTIF_DAYS, String(n)); } catch (e) {} }
+
+function inactivityDays() {
+  const d = State.data; if (!d) return 0;
+  const ref = d.lastStudyDay || (d.createdAt ? new Date(d.createdAt).toISOString().slice(0, 10) : null);
+  if (!ref) return 0;
+  const p = ref.split('-').map(Number);
+  const last = Date.UTC(p[0], p[1] - 1, p[2]);
+  const now = new Date();
+  const today = Date.UTC(now.getFullYear(), now.getMonth(), now.getDate());
+  return Math.max(0, Math.floor((today - last) / 86400000));
+}
+
+function showReminderToast(days) {
+  const host = document.getElementById('toast-container');
+  const msg = `Ça fait ${days} jour${days > 1 ? 's' : ''} sans révision — reprends quelques minutes 💪`;
+  if (host) {
+    const el = document.createElement('div');
+    el.className = 'toast toast-info';
+    el.style.cursor = 'pointer';
+    el.innerHTML = `${icon('flame')} <span>${msg}</span>`;
+    el.addEventListener('click', () => { location.href = 'revision.html?mode=smart'; });
+    host.appendChild(el);
+    hydrateIcons(el);
+    setTimeout(() => el.remove(), 9000);
+  }
+  if ('Notification' in window && Notification.permission === 'granted') {
+    try { new Notification('NaturoApp 🌿', { body: msg, icon: 'icons/icon-192.png', tag: 'naturoapp-inactif' }); } catch (e) {}
+  }
+}
+
+function maybeRemind() {
+  if (!reminderOn() || !State.data) return;
+  if (inactivityDays() < reminderDays()) return;
+  const today = new Date().toISOString().slice(0, 10);
+  if (localStorage.getItem(INACTIF_LAST) === today) return;   // 1 rappel/jour max
+  try { localStorage.setItem(INACTIF_LAST, today); } catch (e) {}
+  setTimeout(() => showReminderToast(inactivityDays()), 1200);
+}
+onReady(maybeRemind);
+
+// ═══════════════════════════════════════════════════════════════
 //  ANIMATIONS — helpers (respectent prefers-reduced-motion)
 // ═══════════════════════════════════════════════════════════════
 function prefersReducedMotion() {
@@ -2991,6 +3043,7 @@ window.APP = {
   courseToFlashcards, gardenSVG, searchAll, openSearch,
   AI_PROVIDERS, getAIProvider, setAIProvider, getAIProviderConfig,
   getAIKey, setAIKey, getAIModel, setAIModel,
+  reminderOn, setReminderOn, reminderDays, setReminderDays, inactivityDays,
   animateNumber, progressRing, setRing, prefersReducedMotion, celebrate
 };
 

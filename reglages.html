@@ -108,6 +108,23 @@
         <span class="switch__track"></span>
       </label>
     </div>
+
+    <div class="setting-row">
+      <div class="setting-row__label"><b>Rappel d'inactivité</b><p>Un rappel quand tu restes plusieurs jours sans réviser.</p></div>
+      <div style="display:flex;align-items:center;gap:12px;">
+        <select id="inactif-days" style="width:auto;min-width:96px;">
+          <option value="1">1 jour</option>
+          <option value="2">2 jours</option>
+          <option value="3">3 jours</option>
+          <option value="5">5 jours</option>
+          <option value="7">7 jours</option>
+        </select>
+        <label class="switch">
+          <input type="checkbox" id="inactif-toggle">
+          <span class="switch__track"></span>
+        </label>
+      </div>
+    </div>
   </div></div>
 
   <div class="card" id="tuteur" style="margin-top:18px;"><div class="card__body">
@@ -280,6 +297,18 @@ soundToggle.addEventListener('change', () => {
     navigator.serviceWorker.ready.then(reg => { if (reg.periodicSync) reg.periodicSync.unregister('daily-reminder').catch(() => {}); }).catch(() => {});
   }
   toggle.addEventListener('change', () => { toggle.checked ? enable() : disable(); });
+})();
+
+// ── Rappel d'inactivité (in-app, désactivable) ──
+(function () {
+  const tog = document.getElementById('inactif-toggle');
+  const sel = document.getElementById('inactif-days');
+  if (!tog || !sel) return;
+  tog.checked = window.APP.reminderOn();
+  sel.value = String(window.APP.reminderDays());
+  sel.disabled = !tog.checked;
+  tog.addEventListener('change', () => { window.APP.setReminderOn(tog.checked); sel.disabled = !tog.checked; });
+  sel.addEventListener('change', () => { window.APP.setReminderDays(parseInt(sel.value, 10)); });
 })();
 
 // ── Objectif quotidien (nécessite le profil → onReady) ──
