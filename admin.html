@@ -411,6 +411,7 @@ function showGate(iconName,title,msg){
 
 const withTimeout=(p,ms,l)=>Promise.race([p,new Promise((_,r)=>setTimeout(()=>r(new Error('timeout:'+l)),ms))]);
 
+let techRetried=false;
 async function load() {
   let data;
   try { data=await withTimeout(Cloud.fetchAllUsers(),12000,'fetch'); }
@@ -421,6 +422,14 @@ async function load() {
   document.getElementById('admin-app').style.display='block';
   document.getElementById('updated-at').textContent='Mis à jour '+new Date().toLocaleTimeString('fr-FR');
   renderKpis(); renderCharts(); renderBoards(); renderRanking(); renderCards();
+
+  // Les infos techniques (IP) de l'admin sont collectées en tâche de fond au
+  // chargement de la page → on recharge une fois pour les afficher.
+  try {
+    const me = Cloud.currentUser && Cloud.currentUser();
+    const mine = me && ALL.find(u => u.id === me.id);
+    if (mine && mine.tech.ip === '—' && !techRetried) { techRetried = true; setTimeout(load, 5000); }
+  } catch (e) {}
 }
 
 window.APP.onReady(async () => {
