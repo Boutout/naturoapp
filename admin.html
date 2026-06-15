@@ -50,20 +50,31 @@
     .board__val { font-weight:700; color:var(--c-green-deep); white-space:nowrap; }
     .board__empty { font-size:13px; color:var(--c-mid); }
 
-    .admin-tools { display:flex; gap:10px; align-items:center; margin:8px 0 12px; flex-wrap:wrap; }
-    .admin-tools input { max-width:280px; }
-    .table-wrap { overflow-x:auto; background:var(--c-white); border:1px solid var(--c-border); border-radius:var(--r-lg); box-shadow:var(--shadow-sm); }
-    table.users { border-collapse:collapse; width:100%; font-size:13px; min-width:980px; }
-    table.users th, table.users td { padding:10px 13px; text-align:left; border-bottom:1px solid var(--c-border); white-space:nowrap; }
-    table.users th { font-size:11px; text-transform:uppercase; letter-spacing:.4px; color:var(--c-mid); cursor:pointer; user-select:none; position:sticky; top:0; background:var(--c-white); }
-    table.users th:hover { color:var(--c-green-deep); }
-    table.users tbody tr:hover { background:var(--c-green-pale); }
-    table.users td.num { text-align:right; font-variant-numeric:tabular-nums; }
+    .admin-tools { display:flex; gap:10px; align-items:center; margin:8px 0 14px; flex-wrap:wrap; }
+    .admin-tools input { max-width:240px; }
+    .admin-tools select { width:auto; }
+
     .pill { display:inline-block; padding:2px 9px; border-radius:20px; font-size:11px; font-weight:600; }
     .pill--on { background:var(--c-green-pale); color:var(--c-green-deep); }
     .pill--off { background:var(--c-red-light); color:var(--c-red); }
-    .admin-name { font-weight:600; }
-    .admin-email { color:var(--c-mid); font-size:11.5px; }
+    .admin-name { font-weight:600; font-size:14.5px; }
+    .admin-email { color:var(--c-mid); font-size:11.5px; word-break:break-all; }
+
+    /* Fiches utilisateurs (pas de scroll horizontal) */
+    .ucards { display:grid; grid-template-columns:repeat(auto-fill,minmax(290px,1fr)); gap:14px; }
+    .ucard { background:var(--c-white); border:1px solid var(--c-border); border-radius:var(--r-lg); box-shadow:var(--shadow-sm); padding:15px 16px; }
+    .ucard__head { display:flex; align-items:flex-start; gap:10px; margin-bottom:12px; }
+    .ucard__head > div:first-child { flex:1; min-width:0; }
+    .ucard__stats { display:grid; grid-template-columns:repeat(3,1fr); gap:10px 8px; }
+    .ucard__stats > div { display:flex; flex-direction:column; gap:1px; }
+    .ucard__stats b { font-size:10.5px; font-weight:600; text-transform:uppercase; letter-spacing:.3px; color:var(--c-mid); }
+    .ucard__stats span { font-size:15px; font-weight:700; color:var(--c-dark); font-variant-numeric:tabular-nums; }
+    .ucard details { margin-top:12px; border-top:1px solid var(--c-border); padding-top:10px; }
+    .ucard summary { cursor:pointer; font-size:12.5px; font-weight:600; color:var(--c-green-deep); list-style:none; display:flex; align-items:center; gap:6px; }
+    .ucard summary::-webkit-details-marker { display:none; }
+    .ucard summary::before { content:'▸'; transition:transform .15s; }
+    .ucard details[open] summary::before { transform:rotate(90deg); }
+    .ucard details .ucard__stats { margin-top:10px; }
 
     .admin-state { max-width:460px; margin:60px auto; text-align:center; }
     .admin-state .app-icon { width:46px; height:46px; color:var(--c-green); }
@@ -117,31 +128,21 @@
     <div class="section-title"><span data-icon="list"></span> Tous les utilisateurs</div>
     <div class="admin-tools">
       <input type="search" id="filter" placeholder="Rechercher (nom, e-mail)…">
+      <label class="text-sm text-mid" style="display:flex;align-items:center;gap:6px;">Trier&nbsp;:
+        <select id="sortsel">
+          <option value="active">Dernière activité</option>
+          <option value="time">Temps passé</option>
+          <option value="score">Score</option>
+          <option value="answered">Questions répondues</option>
+          <option value="coverage">Couverture du programme</option>
+          <option value="streak">Série</option>
+          <option value="created">Date d'inscription</option>
+          <option value="name">Nom</option>
+        </select>
+      </label>
       <span class="text-sm text-mid" id="count-note"></span>
     </div>
-    <div class="table-wrap">
-      <table class="users">
-        <thead>
-          <tr>
-            <th data-sort="name">Utilisateur</th>
-            <th data-sort="created">Inscrit</th>
-            <th data-sort="active">Activité</th>
-            <th data-sort="time" class="num">Temps</th>
-            <th data-sort="sessions" class="num">Visites</th>
-            <th data-sort="answered" class="num">Questions</th>
-            <th data-sort="coverage" class="num">Couvert.</th>
-            <th data-sort="score" class="num">Score</th>
-            <th data-sort="exams" class="num">Examens</th>
-            <th data-sort="bestExam" class="num">Meill. exam</th>
-            <th data-sort="lessons" class="num">Cours</th>
-            <th data-sort="cas" class="num">Cas</th>
-            <th data-sort="xp" class="num">XP</th>
-            <th data-sort="streak" class="num">Série</th>
-          </tr>
-        </thead>
-        <tbody id="rows"></tbody>
-      </table>
-    </div>
+    <div class="ucards" id="cards"></div>
   </div>
 </div>
 
@@ -264,31 +265,41 @@ function renderBoards() {
   window.APP.hydrateIcons(document.getElementById('boards'));
 }
 
-function renderRows() {
+function renderCards() {
   const q=(document.getElementById('filter').value||'').toLowerCase().trim();
   let rows=ALL.filter(u=>!q||u.name.toLowerCase().includes(q)||u.email.toLowerCase().includes(q));
   rows.sort((a,b)=>{ let va=a[sortKey],vb=b[sortKey];
     if(sortKey==='name'){va=(va||'').toLowerCase();vb=(vb||'').toLowerCase();return va<vb?-sortDir:va>vb?sortDir:0;}
     return ((va==null?-1:va)-(vb==null?-1:vb))*sortDir; });
   document.getElementById('count-note').textContent=rows.length+' / '+ALL.length+' utilisateur'+(ALL.length>1?'s':'');
-  document.getElementById('rows').innerHTML=rows.map(u=>{
+  document.getElementById('cards').innerHTML=rows.map(u=>{
     const recent=u.active&&(Date.now()-u.active)<7*86400000;
-    return `<tr>
-      <td><div class="admin-name">${escapeHtml(u.name)}</div><div class="admin-email">${escapeHtml(u.email)}</div></td>
-      <td>${fmtDate(u.created)}</td>
-      <td>${u.active?`<span class="pill ${recent?'pill--on':'pill--off'}">${fmtAgo(u.active)}</span>`:'—'}</td>
-      <td class="num">${fmtDur(u.time)}</td>
-      <td class="num">${u.sessions}</td>
-      <td class="num">${u.answered}</td>
-      <td class="num">${u.coverage}%</td>
-      <td class="num">${u.answered?u.score+'%':'—'}</td>
-      <td class="num">${u.exams}</td>
-      <td class="num">${u.bestExam!=null?u.bestExam+'%':'—'}</td>
-      <td class="num">${u.lessons}</td>
-      <td class="num">${u.cas}</td>
-      <td class="num">${u.xp}</td>
-      <td class="num">${u.streak}</td>
-    </tr>`;
+    const pill=u.active?`<span class="pill ${recent?'pill--on':'pill--off'}">${fmtAgo(u.active)}</span>`:'';
+    return `<div class="ucard">
+      <div class="ucard__head">
+        <div><div class="admin-name">${escapeHtml(u.name)}</div><div class="admin-email">${escapeHtml(u.email)}</div></div>
+        ${pill}
+      </div>
+      <div class="ucard__stats">
+        <div><b>Temps passé</b><span>${fmtDur(u.time)}</span></div>
+        <div><b>Score</b><span>${u.answered?u.score+'%':'—'}</span></div>
+        <div><b>Questions</b><span>${u.answered}</span></div>
+        <div><b>Couverture</b><span>${u.coverage}%</span></div>
+        <div><b>Examens</b><span>${u.exams}</span></div>
+        <div><b>Série</b><span>${u.streak} j</span></div>
+      </div>
+      <details>
+        <summary>Plus de détails</summary>
+        <div class="ucard__stats">
+          <div><b>Inscrit le</b><span>${fmtDate(u.created)}</span></div>
+          <div><b>Visites</b><span>${u.sessions}</span></div>
+          <div><b>Meilleur examen</b><span>${u.bestExam!=null?u.bestExam+'%':'—'}</span></div>
+          <div><b>Cours lus</b><span>${u.lessons}</span></div>
+          <div><b>Cas résolus</b><span>${u.cas}</span></div>
+          <div><b>Points (XP)</b><span>${u.xp}</span></div>
+        </div>
+      </details>
+    </div>`;
   }).join('');
 }
 
@@ -321,7 +332,7 @@ async function load() {
   document.getElementById('admin-gate').style.display='none';
   document.getElementById('admin-app').style.display='block';
   document.getElementById('updated-at').textContent='Mis à jour '+new Date().toLocaleTimeString('fr-FR');
-  renderKpis(); renderCharts(); renderBoards(); renderRows();
+  renderKpis(); renderCharts(); renderBoards(); renderCards();
 }
 
 window.APP.onReady(async () => {
@@ -340,10 +351,8 @@ window.APP.onReady(async () => {
     await load();
     document.getElementById('refresh-btn').addEventListener('click',load);
     document.getElementById('export-btn').addEventListener('click',exportCsv);
-    document.getElementById('filter').addEventListener('input',renderRows);
-    document.querySelectorAll('th[data-sort]').forEach(th=>th.addEventListener('click',()=>{
-      const k=th.dataset.sort; if(sortKey===k)sortDir=-sortDir; else{sortKey=k;sortDir=(k==='name')?1:-1;} renderRows();
-    }));
+    document.getElementById('filter').addEventListener('input',renderCards);
+    document.getElementById('sortsel').addEventListener('change',e=>{ sortKey=e.target.value; sortDir=(sortKey==='name')?1:-1; renderCards(); });
   } catch(e){ showGate('alert-triangle','Erreur',"Échec ("+(e&&e.message?e.message:'inconnu')+"). Recharge la page."); }
 });
 </script>
