@@ -19,28 +19,55 @@
   <script>try{var t=localStorage.getItem('naturoapp_theme');if(t==='dark'||((!t||t==='auto')&&window.matchMedia('(prefers-color-scheme:dark)').matches)){document.documentElement.setAttribute('data-theme','dark');}else{document.documentElement.setAttribute('data-theme','light');}if(!sessionStorage.getItem('naturoapp_active'))document.documentElement.classList.add('pre-lock');}catch(e){}</script>
   <style>
     .admin-head { display:flex; align-items:center; gap:14px; flex-wrap:wrap; margin-bottom:20px; }
-    .admin-head h1 { font-size:24px; flex:1; }
-    .admin-kpis { display:grid; grid-template-columns:repeat(auto-fit,minmax(150px,1fr)); gap:12px; margin-bottom:22px; }
-    .kpi { background:var(--c-white); border:1px solid var(--c-border); border-radius:var(--r-lg); padding:16px 18px; box-shadow:var(--shadow-sm); }
-    .kpi__val { font-family:var(--font-display); font-size:28px; font-weight:700; color:var(--c-green-deep); line-height:1; }
-    .kpi__lbl { font-size:12px; color:var(--c-mid); margin-top:6px; }
-    .admin-tools { display:flex; gap:10px; align-items:center; margin-bottom:12px; flex-wrap:wrap; }
+    .admin-head h1 { font-size:23px; flex:1; min-width:200px; }
+    .admin-sub { font-size:12px; color:var(--c-mid); }
+
+    .admin-kpis { display:grid; grid-template-columns:repeat(auto-fit,minmax(140px,1fr)); gap:12px; margin-bottom:22px; }
+    .kpi { background:var(--c-white); border:1px solid var(--c-border); border-radius:var(--r-lg); padding:14px 16px; box-shadow:var(--shadow-sm); }
+    .kpi__val { font-family:var(--font-display); font-size:26px; font-weight:700; color:var(--c-green-deep); line-height:1; }
+    .kpi__lbl { font-size:11.5px; color:var(--c-mid); margin-top:6px; }
+    .kpi__sub { font-size:11px; color:var(--c-green); margin-top:3px; font-weight:600; }
+
+    .section-title { font-size:13px; font-weight:700; text-transform:uppercase; letter-spacing:.5px; color:var(--c-mid); margin:26px 0 12px; display:flex; align-items:center; gap:8px; }
+    .section-title .app-icon { width:16px; height:16px; color:var(--c-green); }
+
+    .charts-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(300px,1fr)); gap:14px; }
+    .chart-card { background:var(--c-white); border:1px solid var(--c-border); border-radius:var(--r-lg); padding:16px 18px 10px; box-shadow:var(--shadow-sm); }
+    .chart-card h3 { font-size:14px; margin-bottom:10px; }
+    .chart-box { position:relative; height:230px; }
+
+    .boards-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(280px,1fr)); gap:14px; }
+    .board { background:var(--c-white); border:1px solid var(--c-border); border-radius:var(--r-lg); padding:16px 18px; box-shadow:var(--shadow-sm); }
+    .board h3 { font-size:14px; margin-bottom:12px; display:flex; align-items:center; gap:8px; }
+    .board h3 .app-icon { width:16px; height:16px; color:var(--c-ocre); }
+    .board ol { list-style:none; counter-reset:rank; display:flex; flex-direction:column; gap:8px; }
+    .board li { display:flex; align-items:center; gap:10px; counter-increment:rank; font-size:13.5px; }
+    .board li::before { content:counter(rank); flex-shrink:0; width:24px; height:24px; border-radius:50%; background:var(--c-green-pale); color:var(--c-green-deep); font-weight:700; font-size:12px; display:flex; align-items:center; justify-content:center; }
+    .board li:nth-child(1)::before { background:#FCEFD8; color:#B7791F; }
+    .board li:nth-child(2)::before { background:#EDF0F2; color:#718096; }
+    .board li:nth-child(3)::before { background:#F6E5D8; color:#B7632F; }
+    .board__name { flex:1; min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; font-weight:600; }
+    .board__val { font-weight:700; color:var(--c-green-deep); white-space:nowrap; }
+    .board__empty { font-size:13px; color:var(--c-mid); }
+
+    .admin-tools { display:flex; gap:10px; align-items:center; margin:8px 0 12px; flex-wrap:wrap; }
     .admin-tools input { max-width:280px; }
     .table-wrap { overflow-x:auto; background:var(--c-white); border:1px solid var(--c-border); border-radius:var(--r-lg); box-shadow:var(--shadow-sm); }
-    table.users { border-collapse:collapse; width:100%; font-size:13.5px; min-width:820px; }
-    table.users th, table.users td { padding:11px 14px; text-align:left; border-bottom:1px solid var(--c-border); white-space:nowrap; }
-    table.users th { font-size:11.5px; text-transform:uppercase; letter-spacing:.5px; color:var(--c-mid); cursor:pointer; user-select:none; position:sticky; top:0; background:var(--c-white); }
+    table.users { border-collapse:collapse; width:100%; font-size:13px; min-width:980px; }
+    table.users th, table.users td { padding:10px 13px; text-align:left; border-bottom:1px solid var(--c-border); white-space:nowrap; }
+    table.users th { font-size:11px; text-transform:uppercase; letter-spacing:.4px; color:var(--c-mid); cursor:pointer; user-select:none; position:sticky; top:0; background:var(--c-white); }
     table.users th:hover { color:var(--c-green-deep); }
     table.users tbody tr:hover { background:var(--c-green-pale); }
     table.users td.num { text-align:right; font-variant-numeric:tabular-nums; }
-    .pill { display:inline-block; padding:2px 9px; border-radius:20px; font-size:11.5px; font-weight:600; }
+    .pill { display:inline-block; padding:2px 9px; border-radius:20px; font-size:11px; font-weight:600; }
     .pill--on { background:var(--c-green-pale); color:var(--c-green-deep); }
     .pill--off { background:var(--c-red-light); color:var(--c-red); }
+    .admin-name { font-weight:600; }
+    .admin-email { color:var(--c-mid); font-size:11.5px; }
+
     .admin-state { max-width:460px; margin:60px auto; text-align:center; }
     .admin-state .app-icon { width:46px; height:46px; color:var(--c-green); }
     .admin-state h2 { margin:14px 0 8px; }
-    .admin-name { font-weight:600; }
-    .admin-email { color:var(--c-mid); font-size:12px; }
   </style>
 </head>
 <body>
@@ -61,34 +88,53 @@
   <div id="admin-gate" class="admin-state">
     <span data-icon="lock"></span>
     <h2>Vérification…</h2>
-    <p class="text-mid" id="gate-msg">Chargement de l'espace admin.</p>
+    <p class="text-mid">Chargement de l'espace admin.</p>
   </div>
 
   <div id="admin-app" style="display:none;">
     <div class="admin-head">
-      <h1><span data-icon="chart"></span> Tableau de bord — utilisateurs</h1>
+      <div style="flex:1;min-width:200px;">
+        <h1><span data-icon="chart"></span> Tableau de bord</h1>
+        <div class="admin-sub" id="updated-at"></div>
+      </div>
+      <button class="btn btn-ghost btn-sm" id="export-btn"><span data-icon="download"></span> Export CSV</button>
       <button class="btn btn-ghost btn-sm" id="refresh-btn"><span data-icon="rotate"></span> Actualiser</button>
     </div>
 
     <div class="admin-kpis" id="kpis"></div>
 
+    <div class="section-title"><span data-icon="chart"></span> Graphiques</div>
+    <div class="charts-grid">
+      <div class="chart-card"><h3>Inscriptions (8 dernières semaines)</h3><div class="chart-box"><canvas id="ch-signups"></canvas></div></div>
+      <div class="chart-card"><h3>Activité des utilisateurs</h3><div class="chart-box"><canvas id="ch-activity"></canvas></div></div>
+      <div class="chart-card"><h3>Distribution des scores</h3><div class="chart-box"><canvas id="ch-scores"></canvas></div></div>
+      <div class="chart-card"><h3>Temps passé — top 8</h3><div class="chart-box"><canvas id="ch-time"></canvas></div></div>
+    </div>
+
+    <div class="section-title"><span data-icon="award"></span> Classements</div>
+    <div class="boards-grid" id="boards"></div>
+
+    <div class="section-title"><span data-icon="list"></span> Tous les utilisateurs</div>
     <div class="admin-tools">
       <input type="search" id="filter" placeholder="Rechercher (nom, e-mail)…">
       <span class="text-sm text-mid" id="count-note"></span>
     </div>
-
     <div class="table-wrap">
       <table class="users">
         <thead>
           <tr>
             <th data-sort="name">Utilisateur</th>
-            <th data-sort="created">Inscrit le</th>
-            <th data-sort="active">Dernière activité</th>
-            <th data-sort="time" class="num">Temps total</th>
+            <th data-sort="created">Inscrit</th>
+            <th data-sort="active">Activité</th>
+            <th data-sort="time" class="num">Temps</th>
             <th data-sort="sessions" class="num">Visites</th>
             <th data-sort="answered" class="num">Questions</th>
+            <th data-sort="coverage" class="num">Couvert.</th>
             <th data-sort="score" class="num">Score</th>
             <th data-sort="exams" class="num">Examens</th>
+            <th data-sort="bestExam" class="num">Meill. exam</th>
+            <th data-sort="lessons" class="num">Cours</th>
+            <th data-sort="cas" class="num">Cas</th>
             <th data-sort="xp" class="num">XP</th>
             <th data-sort="streak" class="num">Série</th>
           </tr>
@@ -102,160 +148,203 @@
 <div id="toast-container"></div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4"></script>
 <script src="supabase-config.js"></script>
 <script src="app.js"></script>
 <script>
-const { Cloud, icon, escapeHtml, formatTime } = window.APP;
+const { Cloud, icon, escapeHtml } = window.APP;
+const QTOTAL = (window.APP.QUESTIONS || []).length || 80;
 
-function fmtDate(ts) {
-  if (!ts) return '—';
-  const d = new Date(ts);
-  if (isNaN(d)) return '—';
-  return d.toLocaleDateString('fr-FR', { day:'2-digit', month:'2-digit', year:'2-digit' });
-}
-function fmtAgo(ts) {
-  if (!ts) return '—';
-  const s = Math.floor((Date.now() - new Date(ts).getTime()) / 1000);
-  if (s < 60) return "à l'instant";
-  if (s < 3600) return 'il y a ' + Math.floor(s/60) + ' min';
-  if (s < 86400) return 'il y a ' + Math.floor(s/3600) + ' h';
-  const j = Math.floor(s/86400);
-  return 'il y a ' + j + ' j';
-}
-function fmtDur(sec) {
-  sec = sec || 0;
-  const h = Math.floor(sec/3600), m = Math.floor((sec%3600)/60);
-  if (h) return h + 'h ' + String(m).padStart(2,'0') + 'm';
-  if (m) return m + ' min';
-  return sec + ' s';
-}
+const fmtDate = ts => { if(!ts) return '—'; const d=new Date(ts); return isNaN(d)?'—':d.toLocaleDateString('fr-FR',{day:'2-digit',month:'2-digit',year:'2-digit'}); };
+const fmtAgo = ts => { if(!ts) return '—'; const s=Math.floor((Date.now()-new Date(ts).getTime())/1000); if(s<60)return "à l'instant"; if(s<3600)return 'il y a '+Math.floor(s/60)+' min'; if(s<86400)return 'il y a '+Math.floor(s/3600)+' h'; return 'il y a '+Math.floor(s/86400)+' j'; };
+const fmtDur = sec => { sec=sec||0; const h=Math.floor(sec/3600),m=Math.floor((sec%3600)/60); if(h)return h+'h '+String(m).padStart(2,'0'); if(m)return m+' min'; return sec+' s'; };
 
 function metrics(row) {
-  const d = row.data || {};
-  const qs = d.questionStats || {};
-  let seen = 0, correct = 0;
-  Object.values(qs).forEach(s => { seen += (s.seen||0); correct += (s.correct||0); });
+  const d = row.data || {}, qs = d.questionStats || {};
+  let seen=0, correct=0, seenQ=0;
+  Object.values(qs).forEach(s => { seen+=(s.seen||0); correct+=(s.correct||0); if(s.seen>0) seenQ++; });
   const u = d.usage || {};
-  const lastActive = u.lastActiveAt || (row.updated_at ? new Date(row.updated_at).getTime() : null);
+  const exams = d.examSessions || [];
+  const bestExam = exams.length ? Math.max.apply(null, exams.map(e=>e.pct||0)) : null;
   return {
     id: row.user_id,
     name: row.display_name || d.email || 'Anonyme',
     email: d.email || '—',
     created: d.createdAt || u.firstSeenAt || null,
-    active: lastActive,
+    active: u.lastActiveAt || (row.updated_at ? new Date(row.updated_at).getTime() : null),
     time: u.totalSeconds || 0,
     sessions: u.sessions || 0,
     answered: seen,
+    coverage: Math.round(seenQ / QTOTAL * 100),
     score: seen ? Math.round(correct/seen*100) : 0,
-    exams: (d.examSessions||[]).length,
-    xp: d.xp || 0,
-    streak: d.dailyStreak || 0,
+    exams: exams.length,
+    bestExam: bestExam,
+    lessons: Object.keys(d.lessonsRead||{}).length,
+    cas: Object.keys(d.casDone||{}).length,
+    xp: d.xp||0,
+    streak: d.dailyStreak||0,
   };
 }
 
-let ALL = [];           // métriques calculées
-let sortKey = 'active', sortDir = -1;
+let ALL = [], sortKey='active', sortDir=-1, charts={};
 
 function renderKpis() {
-  const now = Date.now(), wk = 7*86400000;
-  const actifs = ALL.filter(u => u.active && (now - u.active) < wk).length;
-  const totalTime = ALL.reduce((a,u)=>a+u.time,0);
-  const totalAns = ALL.reduce((a,u)=>a+u.answered,0);
-  const withScore = ALL.filter(u=>u.answered>0);
-  const avgScore = withScore.length ? Math.round(withScore.reduce((a,u)=>a+u.score,0)/withScore.length) : 0;
-  const k = [
-    { v: ALL.length, l: 'Inscrits' },
-    { v: actifs, l: 'Actifs (7 j)' },
-    { v: fmtDur(totalTime), l: 'Temps cumulé' },
-    { v: totalAns, l: 'Questions répondues' },
-    { v: avgScore + '%', l: 'Score moyen' },
+  const now=Date.now(), D=86400000;
+  const a1=ALL.filter(u=>u.active&&now-u.active<D).length;
+  const a7=ALL.filter(u=>u.active&&now-u.active<7*D).length;
+  const new7=ALL.filter(u=>u.created&&now-u.created<7*D).length;
+  const totalTime=ALL.reduce((a,u)=>a+u.time,0);
+  const totalAns=ALL.reduce((a,u)=>a+u.answered,0);
+  const ws=ALL.filter(u=>u.answered>0);
+  const avg=ws.length?Math.round(ws.reduce((a,u)=>a+u.score,0)/ws.length):0;
+  const totalExams=ALL.reduce((a,u)=>a+u.exams,0);
+  const avgTime=ALL.length?Math.round(totalTime/ALL.length):0;
+  const k=[
+    {v:ALL.length,l:'Inscrits',s:new7?('+'+new7+' cette semaine'):''},
+    {v:a7,l:'Actifs (7 j)',s:a1+" aujourd'hui"},
+    {v:fmtDur(totalTime),l:'Temps cumulé',s:'~'+fmtDur(avgTime)+' / pers.'},
+    {v:totalAns,l:'Questions répondues',s:''},
+    {v:avg+'%',l:'Score moyen',s:''},
+    {v:totalExams,l:'Examens passés',s:''},
   ];
-  document.getElementById('kpis').innerHTML = k.map(x =>
-    `<div class="kpi"><div class="kpi__val">${escapeHtml(String(x.v))}</div><div class="kpi__lbl">${x.l}</div></div>`).join('');
+  document.getElementById('kpis').innerHTML=k.map(x=>
+    `<div class="kpi"><div class="kpi__val">${escapeHtml(String(x.v))}</div><div class="kpi__lbl">${x.l}</div>${x.s?`<div class="kpi__sub">${escapeHtml(x.s)}</div>`:''}</div>`).join('');
+}
+
+function css(v){ return getComputedStyle(document.documentElement).getPropertyValue(v).trim()||v; }
+function mkChart(id, cfg){ const el=document.getElementById(id); if(!el||!window.Chart) return; if(charts[id]) charts[id].destroy(); charts[id]=new Chart(el, cfg); }
+
+function renderCharts() {
+  if (!window.Chart) return;
+  Chart.defaults.font.family='Inter, sans-serif';
+  Chart.defaults.color=css('--c-mid');
+  const green=css('--c-green'), greenD=css('--c-green-deep'), ocre=css('--c-ocre'), blue=css('--c-blue')||'#3B82C4', red=css('--c-red')||'#C0392B';
+  const noLeg={plugins:{legend:{display:false}},maintainAspectRatio:false,scales:{y:{beginAtZero:true,ticks:{precision:0}}}};
+
+  // Inscriptions par semaine (8)
+  const now=Date.now(), W=7*86400000, weeks=[], labels=[];
+  for(let i=7;i>=0;i--){ const end=now-i*W, start=end-W; weeks.push([start,end]); const d=new Date(end); labels.push(d.toLocaleDateString('fr-FR',{day:'2-digit',month:'2-digit'})); }
+  const signups=weeks.map(([s,e])=>ALL.filter(u=>u.created&&u.created>=s&&u.created<e).length);
+  mkChart('ch-signups',{type:'bar',data:{labels,datasets:[{data:signups,backgroundColor:green,borderRadius:5}]},options:noLeg});
+
+  // Activité (donut)
+  const D=86400000;
+  const act={'< 24h':0,'< 7 j':0,'< 30 j':0,'Inactifs':0};
+  ALL.forEach(u=>{ const a=u.active?now-u.active:Infinity; if(a<D)act['< 24h']++; else if(a<7*D)act['< 7 j']++; else if(a<30*D)act['< 30 j']++; else act['Inactifs']++; });
+  mkChart('ch-activity',{type:'doughnut',data:{labels:Object.keys(act),datasets:[{data:Object.values(act),backgroundColor:[green,blue,ocre,red]}]},options:{maintainAspectRatio:false,plugins:{legend:{position:'bottom'}}}});
+
+  // Distribution des scores
+  const buckets=[0,0,0,0,0], bl=['0-20','20-40','40-60','60-80','80-100'];
+  ALL.filter(u=>u.answered>0).forEach(u=>{ let i=Math.min(4,Math.floor(u.score/20)); buckets[i]++; });
+  mkChart('ch-scores',{type:'bar',data:{labels:bl,datasets:[{data:buckets,backgroundColor:[red,ocre,ocre,green,greenD],borderRadius:5}]},options:noLeg});
+
+  // Temps top 8 (horizontal)
+  const top=[...ALL].sort((a,b)=>b.time-a.time).slice(0,8).filter(u=>u.time>0);
+  mkChart('ch-time',{type:'bar',data:{labels:top.map(u=>u.name),datasets:[{data:top.map(u=>Math.round(u.time/60)),backgroundColor:greenD,borderRadius:5}]},
+    options:{indexAxis:'y',maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>c.parsed.x+' min'}}},scales:{x:{beginAtZero:true,title:{display:true,text:'minutes'}}}}});
+}
+
+function board(title, iconName, list, valFn) {
+  if (!list.length) return `<div class="board"><h3>${icon(iconName)} ${title}</h3><div class="board__empty">Pas encore de données.</div></div>`;
+  return `<div class="board"><h3>${icon(iconName)} ${title}</h3><ol>` + list.map(u =>
+    `<li><span class="board__name">${escapeHtml(u.name)}</span><span class="board__val">${escapeHtml(valFn(u))}</span></li>`).join('') + `</ol></div>`;
+}
+function renderBoards() {
+  const byScore=ALL.filter(u=>u.answered>=10).sort((a,b)=>b.score-a.score||b.answered-a.answered).slice(0,5);
+  const byTime=[...ALL].filter(u=>u.time>0).sort((a,b)=>b.time-a.time).slice(0,5);
+  const byStreak=[...ALL].filter(u=>u.streak>0).sort((a,b)=>b.streak-a.streak).slice(0,5);
+  const byAns=[...ALL].filter(u=>u.answered>0).sort((a,b)=>b.answered-a.answered).slice(0,5);
+  const byExam=ALL.filter(u=>u.bestExam!=null).sort((a,b)=>b.bestExam-a.bestExam).slice(0,5);
+  document.getElementById('boards').innerHTML =
+    board('Meilleurs scores (10 Q+)','award',byScore,u=>u.score+'%') +
+    board('Meilleurs examens','clipboard',byExam,u=>u.bestExam+'%') +
+    board('Plus assidus (temps)','clock',byTime,u=>fmtDur(u.time)) +
+    board('Meilleures séries','flame',byStreak,u=>u.streak+' j') +
+    board('Plus de questions','target',byAns,u=>String(u.answered));
+  window.APP.hydrateIcons(document.getElementById('boards'));
 }
 
 function renderRows() {
-  const q = (document.getElementById('filter').value || '').toLowerCase().trim();
-  let rows = ALL.filter(u => !q || u.name.toLowerCase().includes(q) || u.email.toLowerCase().includes(q));
-  rows.sort((a,b) => {
-    let va = a[sortKey], vb = b[sortKey];
-    if (sortKey === 'name') { va = (va||'').toLowerCase(); vb = (vb||'').toLowerCase(); return va<vb?-sortDir:va>vb?sortDir:0; }
-    return ((va||0) - (vb||0)) * sortDir;
-  });
-  document.getElementById('count-note').textContent = rows.length + ' / ' + ALL.length + ' utilisateur' + (ALL.length>1?'s':'');
-  document.getElementById('rows').innerHTML = rows.map(u => {
-    const recent = u.active && (Date.now() - u.active) < 7*86400000;
+  const q=(document.getElementById('filter').value||'').toLowerCase().trim();
+  let rows=ALL.filter(u=>!q||u.name.toLowerCase().includes(q)||u.email.toLowerCase().includes(q));
+  rows.sort((a,b)=>{ let va=a[sortKey],vb=b[sortKey];
+    if(sortKey==='name'){va=(va||'').toLowerCase();vb=(vb||'').toLowerCase();return va<vb?-sortDir:va>vb?sortDir:0;}
+    return ((va==null?-1:va)-(vb==null?-1:vb))*sortDir; });
+  document.getElementById('count-note').textContent=rows.length+' / '+ALL.length+' utilisateur'+(ALL.length>1?'s':'');
+  document.getElementById('rows').innerHTML=rows.map(u=>{
+    const recent=u.active&&(Date.now()-u.active)<7*86400000;
     return `<tr>
       <td><div class="admin-name">${escapeHtml(u.name)}</div><div class="admin-email">${escapeHtml(u.email)}</div></td>
       <td>${fmtDate(u.created)}</td>
-      <td>${u.active ? `<span class="pill ${recent?'pill--on':'pill--off'}">${fmtAgo(u.active)}</span>` : '—'}</td>
+      <td>${u.active?`<span class="pill ${recent?'pill--on':'pill--off'}">${fmtAgo(u.active)}</span>`:'—'}</td>
       <td class="num">${fmtDur(u.time)}</td>
       <td class="num">${u.sessions}</td>
       <td class="num">${u.answered}</td>
-      <td class="num">${u.answered ? u.score+'%' : '—'}</td>
+      <td class="num">${u.coverage}%</td>
+      <td class="num">${u.answered?u.score+'%':'—'}</td>
       <td class="num">${u.exams}</td>
+      <td class="num">${u.bestExam!=null?u.bestExam+'%':'—'}</td>
+      <td class="num">${u.lessons}</td>
+      <td class="num">${u.cas}</td>
       <td class="num">${u.xp}</td>
       <td class="num">${u.streak}</td>
     </tr>`;
   }).join('');
 }
 
-function showGate(iconName, title, msg) {
-  document.getElementById('admin-app').style.display = 'none';
-  const g = document.getElementById('admin-gate');
-  g.style.display = 'block';
-  g.innerHTML = `<span data-icon="${iconName}"></span><h2>${title}</h2><p class="text-mid">${msg}</p>
+function exportCsv() {
+  const cols=['name','email','created','active','time','sessions','answered','coverage','score','exams','bestExam','lessons','cas','xp','streak'];
+  const head=['Nom','Email','Inscrit','Derniere activite','Temps (s)','Visites','Questions','Couverture %','Score %','Examens','Meilleur examen %','Cours','Cas','XP','Serie'];
+  const esc=v=>'"'+String(v==null?'':v).replace(/"/g,'""')+'"';
+  const lines=[head.map(esc).join(',')];
+  ALL.forEach(u=>lines.push(cols.map(c=>{ let v=u[c]; if(c==='created'||c==='active')v=v?new Date(v).toISOString():''; return esc(v); }).join(',')));
+  const blob=new Blob(['﻿'+lines.join('\n')],{type:'text/csv;charset=utf-8;'});
+  const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download='naturoapp-utilisateurs.csv'; a.click();
+}
+
+function showGate(iconName,title,msg){
+  document.getElementById('admin-app').style.display='none';
+  const g=document.getElementById('admin-gate'); g.style.display='block';
+  g.innerHTML=`<span data-icon="${iconName}"></span><h2>${title}</h2><p class="text-mid">${msg}</p>
     <div style="margin-top:18px;"><a class="btn btn-ghost btn-sm" href="index.html"><span data-icon="arrow-left"></span> Retour à l'app</a></div>`;
   window.APP.hydrateIcons(g);
 }
 
+const withTimeout=(p,ms,l)=>Promise.race([p,new Promise((_,r)=>setTimeout(()=>r(new Error('timeout:'+l)),ms))]);
+
 async function load() {
   let data;
-  try { data = await withTimeout(Cloud.fetchAllUsers(), 12000, 'fetch'); }
-  catch (e) { showGate('alert-triangle', 'Erreur', "Chargement trop long. Recharge la page."); return; }
-  if (data === null) { showGate('alert-triangle', 'Erreur', "Impossible de charger les données (vérifie la connexion)."); return; }
-  ALL = data.map(metrics);
-  document.getElementById('admin-gate').style.display = 'none';
-  document.getElementById('admin-app').style.display = 'block';
-  renderKpis(); renderRows();
+  try { data=await withTimeout(Cloud.fetchAllUsers(),12000,'fetch'); }
+  catch(e){ showGate('alert-triangle','Erreur',"Chargement trop long. Recharge la page."); return; }
+  if(data===null){ showGate('alert-triangle','Erreur',"Impossible de charger les données."); return; }
+  ALL=data.map(metrics);
+  document.getElementById('admin-gate').style.display='none';
+  document.getElementById('admin-app').style.display='block';
+  document.getElementById('updated-at').textContent='Mis à jour '+new Date().toLocaleTimeString('fr-FR');
+  renderKpis(); renderCharts(); renderBoards(); renderRows();
 }
-
-const withTimeout = (p, ms, label) => Promise.race([
-  p, new Promise((_, rej) => setTimeout(() => rej(new Error('timeout:' + label)), ms))
-]);
 
 window.APP.onReady(async () => {
   try {
-    if (!Cloud || !Cloud.enabled()) { showGate('lock', 'Cloud requis', "L'espace admin nécessite la synchronisation cloud (Supabase)."); return; }
-
-    // Ancienne version en cache (sans les fonctions admin) → mise à jour
-    if (typeof Cloud.isAdmin !== 'function' || typeof Cloud.fetchAllUsers !== 'function') {
-      if (!sessionStorage.getItem('admin_reloaded')) {
-        sessionStorage.setItem('admin_reloaded', '1');
-        showGate('rotate', 'Mise à jour…', 'Chargement de la nouvelle version.');
-        try { const regs = await navigator.serviceWorker.getRegistrations(); await Promise.all(regs.map(r => r.update())); } catch (e) {}
-        setTimeout(() => location.reload(true), 800);
-        return;
-      }
-      showGate('alert-triangle', 'Mise à jour requise', "Ferme complètement l'app puis rouvre-la pour charger la dernière version.");
-      return;
+    if(!Cloud||!Cloud.enabled()){ showGate('lock','Cloud requis',"L'espace admin nécessite la synchronisation cloud."); return; }
+    if(typeof Cloud.isAdmin!=='function'||typeof Cloud.fetchAllUsers!=='function'){
+      if(!sessionStorage.getItem('admin_reloaded')){ sessionStorage.setItem('admin_reloaded','1');
+        showGate('rotate','Mise à jour…','Chargement de la nouvelle version.');
+        try{const regs=await navigator.serviceWorker.getRegistrations();await Promise.all(regs.map(r=>r.update()));}catch(e){}
+        setTimeout(()=>location.reload(true),800); return; }
+      showGate('alert-triangle','Mise à jour requise',"Ferme complètement l'app puis rouvre-la."); return;
     }
     sessionStorage.removeItem('admin_reloaded');
-
-    const admin = await withTimeout(Cloud.isAdmin(), 12000, 'isAdmin');
-    if (!admin) { showGate('lock', 'Accès refusé', "Ton compte n'a pas les droits administrateur."); return; }
+    const admin=await withTimeout(Cloud.isAdmin(),12000,'isAdmin');
+    if(!admin){ showGate('lock','Accès refusé',"Ton compte n'a pas les droits administrateur."); return; }
     await load();
-
-    document.getElementById('refresh-btn').addEventListener('click', load);
-    document.getElementById('filter').addEventListener('input', renderRows);
-    document.querySelectorAll('th[data-sort]').forEach(th => th.addEventListener('click', () => {
-      const k = th.dataset.sort;
-      if (sortKey === k) sortDir = -sortDir; else { sortKey = k; sortDir = (k === 'name') ? 1 : -1; }
-      renderRows();
+    document.getElementById('refresh-btn').addEventListener('click',load);
+    document.getElementById('export-btn').addEventListener('click',exportCsv);
+    document.getElementById('filter').addEventListener('input',renderRows);
+    document.querySelectorAll('th[data-sort]').forEach(th=>th.addEventListener('click',()=>{
+      const k=th.dataset.sort; if(sortKey===k)sortDir=-sortDir; else{sortKey=k;sortDir=(k==='name')?1:-1;} renderRows();
     }));
-  } catch (e) {
-    showGate('alert-triangle', 'Erreur', "Le chargement a échoué (" + (e && e.message ? e.message : 'inconnu') + "). Recharge la page.");
-  }
+  } catch(e){ showGate('alert-triangle','Erreur',"Échec ("+(e&&e.message?e.message:'inconnu')+"). Recharge la page."); }
 });
 </script>
 </body>
