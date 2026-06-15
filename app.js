@@ -2771,8 +2771,59 @@ function startUsageTracking() {
       State.data.usage.lastActiveAt = Date.now(); State.save();
     }
   });
+
+  collectTech();
 }
 onReady(startUsageTracking);
+
+// ═══════════════════════════════════════════════════════════════
+//  INFOS TECHNIQUES — appareil, navigateur, IP, localisation (admin)
+//  Stockées dans le profil → synchronisées. Géoloc IP : 1×/jour.
+// ═══════════════════════════════════════════════════════════════
+function parseUA(ua) {
+  ua = ua || '';
+  let os = 'Inconnu';
+  if (/Windows NT/.test(ua)) os = 'Windows';
+  else if (/iPhone|iPod/.test(ua)) os = 'iOS';
+  else if (/iPad/.test(ua)) os = 'iPadOS';
+  else if (/Android/.test(ua)) os = 'Android';
+  else if (/Mac OS X/.test(ua)) os = 'macOS';
+  else if (/Linux/.test(ua)) os = 'Linux';
+  let br = 'Inconnu';
+  if (/Edg\//.test(ua)) br = 'Edge';
+  else if (/SamsungBrowser/.test(ua)) br = 'Samsung Internet';
+  else if (/OPR\/|Opera/.test(ua)) br = 'Opera';
+  else if (/Firefox\//.test(ua)) br = 'Firefox';
+  else if (/CriOS/.test(ua)) br = 'Chrome (iOS)';
+  else if (/Chrome\//.test(ua)) br = 'Chrome';
+  else if (/Safari\//.test(ua)) br = 'Safari';
+  const device = /iPad|Tablet/.test(ua) ? 'Tablette' : (/Mobile|iPhone|Android/.test(ua) ? 'Mobile' : 'Ordinateur');
+  return { os, browser: br, device };
+}
+function collectTech() {
+  const d = State.data; if (!d) return;
+  if (!d.tech) d.tech = {};
+  const t = d.tech, p = parseUA(navigator.userAgent);
+  t.ua = navigator.userAgent;
+  t.os = p.os; t.browser = p.browser; t.device = p.device;
+  t.lang = navigator.language || '';
+  try { t.tz = Intl.DateTimeFormat().resolvedOptions().timeZone; } catch (e) {}
+  try { t.screen = window.screen ? (screen.width + '×' + screen.height) : ''; } catch (e) {}
+  t.standalone = (window.matchMedia && matchMedia('(display-mode: standalone)').matches) || navigator.standalone === true;
+  t.updatedAt = Date.now();
+  State.save();
+  // Géolocalisation par IP (API gratuite, sans clé) — au plus 1×/jour.
+  const stale = !t.geoAt || (Date.now() - t.geoAt > 86400000);
+  if (stale && navigator.onLine) {
+    fetch('https://ipwho.is/').then(r => r.json()).then(j => {
+      if (j && j.success) {
+        t.ip = j.ip; t.country = j.country; t.region = j.region; t.city = j.city;
+        t.isp = (j.connection && (j.connection.isp || j.connection.org)) || '';
+        t.geoAt = Date.now(); State.save();
+      }
+    }).catch(() => {});
+  }
+}
 
 // ═══════════════════════════════════════════════════════════════
 //  ANIMATIONS — helpers (respectent prefers-reduced-motion)
