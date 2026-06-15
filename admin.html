@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>NaturoApp — Admin</title>
+  <meta name="theme-color" content="#1A5C45">
+  <meta name="robots" content="noindex, nofollow">
+  <link rel="manifest" href="manifest.json">
+  <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="NaturoApp">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Lora:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+  <script>try{var t=localStorage.getItem('naturoapp_theme');if(t==='dark'||((!t||t==='auto')&&window.matchMedia('(prefers-color-scheme:dark)').matches)){document.documentElement.setAttribute('data-theme','dark');}else{document.documentElement.setAttribute('data-theme','light');}if(!sessionStorage.getItem('naturoapp_active'))document.documentElement.classList.add('pre-lock');}catch(e){}</script>
+  <style>
+    .admin-head { display:flex; align-items:center; gap:14px; flex-wrap:wrap; margin-bottom:20px; }
+    .admin-head h1 { font-size:24px; flex:1; }
+    .admin-kpis { display:grid; grid-template-columns:repeat(auto-fit,minmax(150px,1fr)); gap:12px; margin-bottom:22px; }
+    .kpi { background:var(--c-white); border:1px solid var(--c-border); border-radius:var(--r-lg); padding:16px 18px; box-shadow:var(--shadow-sm); }
+    .kpi__val { font-family:var(--font-display); font-size:28px; font-weight:700; color:var(--c-green-deep); line-height:1; }
+    .kpi__lbl { font-size:12px; color:var(--c-mid); margin-top:6px; }
+    .admin-tools { display:flex; gap:10px; align-items:center; margin-bottom:12px; flex-wrap:wrap; }
+    .admin-tools input { max-width:280px; }
+    .table-wrap { overflow-x:auto; background:var(--c-white); border:1px solid var(--c-border); border-radius:var(--r-lg); box-shadow:var(--shadow-sm); }
+    table.users { border-collapse:collapse; width:100%; font-size:13.5px; min-width:820px; }
+    table.users th, table.users td { padding:11px 14px; text-align:left; border-bottom:1px solid var(--c-border); white-space:nowrap; }
+    table.users th { font-size:11.5px; text-transform:uppercase; letter-spacing:.5px; color:var(--c-mid); cursor:pointer; user-select:none; position:sticky; top:0; background:var(--c-white); }
+    table.users th:hover { color:var(--c-green-deep); }
+    table.users tbody tr:hover { background:var(--c-green-pale); }
+    table.users td.num { text-align:right; font-variant-numeric:tabular-nums; }
+    .pill { display:inline-block; padding:2px 9px; border-radius:20px; font-size:11.5px; font-weight:600; }
+    .pill--on { background:var(--c-green-pale); color:var(--c-green-deep); }
+    .pill--off { background:var(--c-red-light); color:var(--c-red); }
+    .admin-state { max-width:460px; margin:60px auto; text-align:center; }
+    .admin-state .app-icon { width:46px; height:46px; color:var(--c-green); }
+    .admin-state h2 { margin:14px 0 8px; }
+    .admin-name { font-weight:600; }
+    .admin-email { color:var(--c-mid); font-size:12px; }
+  </style>
+</head>
+<body>
+
+<nav class="topnav">
+  <a href="index.html" class="topnav__logo">
+    <div class="topnav__logo-icon" data-icon="leaf"></div>
+    <div>
+      <div class="topnav__logo-text">NaturoApp</div>
+      <span class="topnav__logo-sub">Espace admin</span>
+    </div>
+  </a>
+  <button class="nav-lock" id="nav-theme" data-icon="moon" title="Thème" aria-label="Thème"></button>
+  <button class="nav-lock" id="nav-lock" data-icon="lock" title="Se déconnecter" aria-label="Se déconnecter"></button>
+</nav>
+
+<div class="page">
+  <div id="admin-gate" class="admin-state">
+    <span data-icon="lock"></span>
+    <h2>Vérification…</h2>
+    <p class="text-mid" id="gate-msg">Chargement de l'espace admin.</p>
+  </div>
+
+  <div id="admin-app" style="display:none;">
+    <div class="admin-head">
+      <h1><span data-icon="chart"></span> Tableau de bord — utilisateurs</h1>
+      <button class="btn btn-ghost btn-sm" id="refresh-btn"><span data-icon="rotate"></span> Actualiser</button>
+    </div>
+
+    <div class="admin-kpis" id="kpis"></div>
+
+    <div class="admin-tools">
+      <input type="search" id="filter" placeholder="Rechercher (nom, e-mail)…">
+      <span class="text-sm text-mid" id="count-note"></span>
+    </div>
+
+    <div class="table-wrap">
+      <table class="users">
+        <thead>
+          <tr>
+            <th data-sort="name">Utilisateur</th>
+            <th data-sort="created">Inscrit le</th>
+            <th data-sort="active">Dernière activité</th>
+            <th data-sort="time" class="num">Temps total</th>
+            <th data-sort="sessions" class="num">Visites</th>
+            <th data-sort="answered" class="num">Questions</th>
+            <th data-sort="score" class="num">Score</th>
+            <th data-sort="exams" class="num">Examens</th>
+            <th data-sort="xp" class="num">XP</th>
+            <th data-sort="streak" class="num">Série</th>
+          </tr>
+        </thead>
+        <tbody id="rows"></tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<div id="toast-container"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="supabase-config.js"></script>
+<script src="app.js"></script>
+<script>
+const { Cloud, icon, escapeHtml, formatTime } = window.APP;
+
+function fmtDate(ts) {
+  if (!ts) return '—';
+  const d = new Date(ts);
+  if (isNaN(d)) return '—';
+  return d.toLocaleDateString('fr-FR', { day:'2-digit', month:'2-digit', year:'2-digit' });
+}
+function fmtAgo(ts) {
+  if (!ts) return '—';
+  const s = Math.floor((Date.now() - new Date(ts).getTime()) / 1000);
+  if (s < 60) return "à l'instant";
+  if (s < 3600) return 'il y a ' + Math.floor(s/60) + ' min';
+  if (s < 86400) return 'il y a ' + Math.floor(s/3600) + ' h';
+  const j = Math.floor(s/86400);
+  return 'il y a ' + j + ' j';
+}
+function fmtDur(sec) {
+  sec = sec || 0;
+  const h = Math.floor(sec/3600), m = Math.floor((sec%3600)/60);
+  if (h) return h + 'h ' + String(m).padStart(2,'0') + 'm';
+  if (m) return m + ' min';
+  return sec + ' s';
+}
+
+function metrics(row) {
+  const d = row.data || {};
+  const qs = d.questionStats || {};
+  let seen = 0, correct = 0;
+  Object.values(qs).forEach(s => { seen += (s.seen||0); correct += (s.correct||0); });
+  const u = d.usage || {};
+  const lastActive = u.lastActiveAt || (row.updated_at ? new Date(row.updated_at).getTime() : null);
+  return {
+    id: row.user_id,
+    name: row.display_name || d.email || 'Anonyme',
+    email: d.email || '—',
+    created: d.createdAt || u.firstSeenAt || null,
+    active: lastActive,
+    time: u.totalSeconds || 0,
+    sessions: u.sessions || 0,
+    answered: seen,
+    score: seen ? Math.round(correct/seen*100) : 0,
+    exams: (d.examSessions||[]).length,
+    xp: d.xp || 0,
+    streak: d.dailyStreak || 0,
+  };
+}
+
+let ALL = [];           // métriques calculées
+let sortKey = 'active', sortDir = -1;
+
+function renderKpis() {
+  const now = Date.now(), wk = 7*86400000;
+  const actifs = ALL.filter(u => u.active && (now - u.active) < wk).length;
+  const totalTime = ALL.reduce((a,u)=>a+u.time,0);
+  const totalAns = ALL.reduce((a,u)=>a+u.answered,0);
+  const withScore = ALL.filter(u=>u.answered>0);
+  const avgScore = withScore.length ? Math.round(withScore.reduce((a,u)=>a+u.score,0)/withScore.length) : 0;
+  const k = [
+    { v: ALL.length, l: 'Inscrits' },
+    { v: actifs, l: 'Actifs (7 j)' },
+    { v: fmtDur(totalTime), l: 'Temps cumulé' },
+    { v: totalAns, l: 'Questions répondues' },
+    { v: avgScore + '%', l: 'Score moyen' },
+  ];
+  document.getElementById('kpis').innerHTML = k.map(x =>
+    `<div class="kpi"><div class="kpi__val">${escapeHtml(String(x.v))}</div><div class="kpi__lbl">${x.l}</div></div>`).join('');
+}
+
+function renderRows() {
+  const q = (document.getElementById('filter').value || '').toLowerCase().trim();
+  let rows = ALL.filter(u => !q || u.name.toLowerCase().includes(q) || u.email.toLowerCase().includes(q));
+  rows.sort((a,b) => {
+    let va = a[sortKey], vb = b[sortKey];
+    if (sortKey === 'name') { va = (va||'').toLowerCase(); vb = (vb||'').toLowerCase(); return va<vb?-sortDir:va>vb?sortDir:0; }
+    return ((va||0) - (vb||0)) * sortDir;
+  });
+  document.getElementById('count-note').textContent = rows.length + ' / ' + ALL.length + ' utilisateur' + (ALL.length>1?'s':'');
+  document.getElementById('rows').innerHTML = rows.map(u => {
+    const recent = u.active && (Date.now() - u.active) < 7*86400000;
+    return `<tr>
+      <td><div class="admin-name">${escapeHtml(u.name)}</div><div class="admin-email">${escapeHtml(u.email)}</div></td>
+      <td>${fmtDate(u.created)}</td>
+      <td>${u.active ? `<span class="pill ${recent?'pill--on':'pill--off'}">${fmtAgo(u.active)}</span>` : '—'}</td>
+      <td class="num">${fmtDur(u.time)}</td>
+      <td class="num">${u.sessions}</td>
+      <td class="num">${u.answered}</td>
+      <td class="num">${u.answered ? u.score+'%' : '—'}</td>
+      <td class="num">${u.exams}</td>
+      <td class="num">${u.xp}</td>
+      <td class="num">${u.streak}</td>
+    </tr>`;
+  }).join('');
+}
+
+function showGate(iconName, title, msg) {
+  document.getElementById('admin-app').style.display = 'none';
+  const g = document.getElementById('admin-gate');
+  g.style.display = 'block';
+  g.innerHTML = `<span data-icon="${iconName}"></span><h2>${title}</h2><p class="text-mid">${msg}</p>
+    <div style="margin-top:18px;"><a class="btn btn-ghost btn-sm" href="index.html"><span data-icon="arrow-left"></span> Retour à l'app</a></div>`;
+  window.APP.hydrateIcons(g);
+}
+
+async function load() {
+  const data = await Cloud.fetchAllUsers();
+  if (data === null) { showGate('alert-triangle', 'Erreur', "Impossible de charger les données (vérifie la connexion)."); return; }
+  ALL = data.map(metrics);
+  document.getElementById('admin-gate').style.display = 'none';
+  document.getElementById('admin-app').style.display = 'block';
+  renderKpis(); renderRows();
+}
+
+window.APP.onReady(async () => {
+  if (!Cloud.enabled()) { showGate('lock', 'Cloud requis', "L'espace admin nécessite la synchronisation cloud (Supabase)."); return; }
+  const admin = await Cloud.isAdmin();
+  if (!admin) { showGate('lock', 'Accès refusé', "Ton compte n'a pas les droits administrateur."); return; }
+  await load();
+
+  document.getElementById('refresh-btn').addEventListener('click', load);
+  document.getElementById('filter').addEventListener('input', renderRows);
+  document.querySelectorAll('th[data-sort]').forEach(th => th.addEventListener('click', () => {
+    const k = th.dataset.sort;
+    if (sortKey === k) sortDir = -sortDir; else { sortKey = k; sortDir = (k === 'name') ? 1 : -1; }
+    renderRows();
+  }));
+});
+</script>
+</body>
+</html>

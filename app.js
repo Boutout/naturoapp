@@ -933,6 +933,7 @@ const State = {
     if (typeof d.fichesSeries !== 'number') d.fichesSeries = 0;  // séries de fiches terminées
     if (typeof d.examDate === 'undefined') d.examDate = null;   // 'YYYY-MM-DD' ou null
     if (!d.inProgress || typeof d.inProgress !== 'object') d.inProgress = {};  // sessions en cours (reprise) par type
+    if (!d.usage || typeof d.usage !== 'object') d.usage = { totalSeconds: 0, lastActiveAt: null, sessions: 0, firstSeenAt: d.createdAt || null };
     QUESTIONS.forEach(q => {
       const s = d.questionStats[q.id];
       if (!s) {
@@ -967,6 +968,7 @@ const State = {
       examDate: null,      // date d'examen visée ('YYYY-MM-DD')
       dailyStats: {},      // "YYYY-MM-DD" -> { questions, correct }
       inProgress: {},      // sessions en cours, reprenables — { revision|exam|cas: {…snapshot} }
+      usage: { totalSeconds: 0, lastActiveAt: null, sessions: 0, firstSeenAt: Date.now() },  // suivi du temps (admin)
     };
     QUESTIONS.forEach(q => {
       this.data.questionStats[q.id] = {
@@ -2613,7 +2615,25 @@ const Cloud = (function () {
     }
   }
 
-  return { enabled, start, signOut, updatePassword, schedulePush, currentUser };
+  // ───────── Admin (sécurité = RLS Supabase, pas seulement le JS) ─────────
+  async function isAdmin() {
+    const c = getClient(); if (!c || !user) return false;
+    try {
+      const { data, error } = await c.from('admins').select('user_id').eq('user_id', user.id).maybeSingle();
+      return !error && !!data;
+    } catch (e) { return false; }
+  }
+  // Renvoie toutes les progressions (RLS : ne renvoie tout QUE si l'utilisateur est admin).
+  async function fetchAllUsers() {
+    const c = getClient(); if (!c) return null;
+    try {
+      const { data, error } = await c.from('user_progress').select('user_id, display_name, data, updated_at');
+      if (error) { console.warn('[cloud] admin fetch', error.message); return null; }
+      return data || [];
+    } catch (e) { console.warn('[cloud] admin fetch ex', e); return null; }
+  }
+
+  return { enabled, start, signOut, updatePassword, schedulePush, currentUser, isAdmin, fetchAllUsers };
 })();
 
 // ── Bootstrap commun à toutes les pages ──────────────────────────
@@ -2724,6 +2744,35 @@ function maybeRemind() {
   setTimeout(() => showReminderToast(inactivityDays()), 1200);
 }
 onReady(maybeRemind);
+
+// ═══════════════════════════════════════════════════════════════
+//  SUIVI D'USAGE — temps passé, dernière activité (pour /admin)
+//  Stocké dans les données du profil → synchronisé dans le cloud.
+// ═══════════════════════════════════════════════════════════════
+function startUsageTracking() {
+  const d = State.data; if (!d) return;
+  if (!d.usage) d.usage = { totalSeconds: 0, lastActiveAt: null, sessions: 0, firstSeenAt: d.createdAt || Date.now() };
+  d.usage.sessions = (d.usage.sessions || 0) + 1;
+  d.usage.lastActiveAt = Date.now();
+  try { const u = Cloud.currentUser && Cloud.currentUser(); if (u && u.email && d.email !== u.email) d.email = u.email; } catch (e) {}
+  State.save();
+
+  const STEP = 20;   // secondes
+  setInterval(() => {
+    if (document.visibilityState !== 'visible' || !State.data) return;
+    if (!State.data.usage) State.data.usage = { totalSeconds: 0, lastActiveAt: null, sessions: 1 };
+    State.data.usage.totalSeconds = (State.data.usage.totalSeconds || 0) + STEP;
+    State.data.usage.lastActiveAt = Date.now();
+    State.save();
+  }, STEP * 1000);
+
+  document.addEventListener('visibilitychange', () => {
+    if (document.visibilityState === 'hidden' && State.data && State.data.usage) {
+      State.data.usage.lastActiveAt = Date.now(); State.save();
+    }
+  });
+}
+onReady(startUsageTracking);
 
 // ═══════════════════════════════════════════════════════════════
 //  ANIMATIONS — helpers (respectent prefers-reduced-motion)
