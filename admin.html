@@ -210,7 +210,9 @@ function showGate(iconName, title, msg) {
 }
 
 async function load() {
-  const data = await Cloud.fetchAllUsers();
+  let data;
+  try { data = await withTimeout(Cloud.fetchAllUsers(), 12000, 'fetch'); }
+  catch (e) { showGate('alert-triangle', 'Erreur', "Chargement trop long. Recharge la page."); return; }
   if (data === null) { showGate('alert-triangle', 'Erreur', "Impossible de charger les données (vérifie la connexion)."); return; }
   ALL = data.map(metrics);
   document.getElementById('admin-gate').style.display = 'none';
@@ -218,19 +220,42 @@ async function load() {
   renderKpis(); renderRows();
 }
 
-window.APP.onReady(async () => {
-  if (!Cloud.enabled()) { showGate('lock', 'Cloud requis', "L'espace admin nécessite la synchronisation cloud (Supabase)."); return; }
-  const admin = await Cloud.isAdmin();
-  if (!admin) { showGate('lock', 'Accès refusé', "Ton compte n'a pas les droits administrateur."); return; }
-  await load();
+const withTimeout = (p, ms, label) => Promise.race([
+  p, new Promise((_, rej) => setTimeout(() => rej(new Error('timeout:' + label)), ms))
+]);
 
-  document.getElementById('refresh-btn').addEventListener('click', load);
-  document.getElementById('filter').addEventListener('input', renderRows);
-  document.querySelectorAll('th[data-sort]').forEach(th => th.addEventListener('click', () => {
-    const k = th.dataset.sort;
-    if (sortKey === k) sortDir = -sortDir; else { sortKey = k; sortDir = (k === 'name') ? 1 : -1; }
-    renderRows();
-  }));
+window.APP.onReady(async () => {
+  try {
+    if (!Cloud || !Cloud.enabled()) { showGate('lock', 'Cloud requis', "L'espace admin nécessite la synchronisation cloud (Supabase)."); return; }
+
+    // Ancienne version en cache (sans les fonctions admin) → mise à jour
+    if (typeof Cloud.isAdmin !== 'function' || typeof Cloud.fetchAllUsers !== 'function') {
+      if (!sessionStorage.getItem('admin_reloaded')) {
+        sessionStorage.setItem('admin_reloaded', '1');
+        showGate('rotate', 'Mise à jour…', 'Chargement de la nouvelle version.');
+        try { const regs = await navigator.serviceWorker.getRegistrations(); await Promise.all(regs.map(r => r.update())); } catch (e) {}
+        setTimeout(() => location.reload(true), 800);
+        return;
+      }
+      showGate('alert-triangle', 'Mise à jour requise', "Ferme complètement l'app puis rouvre-la pour charger la dernière version.");
+      return;
+    }
+    sessionStorage.removeItem('admin_reloaded');
+
+    const admin = await withTimeout(Cloud.isAdmin(), 12000, 'isAdmin');
+    if (!admin) { showGate('lock', 'Accès refusé', "Ton compte n'a pas les droits administrateur."); return; }
+    await load();
+
+    document.getElementById('refresh-btn').addEventListener('click', load);
+    document.getElementById('filter').addEventListener('input', renderRows);
+    document.querySelectorAll('th[data-sort]').forEach(th => th.addEventListener('click', () => {
+      const k = th.dataset.sort;
+      if (sortKey === k) sortDir = -sortDir; else { sortKey = k; sortDir = (k === 'name') ? 1 : -1; }
+      renderRows();
+    }));
+  } catch (e) {
+    showGate('alert-triangle', 'Erreur', "Le chargement a échoué (" + (e && e.message ? e.message : 'inconnu') + "). Recharge la page.");
+  }
 });
 </script>
 </body>
