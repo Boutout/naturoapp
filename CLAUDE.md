@@ -20,16 +20,21 @@ Application web de **révision en naturopathie**, pensée d'abord pour mobile et
 ```
 index.html      Tableau de bord (héros + anneau de progression + planning)
 cours.html      Cours à lire + glossaire (lit content.js)
-revision.html   QCM + Flashcards (sidebar/drawer, modes)
-examen.html     Examens blancs (timer, bilan, impression)
-stats.html      Statistiques (heatmap, progression, historique, compte)
-app.js          ⭐ Cœur : données QUESTIONS + State + Profiles(auth) + icônes + animations
-content.js      ⭐ Contenu pédagogique (cours, glossaire) — À ENRICHIR
+revision.html   QCM + Flashcards (sidebar/drawer, modes) — gère N options (A–H)
+examen.html     Examens blancs (timer, bilan, impression) — gère N options + multi-réponses
+stats.html      Statistiques (heatmap, progression, historique, compte cloud)
+admin.html      ⭐ Espace ADMIN (protégé RLS) : tous les users, KPIs, graphiques, classements, infos techniques, CSV
+app.js          ⭐ Cœur : QUESTIONS(80, du vrai QCM blanc) + State + Profiles + Cloud(Supabase) + usage/tech + icônes
+content.js      Contenu pédagogique (cours, glossaire, fiches)
+supabase-config.js  URL + clé anon Supabase (publiques) + window.SUPABASE_OAUTH (providers sociaux)
 style.css       Design system complet
-manifest.json   Config PWA   ·   sw.js  Service worker (hors-ligne)
+manifest.json   Config PWA   ·   sw.js  Service worker (hors-ligne) — BUMP CACHE_VERSION à chaque changement
 icons/          Icônes de l'app installée
-docs/           ARCHITECTURE.md · AJOUTER-DU-CONTENU.md · SECURITE.md
+docs/           ARCHITECTURE.md · AJOUTER-DU-CONTENU.md · SECURITE.md · DEPLOIEMENT.md
 ```
+> Évolutions majeures (juin 2026) : **Supabase cloud** (auth e-mail/mdp, sync multi-appareils),
+> **page admin** (RLS), **80 QCM = vrai examen blanc** + explications/mémos, **suivi usage+tech**,
+> reprise de session, rappel d'inactivité. Détail dans la mémoire `naturoapp-handoff` / `supabase-cloud-sync`.
 
 ## 3. Règles d'or (NE PAS casser)
 1. **Vanilla, sans build.** Pas de framework, pas de npm, pas de bundler. Dépendances
