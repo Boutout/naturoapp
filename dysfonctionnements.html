@@ -177,7 +177,7 @@
       <p>Tout le sujet d'examen <b>oral</b>&nbsp;: les <b>dysfonctionnements</b> (grille anatomie → causes → 3&nbsp;piliers → conseils → compléments) et les <b>tempéraments</b> (question&nbsp;1&nbsp;: déduire le profil du client). Une banque de QCM <b>distincte</b> de l'examen blanc.</p>
       <div class="dys-hero__actions">
         <button class="btn btn--solid" id="btn-srs"><span data-icon="zap"></span> Réviser (intelligent)</button>
-        <button class="btn" id="btn-oralblanc"><span data-icon="shuffle"></span> Oral blanc 🎲</button>
+        <button class="btn" id="btn-oralblanc"><span data-icon="shuffle"></span> Cas d'oral 🎲</button>
         <button class="btn" id="btn-concept"><span data-icon="lightbulb"></span> Concept du jour</button>
       </div>
     </div>
@@ -433,35 +433,44 @@ function ficheToSpeech(f) {
   return out;
 }
 
-// ── Oral blanc : interrogation active (mémoire de rappel) ─────────
-const INTERRO_Q = [
-  { n: 1, prompt: "Décris l'<b>anatomie / la physiologie</b> et définis le dysfonctionnement.", get: f => `<p>${md(f.anatomie)}</p>` },
-  { n: 2, prompt: "Quelles sont les <b>causes</b> (étiologie) et les <b>symptômes</b> ?", get: f => mdList(f.etiologie) + mdList(f.symptomes) },
-  { n: 3, prompt: "Donne les conseils sur les <b>3 piliers</b> (alimentation · mouvement · émotionnel).", get: f => `<div class="pilier"><b>🍽️ Alimentation —</b> ${md(f.piliers.alimentation)}</div><div class="pilier"><b>🏃 Mouvement —</b> ${md(f.piliers.mouvement)}</div><div class="pilier"><b>🧠 Émotionnel —</b> ${md(f.piliers.emotionnel)}</div>` },
-  { n: 4, prompt: "Quels <b>autres conseils</b> naturopathiques donnes-tu ?", get: f => (f.autres && f.autres.length ? mdList(f.autres) : '<p><em>Rien de spécifique dans le cours.</em></p>') + (f.nePasConfondre ? `<div class="callout callout--warn" style="margin-top:8px"><div class="callout__h">${icon('alert-triangle')} Ne pas confondre</div>${md(f.nePasConfondre)}</div>` : '') },
-  { n: 5, prompt: "Quels <b>compléments</b> conseilles-tu (plantes, HE, gemmo, micronutrition) ?", get: f => { const c = f.complements || {}; const box = (h, a) => (a && a.length) ? `<div class="comp-box"><div class="comp-box__h">${h}</div>${mdList(a)}</div>` : ''; return `<div class="complements-grid">${box('Plantes', c.plantes)}${box('Huiles essentielles', c.he)}${box('Gemmothérapie', c.gemmo)}${box('Micronutrition', c.micro)}</div>`; } },
-];
-let interroFiche = null;
-function startOralBlanc() {
-  // tire un DYSFONCTIONNEMENT au hasard (pas un tempérament), en priorité non maîtrisé
-  const all = State.dysFiches().filter(f => f.systeme !== 'temperament');
-  const pool = all.filter(f => !State.dysFicheMastery(f.id).mastered);
-  const list = pool.length ? pool : all;
-  interroFiche = list[Math.floor(Math.random() * list.length)];
-  openInterro(interroFiche);
+// ── Cas d'oral : simulateur (énoncé patient → les 5 questions de l'oral) ──
+// Ordre réel de l'épreuve : 1) tempérament/bilan, 2) anatomie/dysfonctionnement,
+// 3) les 3 piliers, 4) autres conseils, 5) compléments.
+function casQuestions(cas, f) {
+  return [
+    { n: 1, prompt: "Quel est le <b>profil / tempérament</b> du client ? (bilan naturopathique)",
+      get: () => `<p>${md(cas.tempReason)}</p><button class="btn btn-ghost btn-sm" id="cas-temp-link"><span data-icon="user"></span> Voir la fiche : ${escapeHtml(cas.tempNom)}</button>` },
+    { n: 2, prompt: "Décris l'<b>anatomie / le dysfonctionnement</b> en détail.",
+      get: () => `<p>${md(f.anatomie)}</p>` + mdList(f.symptomes) },
+    { n: 3, prompt: "Donne les conseils sur les <b>3 piliers</b> (alimentation · mouvement · émotionnel).",
+      get: () => `<div class="pilier"><b>🍽️ Alimentation —</b> ${md(f.piliers.alimentation)}</div><div class="pilier"><b>🏃 Mouvement —</b> ${md(f.piliers.mouvement)}</div><div class="pilier"><b>🧠 Émotionnel —</b> ${md(f.piliers.emotionnel)}</div>` },
+    { n: 4, prompt: "Quels <b>autres conseils</b> (causes à corriger, autres démarches) ?",
+      get: () => mdList(f.etiologie) + ((f.autres && f.autres.length) ? mdList(f.autres) : '') + (f.nePasConfondre ? `<div class="callout callout--warn" style="margin-top:8px"><div class="callout__h">${icon('alert-triangle')} Ne pas confondre</div>${md(f.nePasConfondre)}</div>` : '') },
+    { n: 5, prompt: "Quels <b>compléments</b> (plantes, HE, gemmo, micronutrition) ?",
+      get: () => { const c = f.complements || {}; const box = (h, a) => (a && a.length) ? `<div class="comp-box"><div class="comp-box__h">${h}</div>${mdList(a)}</div>` : ''; return `<div class="complements-grid">${box('Plantes', c.plantes)}${box('Huiles essentielles', c.he)}${box('Gemmothérapie', c.gemmo)}${box('Micronutrition', c.micro)}</div>`; } },
+  ];
 }
-function openInterro(f) {
+function oralCases() { return (window.NATURO_DYS && window.NATURO_DYS.cas) || []; }
+let currentCas = null;
+function startOralBlanc() {
+  const cases = oralCases();
+  if (!cases.length) { alert('Aucun cas d\'oral disponible.'); return; }
+  currentCas = cases[Math.floor(Math.random() * cases.length)];
+  openCas(currentCas);
+}
+function openCas(cas) {
+  const f = State.dysFiche(cas.ficheId);
   if (!f) return;
-  interroFiche = f;
-  document.getElementById('interro-title').textContent = 'Oral blanc — ' + f.nom;
-  const sys = (State.dysSystemes().find(s => s.key === f.systeme) || {}).nom || '';
+  currentCas = cas;
+  document.getElementById('interro-title').textContent = "Cas d'oral — " + cas.nom;
   const body = document.getElementById('interro-body');
-  body.innerHTML = `<div class="interro-intro">${icon('stethoscope')} Énoncé : un client présente <b>${escapeHtml(f.nom)}</b> <span style="opacity:.7">(${escapeHtml(sys)})</span>.<br>Réponds <b>à voix haute</b> à chaque question, puis révèle la correction.</div>` +
-    INTERRO_Q.map(b => `
+  const qs = casQuestions(cas, f);
+  body.innerHTML = `<div class="interro-intro">${icon('stethoscope')} <b>Énoncé.</b> ${md(cas.enonce)}<br><span style="opacity:.85">Réponds <b>à voix haute</b> aux 5 questions de l'oral, puis révèle la correction.</span></div>` +
+    qs.map(b => `
       <div class="interro-block">
         <div class="interro-q"><span class="num">${b.n}</span><span>${b.prompt}</span></div>
         <button class="btn btn-ghost btn-sm interro-reveal" data-n="${b.n}"><span data-icon="eye"></span> Révéler</button>
-        <div class="interro-content" data-c="${b.n}">${b.get(f)}</div>
+        <div class="interro-content" data-c="${b.n}">${b.get()}</div>
       </div>`).join('');
   hydrateIcons(body);
   body.querySelectorAll('.interro-reveal').forEach(btn => btn.addEventListener('click', () => {
@@ -471,9 +480,12 @@ function openInterro(f) {
     btn.innerHTML = c.classList.contains('show') ? `${icon('eye')} Masquer` : `${icon('eye')} Révéler`;
     hydrateIcons(btn);
   }));
+  // Lien Q1 → fiche tempérament (ferme le cas pour éviter la superposition)
+  const tl = document.getElementById('cas-temp-link');
+  if (tl) tl.addEventListener('click', () => { document.getElementById('interro').classList.remove('open'); openFiche(cas.tempId, false); });
   const footer = document.getElementById('interro-footer');
   footer.innerHTML = `<button class="btn btn-primary" id="interro-quiz"><span data-icon="zap"></span> Tester en QCM</button>` +
-    `<button class="btn btn-ghost" id="interro-next"><span data-icon="shuffle"></span> Autre tirage</button>`;
+    `<button class="btn btn-ghost" id="interro-next"><span data-icon="shuffle"></span> Autre cas</button>`;
   hydrateIcons(footer);
   document.getElementById('interro-quiz').addEventListener('click', () => startQuiz(ficheQuestions(f.id), f.nom, f.id));
   document.getElementById('interro-next').addEventListener('click', startOralBlanc);
