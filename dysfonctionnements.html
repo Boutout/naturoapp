@@ -79,7 +79,7 @@
     /* Lecteur de fiche (plein écran) */
     .reader { position:fixed; inset:0; z-index:200; background:var(--c-cream); overflow-y:auto; display:none; }
     .reader.open { display:block; }
-    .reader__bar { position:sticky; top:0; z-index:2; background:var(--c-surface); border-bottom:1px solid var(--c-border); padding:14px 20px; display:flex; align-items:center; gap:12px; }
+    .reader__bar { position:sticky; top:0; z-index:2; background:var(--c-surface); border-bottom:1px solid var(--c-border); padding:max(14px, env(safe-area-inset-top)) 20px 14px; display:flex; align-items:center; gap:12px; }
     .reader__bar h2 { font-size:18px; flex:1; min-width:0; }
     .reader__body { max-width:760px; margin:0 auto; padding:24px 20px 120px; }
     .fiche-block { margin-bottom:20px; }
@@ -244,7 +244,7 @@
 <script src="supabase-config.js"></script>
 <script src="app.js"></script>
 <script>
-const { State, icon, hydrateIcons, escapeHtml, isMultiAnswer, answerKey, isSelectionCorrect, progressRing, setRing, animateNumber, celebrate, sfx, tts } = window.APP;
+const { State, icon, hydrateIcons, escapeHtml, isMultiAnswer, answerKey, isSelectionCorrect, progressRing, setRing, animateNumber, celebrate, sfx, tts, openOverlay, closeOverlay } = window.APP;
 
 let currentSystem = null;   // filtre système actif (null = tout)
 let currentQuery = '';      // recherche texte (filtre toutes fiches)
@@ -407,14 +407,11 @@ function openFiche(id, fromConcept) {
   const vbtn = document.getElementById('fiche-valider');
   if (vbtn) vbtn.addEventListener('click', () => { validateConcept(f.id); openFiche(f.id); });
 
-  document.getElementById('reader').classList.add('open');
+  openOverlay(document.getElementById('reader'));
   document.getElementById('reader-body').scrollTop = 0;
 }
-document.getElementById('reader-close').addEventListener('click', () => {
-  if (tts && tts.cancel) tts.cancel();
-  document.getElementById('reader').classList.remove('open');
-  refreshAll();
-});
+document.getElementById('reader-close').addEventListener('click', () => closeOverlay(document.getElementById('reader')));
+document.getElementById('reader').addEventListener('overlayclosed', () => { if (tts && tts.cancel) tts.cancel(); refreshAll(); });
 
 // Texte lisible (TTS) d'une fiche : retire le markdown/emoji, structure par section
 function plain(s) { return String(s || '').replace(/\*\*/g, '').replace(/[*_`]/g, ''); }
@@ -482,20 +479,18 @@ function openCas(cas) {
   }));
   // Lien Q1 → fiche tempérament (ferme le cas pour éviter la superposition)
   const tl = document.getElementById('cas-temp-link');
-  if (tl) tl.addEventListener('click', () => { document.getElementById('interro').classList.remove('open'); openFiche(cas.tempId, false); });
+  if (tl) tl.addEventListener('click', () => { closeOverlay(document.getElementById('interro')); setTimeout(() => openFiche(cas.tempId, false), 0); });
   const footer = document.getElementById('interro-footer');
   footer.innerHTML = `<button class="btn btn-primary" id="interro-quiz"><span data-icon="zap"></span> Tester en QCM</button>` +
     `<button class="btn btn-ghost" id="interro-next"><span data-icon="shuffle"></span> Autre cas</button>`;
   hydrateIcons(footer);
   document.getElementById('interro-quiz').addEventListener('click', () => startQuiz(ficheQuestions(f.id), f.nom, f.id));
   document.getElementById('interro-next').addEventListener('click', startOralBlanc);
-  document.getElementById('interro').classList.add('open');
+  openOverlay(document.getElementById('interro'));
   document.getElementById('interro-body').scrollTop = 0;
 }
-document.getElementById('interro-close').addEventListener('click', () => {
-  document.getElementById('interro').classList.remove('open');
-  refreshAll();
-});
+document.getElementById('interro-close').addEventListener('click', () => closeOverlay(document.getElementById('interro')));
+document.getElementById('interro').addEventListener('overlayclosed', () => refreshAll());
 
 function validateConcept(id) {
   const bonus = State.markConceptDone(id);
@@ -503,21 +498,22 @@ function validateConcept(id) {
 }
 
 // ── Moteur de QCM (banque orale, SRS séparé) ──────────────────────
+// Questions d'une fiche, adaptées au niveau du joueur (mélangées, plafonnées)
 function ficheQuestions(id) {
-  return State.dysQuestions().filter(q => q.ficheId === id);
+  return State.dysFicheQuiz(id, 8);
 }
 let quiz = null;
 function startQuiz(questions, title, ficheId) {
   if (!questions || !questions.length) { alert('Pas encore de QCM pour cette fiche.'); return; }
   quiz = { qs: questions, i: 0, correct: 0, ficheId: ficheId || null, answered: false };
   document.getElementById('quiz-title').textContent = title || 'Entraînement';
-  document.getElementById('quiz').classList.add('open');
+  openOverlay(document.getElementById('quiz'));
   renderQuizQ();
 }
 document.getElementById('quiz-close').addEventListener('click', closeQuiz);
+document.getElementById('quiz').addEventListener('overlayclosed', () => { quiz = null; refreshAll(); });
 function closeQuiz() {
-  document.getElementById('quiz').classList.remove('open');
-  quiz = null; refreshAll();
+  closeOverlay(document.getElementById('quiz'));
 }
 
 function renderQuizQ() {
@@ -526,8 +522,11 @@ function renderQuizQ() {
   const multi = isMultiAnswer(q);
   const total = quiz.qs.length;
   quiz.answered = false; quiz.selected = [];
+  const niv = q.niveau || 1;
+  const nivLabel = ['', 'Facile', 'Moyen', 'Difficile'][niv];
+  const nivColor = ['', '#2E9B77', '#C77D3A', '#C0392B'][niv];
   host.innerHTML = `
-    <div class="quiz__meta"><span>Question ${quiz.i + 1} / ${total}</span>${multi ? '<span>Plusieurs réponses</span>' : ''}</div>
+    <div class="quiz__meta"><span>Question ${quiz.i + 1} / ${total}</span><span style="display:flex;gap:8px;align-items:center">${multi ? '<span>Plusieurs réponses</span>' : ''}<span class="niv-badge" style="color:${nivColor};border:1px solid ${nivColor}33;background:${nivColor}14;padding:2px 8px;border-radius:99px;font-weight:700;font-size:11px">${'●'.repeat(niv)} ${nivLabel}</span></span></div>
     <div class="quiz__prog"><div class="quiz__prog__fill" style="width:${quiz.i / total * 100}%"></div></div>
     <div class="quiz__q">${md(q.q)}</div>
     <div id="quiz-opts">${q.options.map((o, idx) => `<button class="opt" data-idx="${idx}">${md(o)}</button>`).join('')}</div>

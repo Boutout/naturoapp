@@ -63,7 +63,7 @@
     .reader__bar { position:sticky; top:0; z-index:2; background:rgba(255,255,255,.92);
       -webkit-backdrop-filter:blur(12px); backdrop-filter:blur(12px);
       border-bottom:1px solid var(--c-border); display:flex; align-items:center; gap:12px;
-      padding:14px 18px calc(14px); }
+      padding:max(14px, env(safe-area-inset-top)) 18px 14px; }
     .reader__bar .btn-ghost { padding:8px 14px; }
     .reader__body { max-width:720px; margin:0 auto; padding:28px 20px 60px; }
     .reader__cat { font-size:11.5px; font-weight:700; text-transform:uppercase; letter-spacing:.5px; color:var(--c-green); }
@@ -199,7 +199,7 @@
 <script src="supabase-config.js"></script>
 <script src="app.js"></script>
 <script>
-const { State, icon, escapeHtml, progressRing, setRing, animateNumber, courseToFlashcards, tts } = window.APP;
+const { State, icon, escapeHtml, progressRing, setRing, animateNumber, courseToFlashcards, tts, openOverlay, closeOverlay } = window.APP;
 let currentCourse = null;
 const CONTENT = window.NATURO_CONTENT || { cours: [], glossaire: [] };
 
@@ -328,11 +328,12 @@ function openReader(id) {
   });
   const cardsBtn = document.getElementById('reader-cards');
   if (cardsBtn) cardsBtn.addEventListener('click', () => openFlashcards(c));
-  document.getElementById('reader').classList.add('open');
+  openOverlay(document.getElementById('reader'));
   document.getElementById('reader-body').scrollTop = 0;
 }
 
-function closeReader() { stopListening(); document.getElementById('reader').classList.remove('open'); }
+function closeReader() { closeOverlay(document.getElementById('reader')); }
+document.getElementById('reader').addEventListener('overlayclosed', stopListening);
 
 // ── AUDIO : lecture vocale du cours ──────────────────────────
 function courseToSpeech(c) {
@@ -362,7 +363,7 @@ function openFlashcards(c) {
   fcDeck = courseToFlashcards(c); fcIdx = 0;
   if (!fcDeck.length) return;
   renderFlashcard();
-  document.getElementById('fc-player').classList.add('open');
+  openOverlay(document.getElementById('fc-player'));
 }
 function renderFlashcard() {
   const card = fcDeck[fcIdx];
@@ -377,10 +378,10 @@ function renderFlashcard() {
 document.getElementById('fcp-card').addEventListener('click', () => document.getElementById('fcp-card').classList.toggle('flipped'));
 document.getElementById('fcp-prev').addEventListener('click', () => { if (fcIdx > 0) { fcIdx--; renderFlashcard(); } });
 document.getElementById('fcp-next').addEventListener('click', () => {
-  if (fcIdx >= fcDeck.length - 1) { document.getElementById('fc-player').classList.remove('open'); return; }
+  if (fcIdx >= fcDeck.length - 1) { closeOverlay(document.getElementById('fc-player')); return; }
   fcIdx++; renderFlashcard();
 });
-document.getElementById('fcp-close').addEventListener('click', () => document.getElementById('fc-player').classList.remove('open'));
+document.getElementById('fcp-close').addEventListener('click', () => closeOverlay(document.getElementById('fc-player')));
 
 function showToast(msg, type) {
   const el = document.createElement('div'); el.className = `toast toast-${type||'info'}`; el.textContent = msg;

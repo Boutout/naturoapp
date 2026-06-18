@@ -1313,13 +1313,33 @@ const State = {
   // ════════════════════════════════════════════════════════════════════
   dysFiches() { return (window.NATURO_DYS && window.NATURO_DYS.fiches) || []; },
   dysSystemes() { return (window.NATURO_DYS && window.NATURO_DYS.systemes) || []; },
+  // QCM d'une fiche = ses qcm de base + les qcm supplémentaires (qcmExtra)
+  _ficheQcm(f) {
+    if (!f) return [];
+    const extra = (window.NATURO_DYS && window.NATURO_DYS.qcmExtra && window.NATURO_DYS.qcmExtra[f.id]) || [];
+    return (f.qcm || []).concat(extra);
+  },
   // Tous les QCM oraux « aplatis », avec un id stable : `${ficheId}#${index}`
   dysQuestions() {
     const out = [];
-    this.dysFiches().forEach(f => (f.qcm || []).forEach((q, i) => {
-      out.push(Object.assign({ id: f.id + '#' + i, ficheId: f.id, systeme: f.systeme, nom: f.nom }, q));
+    this.dysFiches().forEach(f => this._ficheQcm(f).forEach((q, i) => {
+      out.push(Object.assign({ id: f.id + '#' + i, ficheId: f.id, systeme: f.systeme, nom: f.nom, niveau: q.niveau || 1 }, q));
     }));
     return out;
+  },
+  // Difficulté débloquée selon le niveau du joueur : 1 (débutant) → 3 (avancé)
+  dysMaxNiveau() {
+    const lvl = (this.levelInfo && this.levelInfo().level) || 1;
+    return lvl <= 2 ? 1 : (lvl <= 5 ? 2 : 3);
+  },
+  // QCM d'entraînement pour une fiche, adaptés au niveau (mélangés, plafonnés)
+  dysFicheQuiz(ficheId, max = 8) {
+    const all = this.dysQuestions().filter(q => q.ficheId === ficheId);
+    const maxN = this.dysMaxNiveau();
+    let pool = all.filter(q => (q.niveau || 1) <= maxN);
+    if (pool.length < 3) pool = all;            // garder un minimum jouable
+    pool = shuffle(pool);
+    return max ? pool.slice(0, max) : pool;
   },
   dysFiche(id) { return this.dysFiches().find(f => f.id === id) || null; },
   _dysStat(qid) {
@@ -1351,10 +1371,11 @@ const State = {
     this.save();
   },
 
-  // File de révision orale (SRS) — éventuellement filtrée par système
+  // File de révision orale (SRS) — filtrée par système + par niveau débloqué
   getDueDys(n = 12, systeme = null) {
     const now = Date.now();
-    let qs = this.dysQuestions();
+    const maxN = this.dysMaxNiveau();
+    let qs = this.dysQuestions().filter(q => (q.niveau || 1) <= maxN);
     if (systeme) qs = qs.filter(q => q.systeme === systeme);
     const scored = qs.map(q => ({ q, s: this.data.dysStats[q.id] }))
       .filter(x => !x.s || x.s.seen === 0 || (x.s.nextReview || 0) <= now)
@@ -1367,7 +1388,8 @@ const State = {
   },
   countDueDys(systeme = null) {
     const now = Date.now();
-    let qs = this.dysQuestions();
+    const maxN = this.dysMaxNiveau();
+    let qs = this.dysQuestions().filter(q => (q.niveau || 1) <= maxN);
     if (systeme) qs = qs.filter(q => q.systeme === systeme);
     return qs.reduce((acc, q) => { const s = this.data.dysStats[q.id]; return acc + ((!s || s.seen === 0 || (s.nextReview || 0) <= now) ? 1 : 0); }, 0);
   },
@@ -1375,14 +1397,17 @@ const State = {
   // Maîtrise d'une FICHE : % de réussite sur ses QCM (et si tous vus)
   dysFicheMastery(ficheId) {
     const f = this.dysFiche(ficheId); if (!f) return { pct: 0, seen: 0, total: 0, mastered: false };
+    const qcm = this._ficheQcm(f);
     let total = 0, seenQ = 0, ans = 0, correct = 0;
-    (f.qcm || []).forEach((q, i) => {
+    qcm.forEach((q, i) => {
       total++;
       const s = this.data.dysStats[ficheId + '#' + i];
       if (s && s.seen > 0) { seenQ++; ans += s.seen; correct += s.correct; }
     });
     const pct = ans > 0 ? Math.round(correct / ans * 100) : 0;
-    return { pct, seen: seenQ, total, ans, mastered: total > 0 && seenQ === total && pct >= 80 };
+    // Maîtrisée : avoir répondu à un échantillon suffisant (≥5 ou tout) avec ≥80 %
+    const need = Math.min(total, 5);
+    return { pct, seen: seenQ, total, ans, mastered: total > 0 && seenQ >= need && pct >= 80 };
   },
   // Maîtrise par SYSTÈME (pour barres de progression)
   dysMasteryBySystem() {
@@ -3289,6 +3314,39 @@ function setAIKey(provider, key) {
 function getAIModel() { try { return localStorage.getItem(AI_MODEL_LS) || ''; } catch (e) { return ''; } }
 function setAIModel(m) { try { localStorage.setItem(AI_MODEL_LS, m); } catch (e) {} }
 
+// ═══════════════════════════════════════════════════════════════
+//  OVERLAYS — le bouton « retour » (matériel/navigateur/geste) ferme
+//  l'overlay au lieu de quitter la page. Les pages appellent
+//  openOverlay(el) à l'ouverture et closeOverlay(el) sur leurs boutons
+//  de fermeture ; elles écoutent l'événement 'overlayclosed' sur l'el
+//  pour leur nettoyage (refresh, arrêt TTS, reset…).
+// ═══════════════════════════════════════════════════════════════
+function openOverlay(el) {
+  if (!el || el.classList.contains('open')) return;   // déjà ouvert → pas de double état d'historique
+  el.classList.add('open');
+  el.setAttribute('data-ov', '1');
+  try { history.pushState({ ov: 1 }, ''); } catch (e) {}
+}
+function _hideOverlay(el) {
+  if (!el) return;
+  el.classList.remove('open');
+  try { el.dispatchEvent(new CustomEvent('overlayclosed')); } catch (e) {}
+}
+function closeOverlay(el) {
+  if (!el || !el.classList.contains('open')) return;
+  // Si on a empilé un état d'historique, revenir en arrière déclenche popstate
+  // (qui masque l'overlay) → cohérent avec le bouton « retour » du téléphone.
+  if (history.state && history.state.ov) history.back();
+  else _hideOverlay(el);
+}
+if (typeof window !== 'undefined') {
+  window.addEventListener('popstate', function () {
+    const list = document.querySelectorAll('[data-ov].open');
+    const top = list[list.length - 1];
+    if (top) _hideOverlay(top);
+  });
+}
+
 // Export global
 window.APP = {
   State, QUESTIONS, BADGES, shuffle, getQuestionsByDay, formatTime, getScoreColor, getGrade,
@@ -3301,6 +3359,7 @@ window.APP = {
   getAIKey, setAIKey, getAIModel, setAIModel,
   reminderOn, setReminderOn, reminderDays, setReminderDays, inactivityDays,
   animateNumber, progressRing, setRing, prefersReducedMotion, celebrate,
+  openOverlay, closeOverlay,
   DYS: (window.NATURO_DYS || null)
 };
 
