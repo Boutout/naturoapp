@@ -1,0 +1,522 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>NaturoApp — Dysfonctionnements (oral)</title>
+  <meta name="theme-color" content="#1A5C45">
+  <link rel="manifest" href="manifest.json">
+  <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="NaturoApp">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Lora:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+  <script>try{var t=localStorage.getItem('naturoapp_theme');if(t==='dark'||((!t||t==='auto')&&window.matchMedia('(prefers-color-scheme:dark)').matches)){document.documentElement.setAttribute('data-theme','dark');}else{document.documentElement.setAttribute('data-theme','light');}if(!sessionStorage.getItem('naturoapp_active'))document.documentElement.classList.add('pre-lock');}catch(e){}</script>
+  <style>
+    .dys-hero {
+      background:
+        radial-gradient(120% 140% at 100% 0%, #1F6B50 0%, rgba(31,107,80,0) 55%),
+        linear-gradient(135deg, var(--c-green-deep), var(--c-green));
+      color:#fff; border-radius:var(--r-xl); padding:30px 32px; margin-bottom:20px;
+      box-shadow:var(--shadow-lg); display:flex; align-items:center; gap:26px; flex-wrap:wrap;
+    }
+    .dys-hero__content { flex:1; min-width:220px; }
+    .dys-hero h1 { color:#fff; font-size:28px; margin-bottom:6px; }
+    .dys-hero p { color:rgba(255,255,255,.84); font-size:14px; line-height:1.5; max-width:560px; }
+    .dys-hero__ring .ring-wrap__num { font-family:var(--font-display); font-size:26px; font-weight:700; color:#fff; }
+    .dys-hero__ring .ring-wrap__cap { font-size:9.5px; letter-spacing:.5px; text-transform:uppercase; color:rgba(255,255,255,.78); margin-top:2px; }
+    .dys-hero__actions { display:flex; gap:10px; margin-top:16px; flex-wrap:wrap; }
+    .dys-hero__actions .btn { background:rgba(255,255,255,.16); color:#fff; border:1px solid rgba(255,255,255,.28); }
+    .dys-hero__actions .btn:hover { background:rgba(255,255,255,.26); }
+    .dys-hero__actions .btn--solid { background:#fff; color:var(--c-green-deep); border-color:#fff; }
+
+    /* Concept du jour */
+    .concept-card { display:flex; align-items:flex-start; gap:16px; padding:20px 22px; margin-bottom:24px;
+      background:linear-gradient(135deg,#FFF7E6,#FFF1D6); border:1px solid #F0D9A8; border-radius:var(--r-lg); }
+    [data-theme="dark"] .concept-card { background:linear-gradient(135deg,#2a2418,#332b18); border-color:#4a3d1f; }
+    .concept-card.done { background:linear-gradient(135deg,#E7F6EF,#D8F0E4); border-color:#A8D8C2; }
+    [data-theme="dark"] .concept-card.done { background:linear-gradient(135deg,#16271f,#1a2e24); border-color:#2c5440; }
+    .concept-card__ico { flex-shrink:0; width:46px; height:46px; border-radius:14px; background:#F5A623; color:#fff; display:flex; align-items:center; justify-content:center; }
+    .concept-card.done .concept-card__ico { background:var(--c-green); }
+    .concept-card__ico .app-icon { width:24px; height:24px; }
+    .concept-card__body { flex:1; min-width:0; }
+    .concept-card__label { font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:.6px; color:#B57A14; }
+    .concept-card.done .concept-card__label { color:var(--c-green); }
+    .concept-card__title { font-size:17px; font-weight:700; margin:2px 0 4px; }
+    .concept-card__txt { font-size:13.5px; color:var(--c-mid); line-height:1.5; }
+    .concept-card__cta { margin-top:12px; display:flex; gap:8px; flex-wrap:wrap; }
+
+    .sec-title { display:flex; align-items:center; gap:8px; font-size:13px; font-weight:700; text-transform:uppercase; letter-spacing:.5px; color:var(--c-green); margin:22px 0 12px; }
+    .sec-title .app-icon { width:16px; height:16px; }
+
+    /* Systèmes */
+    .sys-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(150px,1fr)); gap:12px; }
+    .sys-card { padding:16px; cursor:pointer; text-align:left; border:1px solid var(--c-border); border-radius:var(--r-lg); background:var(--c-surface); transition:transform .15s, box-shadow .15s, border-color .15s; }
+    .sys-card:hover { transform:translateY(-2px); box-shadow:var(--shadow-md); border-color:var(--c-green-light); }
+    .sys-card.active { border-color:var(--c-green); box-shadow:0 0 0 2px var(--c-green-pale); }
+    .sys-card__ico { width:38px; height:38px; border-radius:11px; background:var(--c-green-pale); color:var(--c-green-deep); display:flex; align-items:center; justify-content:center; margin-bottom:10px; }
+    .sys-card__ico .app-icon { width:21px; height:21px; }
+    .sys-card__name { font-weight:700; font-size:14px; }
+    .sys-card__count { font-size:11.5px; color:var(--c-mid); margin-top:2px; }
+    .sys-bar { height:6px; border-radius:99px; background:var(--c-border); margin-top:10px; overflow:hidden; }
+    .sys-bar__fill { height:100%; border-radius:99px; background:linear-gradient(90deg,var(--c-green),var(--c-green-light)); transition:width .5s; }
+
+    /* Fiches */
+    .fiche-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(250px,1fr)); gap:12px; }
+    .fiche-card { padding:16px 18px; cursor:pointer; display:flex; flex-direction:column; gap:6px; }
+    .fiche-card__top { display:flex; align-items:center; justify-content:space-between; gap:10px; }
+    .fiche-card h3 { font-size:15.5px; }
+    .fiche-card__sys { font-size:10.5px; text-transform:uppercase; letter-spacing:.4px; color:var(--c-mid); }
+    .fiche-card__concept { font-size:12.5px; color:var(--c-mid); line-height:1.45; }
+    .pill { display:inline-flex; align-items:center; gap:4px; font-size:10.5px; font-weight:700; padding:3px 8px; border-radius:99px; }
+    .pill--ok { background:var(--c-green-pale); color:var(--c-green-deep); }
+    .pill--todo { background:var(--c-border); color:var(--c-mid); }
+
+    /* Lecteur de fiche (plein écran) */
+    .reader { position:fixed; inset:0; z-index:200; background:var(--c-cream); overflow-y:auto; display:none; }
+    .reader.open { display:block; }
+    .reader__bar { position:sticky; top:0; z-index:2; background:var(--c-surface); border-bottom:1px solid var(--c-border); padding:14px 20px; display:flex; align-items:center; gap:12px; }
+    .reader__bar h2 { font-size:18px; flex:1; min-width:0; }
+    .reader__body { max-width:760px; margin:0 auto; padding:24px 20px 120px; }
+    .fiche-block { margin-bottom:20px; }
+    .fiche-block__h { display:flex; align-items:center; gap:8px; font-size:12px; font-weight:700; text-transform:uppercase; letter-spacing:.5px; color:var(--c-green); margin-bottom:8px; }
+    .fiche-block__h .app-icon { width:15px; height:15px; }
+    .fiche-block p, .fiche-block li { font-size:14.5px; line-height:1.6; color:var(--c-text); }
+    .fiche-block ul { padding-left:20px; }
+    .fiche-block li { margin-bottom:5px; }
+    .pilier { border-left:3px solid var(--c-green-light); padding:4px 0 4px 14px; margin-bottom:10px; }
+    .pilier b { color:var(--c-green-deep); }
+    .callout { border-radius:var(--r-md); padding:14px 16px; font-size:13.5px; line-height:1.55; margin-bottom:14px; }
+    .callout__h { font-weight:700; display:flex; align-items:center; gap:7px; margin-bottom:5px; }
+    .callout__h .app-icon { width:16px; height:16px; }
+    .callout--memo { background:var(--c-green-pale); color:var(--c-green-deep); }
+    .callout--warn { background:#FDECEC; color:#9B2C2C; }
+    [data-theme="dark"] .callout--warn { background:#2e1a1a; color:#f0a8a8; }
+    .callout--fix { background:#FFF7E6; color:#8a5a10; border:1px dashed #E0B860; }
+    [data-theme="dark"] .callout--fix { background:#2a2418; color:#e0c080; border-color:#5a4a20; }
+    .complements-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(180px,1fr)); gap:12px; }
+    .comp-box { background:var(--c-surface); border:1px solid var(--c-border); border-radius:var(--r-md); padding:12px 14px; }
+    .comp-box__h { font-size:11.5px; font-weight:700; text-transform:uppercase; letter-spacing:.4px; color:var(--c-mid); margin-bottom:6px; }
+    .comp-box ul { padding-left:16px; margin:0; }
+    .comp-box li { font-size:13px; margin-bottom:3px; }
+    .reader__footer { position:fixed; bottom:0; left:0; right:0; background:var(--c-surface); border-top:1px solid var(--c-border); padding:12px 20px; display:flex; gap:10px; justify-content:center; z-index:3; }
+    .reader__footer .btn { max-width:380px; flex:1; }
+
+    /* QCM */
+    .quiz { max-width:640px; margin:0 auto; }
+    .quiz__meta { display:flex; align-items:center; justify-content:space-between; font-size:12.5px; color:var(--c-mid); margin-bottom:10px; }
+    .quiz__prog { height:6px; background:var(--c-border); border-radius:99px; overflow:hidden; margin-bottom:20px; }
+    .quiz__prog__fill { height:100%; background:var(--c-green); transition:width .3s; }
+    .quiz__q { font-size:18px; font-weight:600; line-height:1.4; margin-bottom:18px; }
+    .opt { display:block; width:100%; text-align:left; padding:14px 16px; border:1.5px solid var(--c-border); border-radius:var(--r-md); background:var(--c-surface); font-size:14.5px; margin-bottom:10px; cursor:pointer; transition:border-color .15s, background .15s; }
+    .opt:hover { border-color:var(--c-green-light); }
+    .opt.selected { border-color:var(--c-green); background:var(--c-green-pale); }
+    .opt.correct { border-color:#2E9B77; background:#E7F6EF; color:#1A5C45; }
+    [data-theme="dark"] .opt.correct { background:#16271f; color:#7fd8b0; }
+    .opt.wrong { border-color:#D66; background:#FDECEC; color:#9B2C2C; }
+    [data-theme="dark"] .opt.wrong { background:#2e1a1a; color:#f0a8a8; }
+    .opt__mark { float:right; font-weight:700; }
+    .explain { border-radius:var(--r-md); padding:14px 16px; margin-top:6px; font-size:13.5px; line-height:1.55; background:var(--c-green-pale); color:var(--c-green-deep); }
+    .explain b { color:inherit; }
+    .explain__mnemo { margin-top:8px; font-style:italic; opacity:.9; }
+    .quiz__result { text-align:center; padding:30px 10px; }
+    .quiz__result h2 { font-size:24px; margin-bottom:6px; }
+    .quiz__score { font-size:46px; font-weight:700; font-family:var(--font-display); color:var(--c-green); }
+    .empty { text-align:center; color:var(--c-mid); padding:40px 20px; font-size:14px; }
+  </style>
+</head>
+<body>
+
+<nav class="topnav">
+  <a href="index.html" class="topnav__logo">
+    <div class="topnav__logo-icon" data-icon="leaf"></div>
+    <div>
+      <div class="topnav__logo-text">NaturoApp</div>
+      <span class="topnav__logo-sub">Révision Naturopathie</span>
+    </div>
+  </a>
+  <ul class="topnav__nav">
+    <li><a href="index.html"><span class="nav-ico" data-icon="home"></span> <span class="nav-label">Accueil</span></a></li>
+    <li><a href="cours.html"><span class="nav-ico" data-icon="book"></span> <span class="nav-label">Cours</span></a></li>
+    <li><a href="dysfonctionnements.html" class="active"><span class="nav-ico" data-icon="stethoscope"></span> <span class="nav-label">Oral</span></a></li>
+    <li><a href="revision.html"><span class="nav-ico" data-icon="book-open"></span> <span class="nav-label">Révision</span></a></li>
+    <li><a href="examen.html"><span class="nav-ico" data-icon="edit"></span> <span class="nav-label">Examen</span></a></li>
+  </ul>
+  <button class="nav-lock" id="nav-search" data-icon="search" title="Rechercher (Ctrl/Cmd+K)" aria-label="Rechercher"></button>
+  <a class="nav-lock" id="nav-settings" href="reglages.html" data-icon="settings" title="Réglages" aria-label="Réglages"></a>
+  <button class="nav-lock" id="nav-theme" data-icon="moon" title="Thème sombre" aria-label="Changer de thème"></button>
+  <button class="nav-lock" id="nav-lock" data-icon="lock" title="Verrouiller l'app" aria-label="Verrouiller"></button>
+</nav>
+
+<div class="page">
+
+  <div class="dys-hero">
+    <div class="dys-hero__content">
+      <h1>Dysfonctionnements — Oral</h1>
+      <p>Les dysfonctionnements du sujet d'examen <b>oral</b>, appris selon la grille de l'épreuve&nbsp;: anatomie → causes → 3&nbsp;piliers → conseils → compléments. Une banque de QCM <b>distincte</b> de l'examen blanc.</p>
+      <div class="dys-hero__actions">
+        <button class="btn btn--solid" id="btn-srs"><span data-icon="zap"></span> Réviser (intelligent)</button>
+        <button class="btn" id="btn-concept"><span data-icon="lightbulb"></span> Concept du jour</button>
+      </div>
+    </div>
+    <div class="dys-hero__ring ring-wrap" id="hero-ring"></div>
+  </div>
+
+  <div id="concept-host"></div>
+
+  <div class="sec-title"><span data-icon="layers"></span> Par système</div>
+  <div class="sys-grid" id="sys-grid"></div>
+
+  <div class="sec-title" id="fiches-title"><span data-icon="list"></span> Fiches</div>
+  <div class="fiche-grid" id="fiche-grid"></div>
+
+</div>
+
+<!-- Lecteur de fiche -->
+<div class="reader" id="reader">
+  <div class="reader__bar">
+    <button class="btn btn-ghost btn-icon" id="reader-close" aria-label="Fermer"><span data-icon="arrow-left"></span></button>
+    <h2 id="reader-title">Fiche</h2>
+  </div>
+  <div class="reader__body" id="reader-body"></div>
+  <div class="reader__footer" id="reader-footer"></div>
+</div>
+
+<!-- QCM (plein écran) -->
+<div class="reader" id="quiz">
+  <div class="reader__bar">
+    <button class="btn btn-ghost btn-icon" id="quiz-close" aria-label="Fermer"><span data-icon="x"></span></button>
+    <h2 id="quiz-title">Entraînement</h2>
+  </div>
+  <div class="reader__body"><div class="quiz" id="quiz-host"></div></div>
+</div>
+
+<nav class="bottomnav">
+  <a href="index.html"><span class="bn-ico" data-icon="home"></span> Accueil</a>
+  <a href="cours.html"><span class="bn-ico" data-icon="book"></span> Cours</a>
+  <a href="dysfonctionnements.html" class="active"><span class="bn-ico" data-icon="stethoscope"></span> Oral</a>
+  <a href="revision.html"><span class="bn-ico" data-icon="book-open"></span> Révision</a>
+  <a href="examen.html"><span class="bn-ico" data-icon="edit"></span> Examen</a>
+</nav>
+
+<div id="toast-container"></div>
+
+<script src="content.js"></script>
+<script src="dysfonctionnements.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="supabase-config.js"></script>
+<script src="app.js"></script>
+<script>
+const { State, icon, hydrateIcons, escapeHtml, isMultiAnswer, answerKey, isSelectionCorrect, progressRing, setRing, animateNumber, celebrate, sfx } = window.APP;
+
+let currentSystem = null;   // filtre système actif (null = tout)
+
+// Mini-markdown : échappe puis **gras** et *italique*
+function md(s) {
+  return escapeHtml(s || '')
+    .replace(/\*\*(.+?)\*\*/g, '<b>$1</b>')
+    .replace(/\*(.+?)\*/g, '<em>$1</em>');
+}
+function mdList(arr) {
+  return '<ul>' + (arr || []).map(x => '<li>' + md(x) + '</li>').join('') + '</ul>';
+}
+
+// ── Hero : anneau de préparation ─────────────────────────────────
+function renderHero() {
+  const r = State.dysReadiness();
+  const host = document.getElementById('hero-ring');
+  host.innerHTML = progressRing(r.pct, { size: 96, stroke: 8, color: '#fff', track: 'rgba(255,255,255,.2)' }) +
+    `<div class="ring-wrap__label"><div class="ring-wrap__num" id="hero-pct">0%</div><div class="ring-wrap__cap">${r.mastered}/${r.total} fiches</div></div>`;
+  setRing(host.querySelector('.ring__bar'), r.pct);
+  animateNumber(document.getElementById('hero-pct'), r.pct, { suffix: '%', duration: 900 });
+}
+
+// ── Concept du jour ───────────────────────────────────────────────
+function renderConcept() {
+  const host = document.getElementById('concept-host');
+  const f = State.getConceptOfDay();
+  if (!f) { host.innerHTML = ''; return; }
+  const done = State.isConceptDoneToday();
+  host.innerHTML = `
+    <div class="concept-card ${done ? 'done' : ''}">
+      <div class="concept-card__ico">${icon(done ? 'check-circle' : 'lightbulb')}</div>
+      <div class="concept-card__body">
+        <div class="concept-card__label">${done ? 'Concept du jour — relevé ✓' : 'Concept du jour'}</div>
+        <div class="concept-card__title">${escapeHtml(f.nom)}</div>
+        <div class="concept-card__txt">${md(f.concept)}</div>
+        <div class="concept-card__cta">
+          <button class="btn btn-primary btn-sm" data-open="${f.id}"><span data-icon="book-open"></span> Voir la fiche</button>
+          <button class="btn btn-ghost btn-sm" data-quiz="${f.id}"><span data-icon="zap"></span> Tester</button>
+        </div>
+      </div>
+    </div>`;
+  hydrateIcons(host);
+  host.querySelector('[data-open]').addEventListener('click', () => openFiche(f.id, true));
+  host.querySelector('[data-quiz]').addEventListener('click', () => startQuiz(ficheQuestions(f.id), 'Concept : ' + f.nom, f.id));
+}
+
+// ── Grille des systèmes ───────────────────────────────────────────
+function renderSystems() {
+  const grid = document.getElementById('sys-grid');
+  const sys = State.dysMasteryBySystem();
+  grid.innerHTML = sys.map(s => `
+    <button class="sys-card ${currentSystem === s.key ? 'active' : ''}" data-sys="${s.key}">
+      <div class="sys-card__ico">${icon(s.icon)}</div>
+      <div class="sys-card__name">${escapeHtml(s.court)}</div>
+      <div class="sys-card__count">${s.mastered}/${s.fiches} maîtrisée${s.fiches > 1 ? 's' : ''}</div>
+      <div class="sys-bar"><div class="sys-bar__fill" style="width:${s.pct}%"></div></div>
+    </button>`).join('');
+  hydrateIcons(grid);
+  grid.querySelectorAll('[data-sys]').forEach(b => b.addEventListener('click', () => {
+    const k = b.getAttribute('data-sys');
+    currentSystem = (currentSystem === k) ? null : k;
+    renderSystems(); renderFiches();
+    document.getElementById('fiches-title').scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }));
+}
+
+// ── Liste des fiches (filtrée) ────────────────────────────────────
+function renderFiches() {
+  const grid = document.getElementById('fiche-grid');
+  let fiches = State.dysFiches();
+  if (currentSystem) fiches = fiches.filter(f => f.systeme === currentSystem);
+  const sysName = currentSystem ? (State.dysSystemes().find(s => s.key === currentSystem) || {}).nom : null;
+  document.getElementById('fiches-title').innerHTML = `<span data-icon="list"></span> ${sysName ? escapeHtml(sysName) : 'Toutes les fiches'} (${fiches.length})`;
+  hydrateIcons(document.getElementById('fiches-title'));
+  if (!fiches.length) { grid.innerHTML = '<div class="empty">Aucune fiche dans ce système pour le moment.</div>'; return; }
+  grid.innerHTML = fiches.map(f => {
+    const m = State.dysFicheMastery(f.id);
+    return `
+      <div class="card fiche-card" data-open="${f.id}">
+        <div class="fiche-card__top">
+          <div><div class="fiche-card__sys">${escapeHtml((State.dysSystemes().find(s => s.key === f.systeme) || {}).court || '')}</div>
+          <h3>${escapeHtml(f.nom)}</h3></div>
+          <span class="pill ${m.mastered ? 'pill--ok' : 'pill--todo'}">${m.mastered ? '✓ acquis' : (m.seen ? m.pct + '%' : 'à voir')}</span>
+        </div>
+        <div class="fiche-card__concept">${md(f.concept)}</div>
+      </div>`;
+  }).join('');
+  grid.querySelectorAll('[data-open]').forEach(c => c.addEventListener('click', () => openFiche(c.getAttribute('data-open'))));
+}
+
+// ── Lecteur de fiche (grille de l'oral) ───────────────────────────
+function openFiche(id, fromConcept) {
+  const f = State.dysFiche(id);
+  if (!f) return;
+  document.getElementById('reader-title').textContent = f.nom;
+  const body = document.getElementById('reader-body');
+  const comp = f.complements || {};
+  const compBox = (h, arr) => (arr && arr.length) ? `<div class="comp-box"><div class="comp-box__h">${h}</div>${mdList(arr)}</div>` : '';
+  body.innerHTML = `
+    <div class="callout callout--memo"><div class="callout__h">${icon('lightbulb')} Concept clé</div>${md(f.concept)}</div>
+
+    <div class="fiche-block"><div class="fiche-block__h">${icon('eye')} 1 · Anatomie / Définition</div><p>${md(f.anatomie)}</p></div>
+
+    <div class="fiche-block"><div class="fiche-block__h">${icon('alert-triangle')} 2 · Étiologie (causes)</div>${mdList(f.etiologie)}</div>
+    <div class="fiche-block"><div class="fiche-block__h">${icon('activity')} Symptômes</div>${mdList(f.symptomes)}</div>
+
+    <div class="fiche-block"><div class="fiche-block__h">${icon('layers')} 3 · Les 3 piliers</div>
+      <div class="pilier"><b>🍽️ Alimentation —</b> ${md(f.piliers.alimentation)}</div>
+      <div class="pilier"><b>🏃 Mouvement / respiration —</b> ${md(f.piliers.mouvement)}</div>
+      <div class="pilier"><b>🧠 Émotionnel —</b> ${md(f.piliers.emotionnel)}</div>
+    </div>
+
+    ${(f.autres && f.autres.length) ? `<div class="fiche-block"><div class="fiche-block__h">${icon('list')} 4 · Autres conseils & démarches</div>${mdList(f.autres)}</div>` : ''}
+
+    <div class="fiche-block"><div class="fiche-block__h">${icon('flower')} 5 · Compléments</div>
+      <div class="complements-grid">
+        ${compBox('Plantes', comp.plantes)}
+        ${compBox('Huiles essentielles', comp.he)}
+        ${compBox('Gemmothérapie', comp.gemmo)}
+        ${compBox('Micronutrition', comp.micro)}
+      </div>
+    </div>
+
+    ${f.nePasConfondre ? `<div class="callout callout--warn"><div class="callout__h">${icon('alert-triangle')} Ne pas confondre</div>${md(f.nePasConfondre)}</div>` : ''}
+    <div class="callout callout--memo"><div class="callout__h">${icon('brain')} Mémo</div>${md(f.memo)}</div>
+    ${f.correction ? `<div class="callout callout--fix"><div class="callout__h">${icon('check-circle')} Correction / précision</div>${md(f.correction)}</div>` : ''}
+  `;
+  hydrateIcons(body);
+
+  // Footer : s'entraîner + (si concept du jour non relevé) valider
+  const footer = document.getElementById('reader-footer');
+  const isToday = State.getConceptOfDay() && State.getConceptOfDay().id === f.id;
+  footer.innerHTML = `<button class="btn btn-primary" id="fiche-quiz"><span data-icon="zap"></span> S'entraîner sur cette fiche</button>` +
+    ((isToday && !State.isConceptDoneToday()) ? `<button class="btn" id="fiche-valider"><span data-icon="check"></span> Valider le concept (+15 XP)</button>` : '');
+  hydrateIcons(footer);
+  document.getElementById('fiche-quiz').addEventListener('click', () => startQuiz(ficheQuestions(f.id), f.nom, f.id));
+  const vbtn = document.getElementById('fiche-valider');
+  if (vbtn) vbtn.addEventListener('click', () => { validateConcept(f.id); openFiche(f.id); });
+
+  document.getElementById('reader').classList.add('open');
+  document.getElementById('reader-body').scrollTop = 0;
+}
+document.getElementById('reader-close').addEventListener('click', () => {
+  document.getElementById('reader').classList.remove('open');
+  refreshAll();
+});
+
+function validateConcept(id) {
+  const bonus = State.markConceptDone(id);
+  if (bonus) { if (sfx) sfx.levelup(); celebrate && celebrate(); showBadges(); renderConcept(); }
+}
+
+// ── Moteur de QCM (banque orale, SRS séparé) ──────────────────────
+function ficheQuestions(id) {
+  return State.dysQuestions().filter(q => q.ficheId === id);
+}
+let quiz = null;
+function startQuiz(questions, title, ficheId) {
+  if (!questions || !questions.length) { alert('Pas encore de QCM pour cette fiche.'); return; }
+  quiz = { qs: questions, i: 0, correct: 0, ficheId: ficheId || null, answered: false };
+  document.getElementById('quiz-title').textContent = title || 'Entraînement';
+  document.getElementById('quiz').classList.add('open');
+  renderQuizQ();
+}
+document.getElementById('quiz-close').addEventListener('click', closeQuiz);
+function closeQuiz() {
+  document.getElementById('quiz').classList.remove('open');
+  quiz = null; refreshAll();
+}
+
+function renderQuizQ() {
+  const host = document.getElementById('quiz-host');
+  const q = quiz.qs[quiz.i];
+  const multi = isMultiAnswer(q);
+  const total = quiz.qs.length;
+  quiz.answered = false; quiz.selected = [];
+  host.innerHTML = `
+    <div class="quiz__meta"><span>Question ${quiz.i + 1} / ${total}</span>${multi ? '<span>Plusieurs réponses</span>' : ''}</div>
+    <div class="quiz__prog"><div class="quiz__prog__fill" style="width:${quiz.i / total * 100}%"></div></div>
+    <div class="quiz__q">${md(q.q)}</div>
+    <div id="quiz-opts">${q.options.map((o, idx) => `<button class="opt" data-idx="${idx}">${md(o)}</button>`).join('')}</div>
+    <div id="quiz-after"></div>`;
+  host.querySelectorAll('.opt').forEach(btn => btn.addEventListener('click', () => onPick(parseInt(btn.getAttribute('data-idx')), multi)));
+  document.getElementById('quiz').querySelector('.reader__body').scrollTop = 0;
+}
+
+function onPick(idx, multi) {
+  if (quiz.answered) return;
+  if (multi) {
+    const pos = quiz.selected.indexOf(idx);
+    if (pos >= 0) quiz.selected.splice(pos, 1); else quiz.selected.push(idx);
+    const opts = document.getElementById('quiz-opts');
+    opts.querySelectorAll('.opt').forEach(b => b.classList.toggle('selected', quiz.selected.includes(parseInt(b.getAttribute('data-idx')))));
+    // bouton valider
+    let v = document.getElementById('quiz-validate');
+    if (!v) {
+      v = document.createElement('button');
+      v.id = 'quiz-validate'; v.className = 'btn btn-primary'; v.style.width = '100%'; v.style.marginTop = '6px';
+      v.innerHTML = 'Valider ma réponse';
+      v.addEventListener('click', () => revealAnswer(multi));
+      document.getElementById('quiz-after').appendChild(v);
+    }
+  } else {
+    quiz.selected = [idx];
+    revealAnswer(false);
+  }
+}
+
+function revealAnswer(multi) {
+  if (quiz.answered) return;
+  quiz.answered = true;
+  const q = quiz.qs[quiz.i];
+  const key = answerKey(q);
+  const ok = isSelectionCorrect(q, quiz.selected);
+  if (ok) quiz.correct++;
+  State.recordDysAnswer(q.id, ok);
+  if (sfx) { ok ? sfx.correct() : sfx.wrong(); }
+
+  document.querySelectorAll('#quiz-opts .opt').forEach(b => {
+    const i = parseInt(b.getAttribute('data-idx'));
+    b.disabled = true;
+    if (key.includes(i)) b.classList.add('correct');
+    else if (quiz.selected.includes(i)) b.classList.add('wrong');
+  });
+  const v = document.getElementById('quiz-validate'); if (v) v.remove();
+  const after = document.getElementById('quiz-after');
+  after.innerHTML = `
+    <div class="explain">
+      <b>${ok ? '✓ Bonne réponse' : '✗ À revoir'}.</b> ${md(q.explication)}
+      ${q.mnemo ? `<div class="explain__mnemo">💡 ${md(q.mnemo)}</div>` : ''}
+    </div>
+    <button class="btn btn-primary" id="quiz-next" style="width:100%;margin-top:14px">${quiz.i + 1 < quiz.qs.length ? 'Question suivante →' : 'Voir le bilan'}</button>`;
+  hydrateIcons(after);
+  document.getElementById('quiz-next').addEventListener('click', nextQuizQ);
+}
+
+function nextQuizQ() {
+  if (quiz.i + 1 < quiz.qs.length) { quiz.i++; renderQuizQ(); }
+  else finishQuiz();
+}
+
+function finishQuiz() {
+  const total = quiz.qs.length, correct = quiz.correct;
+  const pct = Math.round(correct / total * 100);
+  // Concept du jour : si on a travaillé sa fiche, on le valide
+  let conceptMsg = '';
+  const cod = State.getConceptOfDay();
+  if (quiz.ficheId && cod && cod.id === quiz.ficheId && !State.isConceptDoneToday()) {
+    const bonus = State.markConceptDone(quiz.ficheId);
+    if (bonus) conceptMsg = `<p style="color:var(--c-green);margin-top:6px">+ Concept du jour relevé (+${bonus} XP) 🎉</p>`;
+  }
+  const host = document.getElementById('quiz-host');
+  host.innerHTML = `
+    <div class="quiz__result">
+      <div class="quiz__score">${pct}%</div>
+      <h2>${pct >= 80 ? 'Excellent !' : pct >= 50 ? 'Bien joué' : 'Continue !'}</h2>
+      <p style="color:var(--c-mid)">${correct} / ${total} bonnes réponses · ces QCM ne comptent pas dans l'examen blanc.</p>
+      ${conceptMsg}
+      <div style="display:flex;gap:10px;justify-content:center;margin-top:22px;flex-wrap:wrap">
+        <button class="btn btn-primary" id="quiz-again"><span data-icon="rotate"></span> Recommencer</button>
+        <button class="btn btn-ghost" id="quiz-done"><span data-icon="check"></span> Terminer</button>
+      </div>
+    </div>`;
+  hydrateIcons(host);
+  if (pct >= 80) { celebrate && celebrate(); }
+  showBadges();
+  document.getElementById('quiz-again').addEventListener('click', () => startQuiz(quiz.qs, document.getElementById('quiz-title').textContent, quiz.ficheId));
+  document.getElementById('quiz-done').addEventListener('click', closeQuiz);
+}
+
+// Révision intelligente (SRS) sur toute la banque ou un système
+function startSrs() {
+  const due = State.getDueDys(12, currentSystem);
+  if (!due.length) { alert('Rien à réviser pour le moment — reviens plus tard, la mémoire a besoin d\'espacer !'); return; }
+  startQuiz(due, 'Révision intelligente', null);
+}
+
+// Badges nouvellement gagnés → toast
+function showBadges() {
+  const fresh = State.refreshBadges ? State.refreshBadges() : [];
+  (fresh || []).forEach((b, k) => setTimeout(() => {
+    const t = document.createElement('div');
+    t.className = 'toast'; t.innerHTML = `${icon('award')} Badge débloqué : <b>${escapeHtml(b.nom)}</b>`;
+    document.getElementById('toast-container').appendChild(t);
+    setTimeout(() => t.remove(), 3500);
+  }, k * 400));
+}
+
+function refreshAll() { renderHero(); renderConcept(); renderSystems(); renderFiches(); }
+
+document.getElementById('btn-srs').addEventListener('click', startSrs);
+document.getElementById('btn-concept').addEventListener('click', () => {
+  const f = State.getConceptOfDay(); if (f) openFiche(f.id, true);
+});
+
+window.APP.onReady(() => {
+  State.init();
+  const params = new URLSearchParams(location.search);
+  if (params.get('systeme')) currentSystem = params.get('systeme');
+  refreshAll();
+  const fId = params.get('fiche');
+  if (fId) openFiche(fId, true);
+  if (params.get('mode') === 'srs') startSrs();
+});
+</script>
+</body>
+</html>

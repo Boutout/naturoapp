@@ -411,6 +411,7 @@
   <ul class="topnav__nav">
     <li><a href="index.html" class="active"><span class="nav-ico" data-icon="home"></span> <span class="nav-label">Accueil</span></a></li>
     <li><a href="cours.html"><span class="nav-ico" data-icon="book"></span> <span class="nav-label">Cours</span></a></li>
+    <li><a href="dysfonctionnements.html"><span class="nav-ico" data-icon="stethoscope"></span> <span class="nav-label">Oral</span></a></li>
     <li><a href="revision.html"><span class="nav-ico" data-icon="book-open"></span> <span class="nav-label">Révision</span></a></li>
     <li><a href="examen.html"><span class="nav-ico" data-icon="edit"></span> <span class="nav-label">Examen</span></a></li>
     <li><a href="stats.html"><span class="nav-ico" data-icon="chart"></span> <span class="nav-label">Stats</span></a></li>
@@ -467,6 +468,16 @@
       <span class="daily-challenge__sub" id="dc-sub">10 questions · jusqu'à +50 XP</span>
     </span>
     <span class="daily-challenge__go" data-icon="arrow-right"></span>
+  </a>
+
+  <!-- CONCEPT DU JOUR (préparation à l'oral) -->
+  <a class="smart-cta" id="concept-cta" href="dysfonctionnements.html" style="display:none;background:linear-gradient(135deg,#F5A623,#D98512);box-shadow:0 10px 26px rgba(217,133,18,.30);">
+    <span class="smart-cta__ico" id="concept-cta-ico" data-icon="lightbulb"></span>
+    <span class="smart-cta__txt">
+      <b id="concept-cta-title" style="color:#fff">Concept du jour</b>
+      <span class="smart-cta__sub" id="concept-cta-sub" style="color:rgba(255,255,255,.85)">Un dysfonctionnement clé à réviser pour l'oral.</span>
+    </span>
+    <span class="smart-cta__go" data-icon="arrow-right" style="color:rgba(255,255,255,.9)"></span>
   </a>
 
   <!-- SRS : révision du jour (répétition espacée) -->
@@ -643,6 +654,7 @@
 <nav class="bottomnav">
   <a href="index.html" class="active"><span class="bn-ico" data-icon="home"></span> Accueil</a>
   <a href="cours.html"><span class="bn-ico" data-icon="book"></span> Cours</a>
+  <a href="dysfonctionnements.html"><span class="bn-ico" data-icon="stethoscope"></span> Oral</a>
   <a href="revision.html"><span class="bn-ico" data-icon="book-open"></span> Révision</a>
   <a href="examen.html"><span class="bn-ico" data-icon="edit"></span> Examen</a>
   <a href="stats.html"><span class="bn-ico" data-icon="chart"></span> Stats</a>
@@ -651,6 +663,7 @@
 <div id="toast-container"></div>
 
 <script src="content.js"></script>
+<script src="dysfonctionnements.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="supabase-config.js"></script>
 <script src="app.js"></script>
@@ -699,6 +712,18 @@
       srsCount.textContent = 'Tout est à jour ✓';
       srsSub.textContent = 'Reviens demain pour ta révision du jour.';
     }
+
+    // Concept du jour (préparation à l'oral) — n'apparaît que si la banque est chargée
+    const cc = document.getElementById('concept-cta');
+    const cod = State.getConceptOfDay ? State.getConceptOfDay() : null;
+    if (cc && cod) {
+      cc.style.display = '';
+      const cdone = State.isConceptDoneToday();
+      document.getElementById('concept-cta-ico').innerHTML = icon(cdone ? 'check-circle' : 'lightbulb');
+      document.getElementById('concept-cta-title').textContent = cdone ? 'Concept du jour relevé ✓' : ('Concept du jour : ' + cod.nom);
+      document.getElementById('concept-cta-sub').textContent = cdone ? 'Bravo ! Un nouveau concept t\'attend demain.' : 'Réviser ce dysfonctionnement clé pour l\'oral.';
+      cc.href = 'dysfonctionnements.html?fiche=' + encodeURIComponent(cod.id);
+    } else if (cc) { cc.style.display = 'none'; }
 
     // Défi du jour
     const dc = document.getElementById('daily-challenge');

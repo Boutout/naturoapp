@@ -934,6 +934,9 @@ const State = {
     if (typeof d.examDate === 'undefined') d.examDate = null;   // 'YYYY-MM-DD' ou null
     if (!d.inProgress || typeof d.inProgress !== 'object') d.inProgress = {};  // sessions en cours (reprise) par type
     if (!d.usage || typeof d.usage !== 'object') d.usage = { totalSeconds: 0, lastActiveAt: null, sessions: 0, firstSeenAt: d.createdAt || null };
+    // Dysfonctionnements (préparation ORAL) — suivi SÉPARÉ des QCM d'examen
+    if (!d.dysStats || typeof d.dysStats !== 'object') d.dysStats = {};   // qid -> { seen, correct, wrong, lastSeen, streak, box, nextReview }
+    if (!d.conceptsDone || typeof d.conceptsDone !== 'object') d.conceptsDone = {};  // "YYYY-MM-DD" -> ficheId (concept du jour relevé)
     QUESTIONS.forEach(q => {
       const s = d.questionStats[q.id];
       if (!s) {
@@ -969,6 +972,8 @@ const State = {
       dailyStats: {},      // "YYYY-MM-DD" -> { questions, correct }
       inProgress: {},      // sessions en cours, reprenables — { revision|exam|cas: {…snapshot} }
       usage: { totalSeconds: 0, lastActiveAt: null, sessions: 0, firstSeenAt: Date.now() },  // suivi du temps (admin)
+      dysStats: {},        // ORAL : suivi SRS des QCM de dysfonctionnements (séparé de questionStats)
+      conceptsDone: {},    // ORAL : "YYYY-MM-DD" -> ficheId (concept du jour relevé)
     };
     QUESTIONS.forEach(q => {
       this.data.questionStats[q.id] = {
@@ -1300,7 +1305,131 @@ const State = {
   clearProgress(type) {
     if (!this.data || !this.data.inProgress) return;
     if (this.data.inProgress[type]) { delete this.data.inProgress[type]; this.save(); }
-  }
+  },
+
+  // ════════════════════════════════════════════════════════════════════
+  //  DYSFONCTIONNEMENTS — préparation ORALE (banque SÉPARÉE des 80 QCM)
+  //  Réutilise le moteur SRS/XP/série, mais ne touche JAMAIS questionStats.
+  // ════════════════════════════════════════════════════════════════════
+  dysFiches() { return (window.NATURO_DYS && window.NATURO_DYS.fiches) || []; },
+  dysSystemes() { return (window.NATURO_DYS && window.NATURO_DYS.systemes) || []; },
+  // Tous les QCM oraux « aplatis », avec un id stable : `${ficheId}#${index}`
+  dysQuestions() {
+    const out = [];
+    this.dysFiches().forEach(f => (f.qcm || []).forEach((q, i) => {
+      out.push(Object.assign({ id: f.id + '#' + i, ficheId: f.id, systeme: f.systeme, nom: f.nom }, q));
+    }));
+    return out;
+  },
+  dysFiche(id) { return this.dysFiches().find(f => f.id === id) || null; },
+  _dysStat(qid) {
+    if (!this.data.dysStats[qid]) this.data.dysStats[qid] = { seen: 0, correct: 0, wrong: 0, lastSeen: null, streak: 0, box: 0, nextReview: 0 };
+    return this.data.dysStats[qid];
+  },
+
+  // Enregistre une réponse au QCM oral (XP + série partagés, stats séparées)
+  recordDysAnswer(qid, isCorrect) {
+    const s = this._dysStat(qid);
+    s.seen++; s.lastSeen = Date.now();
+    if (isCorrect) { s.correct++; s.streak++; s.box = Math.min(5, (s.box || 0) + 1); }
+    else { s.wrong++; s.streak = 0; s.box = 0; }
+    const DAY = 86400000, intervals = [0, 1, 3, 7, 16, 35];
+    s.nextReview = Date.now() + intervals[s.box] * DAY;
+
+    // Série + daily stats + XP : partagés avec le moteur principal (cohérence du jeu)
+    const today = new Date().toISOString().split('T')[0];
+    if (!this.data.dailyStats[today]) this.data.dailyStats[today] = { questions: 0, correct: 0 };
+    this.data.dailyStats[today].questions++;
+    if (isCorrect) this.data.dailyStats[today].correct++;
+    if (this.data.lastStudyDay !== today) {
+      const yest = new Date(Date.now() - DAY).toISOString().split('T')[0];
+      this.data.dailyStreak = (this.data.lastStudyDay === yest) ? (this.data.dailyStreak || 0) + 1 : 1;
+      this.data.lastStudyDay = today;
+      if (this.data.dailyStreak > (this.data.bestDailyStreak || 0)) this.data.bestDailyStreak = this.data.dailyStreak;
+    }
+    this.data.xp = (this.data.xp || 0) + (isCorrect ? 10 : 2);
+    this.save();
+  },
+
+  // File de révision orale (SRS) — éventuellement filtrée par système
+  getDueDys(n = 12, systeme = null) {
+    const now = Date.now();
+    let qs = this.dysQuestions();
+    if (systeme) qs = qs.filter(q => q.systeme === systeme);
+    const scored = qs.map(q => ({ q, s: this.data.dysStats[q.id] }))
+      .filter(x => !x.s || x.s.seen === 0 || (x.s.nextReview || 0) <= now)
+      .sort((a, b) => {
+        const aw = (!a.s || a.s.seen === 0) ? -1e15 : (a.s.nextReview || 0);
+        const bw = (!b.s || b.s.seen === 0) ? -1e15 : (b.s.nextReview || 0);
+        return aw - bw;
+      }).map(x => x.q);
+    return n ? scored.slice(0, n) : scored;
+  },
+  countDueDys(systeme = null) {
+    const now = Date.now();
+    let qs = this.dysQuestions();
+    if (systeme) qs = qs.filter(q => q.systeme === systeme);
+    return qs.reduce((acc, q) => { const s = this.data.dysStats[q.id]; return acc + ((!s || s.seen === 0 || (s.nextReview || 0) <= now) ? 1 : 0); }, 0);
+  },
+
+  // Maîtrise d'une FICHE : % de réussite sur ses QCM (et si tous vus)
+  dysFicheMastery(ficheId) {
+    const f = this.dysFiche(ficheId); if (!f) return { pct: 0, seen: 0, total: 0, mastered: false };
+    let total = 0, seenQ = 0, ans = 0, correct = 0;
+    (f.qcm || []).forEach((q, i) => {
+      total++;
+      const s = this.data.dysStats[ficheId + '#' + i];
+      if (s && s.seen > 0) { seenQ++; ans += s.seen; correct += s.correct; }
+    });
+    const pct = ans > 0 ? Math.round(correct / ans * 100) : 0;
+    return { pct, seen: seenQ, total, ans, mastered: total > 0 && seenQ === total && pct >= 80 };
+  },
+  // Maîtrise par SYSTÈME (pour barres de progression)
+  dysMasteryBySystem() {
+    const g = {};
+    this.dysSystemes().forEach(sy => g[sy.key] = { key: sy.key, nom: sy.nom, court: sy.court, icon: sy.icon, fiches: 0, mastered: 0 });
+    this.dysFiches().forEach(f => {
+      if (!g[f.systeme]) return;
+      g[f.systeme].fiches++;
+      if (this.dysFicheMastery(f.id).mastered) g[f.systeme].mastered++;
+    });
+    return Object.values(g).filter(s => s.fiches > 0).map(s => Object.assign(s, { pct: s.fiches ? Math.round(s.mastered / s.fiches * 100) : 0 }));
+  },
+  // Préparation orale globale (nb de fiches maîtrisées / total)
+  dysReadiness() {
+    const fiches = this.dysFiches();
+    const mastered = fiches.filter(f => this.dysFicheMastery(f.id).mastered).length;
+    return { mastered, total: fiches.length, pct: fiches.length ? Math.round(mastered / fiches.length * 100) : 0 };
+  },
+
+  // ── Concept du jour ────────────────────────────────────────────────
+  // Choisit une fiche de façon déterministe par date (priorité : non maîtrisées)
+  getConceptOfDay() {
+    const fiches = this.dysFiches();
+    if (!fiches.length) return null;
+    const today = new Date().toISOString().split('T')[0];
+    let seed = 0; for (let i = 0; i < today.length; i++) seed = (seed * 31 + today.charCodeAt(i)) | 0;
+    const rng = mulberry32(seed >>> 0);
+    const notMastered = fiches.filter(f => !this.dysFicheMastery(f.id).mastered);
+    const pool = notMastered.length ? notMastered : fiches;
+    const f = pool[Math.floor(rng() * pool.length)];
+    return f || null;
+  },
+  isConceptDoneToday() {
+    const today = new Date().toISOString().split('T')[0];
+    return !!(this.data.conceptsDone && this.data.conceptsDone[today]);
+  },
+  markConceptDone(ficheId) {
+    const today = new Date().toISOString().split('T')[0];
+    if (!this.data.conceptsDone) this.data.conceptsDone = {};
+    if (this.data.conceptsDone[today]) return 0;   // déjà fait aujourd'hui
+    this.data.conceptsDone[today] = ficheId;
+    const bonus = 15;
+    this.data.xp = (this.data.xp || 0) + bonus;
+    this.save();
+    return bonus;
+  },
+  conceptsStreakCount() { return Object.keys(this.data.conceptsDone || {}).length; }
 };
 
 // ─── BADGES (succès) ─────────────────────────────────────────────
@@ -1340,7 +1469,18 @@ const BADGES = [
   { id: 'fiche-pro',   nom: 'Fiche pro',    desc: 'Terminer 5 séries de fiches', icon: 'layers',
     earned: s => (s.data.fichesSeries || 0) >= 5 },
   { id: 'niveau-10',   nom: 'Niveau 10',    desc: 'Atteindre le niveau 10', icon: 'star',
-    earned: s => s.levelInfo().level >= 10 }
+    earned: s => s.levelInfo().level >= 10 },
+  // ── Préparation ORALE (dysfonctionnements) ──
+  { id: 'concept-1',   nom: 'Concept du jour', desc: 'Relever son 1er concept du jour', icon: 'lightbulb',
+    earned: s => (s.conceptsStreakCount && s.conceptsStreakCount()) >= 1 },
+  { id: 'concept-7',   nom: 'Régulier à l\'oral', desc: '7 concepts du jour relevés', icon: 'lightbulb',
+    earned: s => (s.conceptsStreakCount && s.conceptsStreakCount()) >= 7 },
+  { id: 'oral-debut',  nom: 'Cas clinique',    desc: 'Maîtriser sa 1ʳᵉ fiche d\'oral', icon: 'stethoscope',
+    earned: s => s.dysReadiness && s.dysReadiness().mastered >= 1 },
+  { id: 'oral-systeme',nom: 'Spécialiste',     desc: 'Maîtriser un système entier', icon: 'shield',
+    earned: s => (s.dysMasteryBySystem ? s.dysMasteryBySystem() : []).some(x => x.fiches > 0 && x.mastered === x.fiches) },
+  { id: 'oral-pret',   nom: 'Prêt·e pour l\'oral', desc: 'Maîtriser toutes les fiches dispo', icon: 'award',
+    earned: s => { const r = s.dysReadiness && s.dysReadiness(); return r && r.total > 0 && r.mastered === r.total; } }
 ];
 
 // ─── UTILITAIRES ────────────────────────────────────────────────
@@ -1461,6 +1601,12 @@ const ICON_PATHS = {
   sparkles:    '<path d="m12 3-1.9 5.8a2 2 0 0 1-1.3 1.3L3 12l5.8 1.9a2 2 0 0 1 1.3 1.3L12 21l1.9-5.8a2 2 0 0 1 1.3-1.3L21 12l-5.8-1.9a2 2 0 0 1-1.3-1.3Z"/>',
   flower:      '<circle cx="12" cy="12" r="3"/><path d="M12 16.5A4.5 4.5 0 1 1 7.5 12 4.5 4.5 0 1 1 12 7.5a4.5 4.5 0 1 1 4.5 4.5 4.5 4.5 0 1 1-4.5 4.5"/><path d="M12 7.5V9"/><path d="M7.5 12H9"/><path d="M16.5 12H15"/><path d="M12 16.5V15"/>',
   droplet:     '<path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z"/>',
+  heart:       '<path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.29 1.51 4.04 3 5.5l7 7Z"/>',
+  bone:        '<path d="M17 10c.7-.7 1.69 0 2.5 0a2.5 2.5 0 1 0 0-5 .5.5 0 0 1-.5-.5 2.5 2.5 0 1 0-5 0c0 .81.7 1.8 0 2.5l-7 7c-.7.7-1.69 0-2.5 0a2.5 2.5 0 0 0 0 5c.28 0 .5.22.5.5a2.5 2.5 0 1 0 5 0c0-.81-.7-1.8 0-2.5Z"/>',
+  lungs:       '<path d="M6.081 20c.94 0 1.6-.6 1.913-1.5C8.633 16.094 9 13.5 9 11V3M12 3v8c0 2.5.367 5.094 1.006 7.5.314.9.973 1.5 1.913 1.5"/><path d="M15.5 9.5c1 .5 2 2 2 4 0 1.5-.5 4-2 6.5M8.5 9.5c-1 .5-2 2-2 4 0 1.5.5 4 2 6.5"/>',
+  stomach:     '<path d="M5 8a4 4 0 0 1 8 0c0 1.5-1 2-1 4 0 3 3 4 5 4a3 3 0 0 0 3-3c0-1-.5-2-1.5-2.5"/><path d="M5 8v6a6 6 0 0 0 6 6"/>',
+  shield:      '<path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>',
+  stethoscope: '<path d="M4.8 2.3A.3.3 0 1 0 5 2H4a2 2 0 0 0-2 2v5a6 6 0 0 0 6 6 6 6 0 0 0 6-6V4a2 2 0 0 0-2-2h-1a.2.2 0 1 0 .3.3"/><path d="M8 15v1a6 6 0 0 0 6 6 6 6 0 0 0 6-6v-4"/><circle cx="20" cy="10" r="2"/>',
   sprout:      '<path d="M7 20h10"/><path d="M10 20c5.5-2.5.8-6.4 3-10"/><path d="M9.5 9.4c1.1.8 1.8 2.2 2.3 3.7-2 .4-3.5.4-4.8-.3-1.2-.6-2.3-1.9-3-4.2 2.8-.5 4.4 0 5.5.8z"/><path d="M14.1 6a7 7 0 0 0-1.1 4c1.9-.1 3.3-.6 4.3-1.4 1-1 1.6-2.3 1.7-4.6-2.7.1-4 1-4.9 2z"/>',
   activity:    '<polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>',
   tag:         '<path d="M20.59 13.41 13.42 20.59a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/>',
@@ -3144,7 +3290,8 @@ window.APP = {
   AI_PROVIDERS, getAIProvider, setAIProvider, getAIProviderConfig,
   getAIKey, setAIKey, getAIModel, setAIModel,
   reminderOn, setReminderOn, reminderDays, setReminderDays, inactivityDays,
-  animateNumber, progressRing, setRing, prefersReducedMotion, celebrate
+  animateNumber, progressRing, setRing, prefersReducedMotion, celebrate,
+  DYS: (window.NATURO_DYS || null)
 };
 
 })();
