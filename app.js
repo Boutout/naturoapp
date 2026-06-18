@@ -3127,6 +3127,15 @@ function searchAll(query) {
     const hay = (c.titre + ' ' + (c.resume || '') + ' ' + (c.pointsCles || []).join(' ') + ' ' + (c.definitions || []).map(d => d.terme + ' ' + d.def).join(' ')).toLowerCase();
     if (hay.includes(q)) res.push({ type: 'Cours', icon: 'book', label: c.titre, sub: c.categorie, href: 'cours.html?open=' + c.id });
   });
+  // Dysfonctionnements (oral) — fiches structurées
+  const DYS = window.NATURO_DYS;
+  if (DYS && DYS.fiches) DYS.fiches.forEach(f => {
+    const hay = (f.nom + ' ' + (f.concept || '') + ' ' + (f.anatomie || '') + ' ' + (f.memo || '') + ' ' + (f.nePasConfondre || '')).toLowerCase();
+    if (hay.includes(q)) {
+      const sy = (DYS.systemes.find(s => s.key === f.systeme) || {}).nom || 'Oral';
+      res.push({ type: 'Oral', icon: 'stethoscope', label: f.nom, sub: sy, href: 'dysfonctionnements.html?fiche=' + f.id });
+    }
+  });
   (C.casPratiques || []).forEach(cas => {
     if ((cas.titre + ' ' + cas.profil.nom + ' ' + cas.profil.motif).toLowerCase().includes(q))
       res.push({ type: 'Cas', icon: 'clipboard', label: cas.titre, sub: cas.profil.nom + ', ' + cas.profil.age + ' ans', href: 'cas.html?id=' + cas.id });

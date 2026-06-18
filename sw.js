@@ -1,7 +1,7 @@
 /* NaturoApp — Service Worker (PWA)
    Stratégie : app-shell en cache, fonctionne hors-ligne.
    Pense à incrémenter CACHE_VERSION quand tu modifies les fichiers. */
-const CACHE_VERSION = 'naturoapp-v49';
+const CACHE_VERSION = 'naturoapp-v50';
 const SUPABASE_CDN = 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2';
 const APP_SHELL = [
   'index.html',

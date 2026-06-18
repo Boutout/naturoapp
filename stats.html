@@ -231,6 +231,18 @@
     <div class="card"><div class="card__body" style="display:flex;justify-content:center;"><div id="mastery-radar" style="width:100%;max-width:380px;"></div></div></div>
   </div>
 
+  <!-- PRÉPARATION À L'ORAL (dysfonctionnements) -->
+  <div class="section" id="oral-section" style="display:none;">
+    <div class="section-header" style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;">
+      <h2><span data-icon="stethoscope"></span> Préparation à l'oral</h2>
+      <a href="dysfonctionnements.html" class="btn btn-ghost btn-sm"><span data-icon="arrow-right"></span> Ouvrir</a>
+    </div>
+    <div class="card"><div class="card__body">
+      <div id="oral-readiness" style="font-size:14px;color:var(--c-mid);margin-bottom:16px;"></div>
+      <div id="oral-systems"></div>
+    </div></div>
+  </div>
+
   <!-- PAR THÈME -->
   <div class="section">
     <h2 class="mb-16"><span data-icon="tag"></span> Par thème</h2>
@@ -349,11 +361,12 @@
 <div id="toast-container"></div>
 
 <script src="content.js"></script>
+<script src="dysfonctionnements.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="supabase-config.js"></script>
 <script src="app.js"></script>
 <script>
-const { State, QUESTIONS, getGrade, getScoreColor, animateNumber, currentProfile, Profiles, Cloud, icon } = window.APP;
+const { State, QUESTIONS, getGrade, getScoreColor, animateNumber, currentProfile, Profiles, Cloud, icon, escapeHtml } = window.APP;
 
 const CATEGORIES = [...new Set(QUESTIONS.map(q => q.categorie))];
 const DAY_LABELS = [
@@ -401,6 +414,25 @@ function render() {
 
   // Q grid
   renderQGrid();
+
+  // Préparation à l'oral (si la banque de dysfonctionnements est chargée)
+  renderOral();
+}
+
+function renderOral() {
+  if (!State.dysReadiness || !window.NATURO_DYS) return;
+  const r = State.dysReadiness();
+  if (!r.total) return;
+  const sec = document.getElementById('oral-section');
+  sec.style.display = '';
+  document.getElementById('oral-readiness').innerHTML =
+    `<b style="color:var(--c-green);font-size:22px;font-family:var(--font-display);">${r.mastered}/${r.total}</b> fiches maîtrisées · <b>${r.pct}%</b> prêt · <b>${State.countDueDys()}</b> à réviser`;
+  document.getElementById('oral-systems').innerHTML = State.dysMasteryBySystem().map(s => `
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:9px;">
+      <span style="flex:0 0 140px;font-size:13px;">${escapeHtml(s.nom)}</span>
+      <span style="flex:1;height:8px;border-radius:99px;background:var(--c-border);overflow:hidden;display:block;"><span style="display:block;height:100%;width:${s.pct}%;background:linear-gradient(90deg,var(--c-green),var(--c-green-light));border-radius:99px;"></span></span>
+      <span style="flex:0 0 46px;text-align:right;font-size:12px;color:var(--c-mid);">${s.mastered}/${s.fiches}</span>
+    </div>`).join('');
 }
 
 function renderMasteryRadar() {

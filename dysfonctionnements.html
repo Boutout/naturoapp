@@ -127,6 +127,23 @@
     .quiz__result h2 { font-size:24px; margin-bottom:6px; }
     .quiz__score { font-size:46px; font-weight:700; font-family:var(--font-display); color:var(--c-green); }
     .empty { text-align:center; color:var(--c-mid); padding:40px 20px; font-size:14px; }
+
+    /* Recherche */
+    .dys-search { position:relative; margin:4px 0 20px; }
+    .dys-search .app-icon { position:absolute; left:14px; top:50%; transform:translateY(-50%); width:18px; height:18px; color:var(--c-mid); }
+    .dys-search input { width:100%; padding:12px 16px 12px 42px; height:46px; font-size:15px; border:1px solid var(--c-border); border-radius:var(--r-md); background:var(--c-surface); color:var(--c-text); }
+    .dys-search input:focus { outline:none; border-color:var(--c-green); box-shadow:0 0 0 3px var(--c-green-pale); }
+
+    /* Oral blanc — interrogation */
+    .interro-intro { background:var(--c-green-pale); color:var(--c-green-deep); border-radius:var(--r-md); padding:14px 16px; font-size:14px; margin-bottom:18px; }
+    .interro-block { border:1px solid var(--c-border); border-radius:var(--r-md); padding:14px 16px; margin-bottom:14px; background:var(--c-surface); }
+    .interro-q { font-weight:700; font-size:15.5px; display:flex; align-items:center; gap:8px; }
+    .interro-q .num { flex-shrink:0; width:24px; height:24px; border-radius:50%; background:var(--c-green); color:#fff; display:inline-flex; align-items:center; justify-content:center; font-size:13px; }
+    .interro-reveal { margin-top:10px; }
+    .interro-content { margin-top:10px; display:none; }
+    .interro-content.show { display:block; animation:fadeIn .2s ease; }
+    @keyframes fadeIn { from { opacity:0; transform:translateY(-4px); } to { opacity:1; transform:none; } }
+    @media (prefers-reduced-motion: reduce) { .interro-content.show { animation:none; } }
   </style>
 </head>
 <body>
@@ -160,6 +177,7 @@
       <p>Les dysfonctionnements du sujet d'examen <b>oral</b>, appris selon la grille de l'épreuve&nbsp;: anatomie → causes → 3&nbsp;piliers → conseils → compléments. Une banque de QCM <b>distincte</b> de l'examen blanc.</p>
       <div class="dys-hero__actions">
         <button class="btn btn--solid" id="btn-srs"><span data-icon="zap"></span> Réviser (intelligent)</button>
+        <button class="btn" id="btn-oralblanc"><span data-icon="shuffle"></span> Oral blanc 🎲</button>
         <button class="btn" id="btn-concept"><span data-icon="lightbulb"></span> Concept du jour</button>
       </div>
     </div>
@@ -167,6 +185,11 @@
   </div>
 
   <div id="concept-host"></div>
+
+  <div class="dys-search">
+    <span data-icon="search"></span>
+    <input id="dys-search" type="search" placeholder="Rechercher un dysfonctionnement (ex. sinusite, goutte…)" autocomplete="off">
+  </div>
 
   <div class="sec-title"><span data-icon="layers"></span> Par système</div>
   <div class="sys-grid" id="sys-grid"></div>
@@ -195,6 +218,16 @@
   <div class="reader__body"><div class="quiz" id="quiz-host"></div></div>
 </div>
 
+<!-- Oral blanc : interrogation active (5 questions de l'oral, à révéler) -->
+<div class="reader" id="interro">
+  <div class="reader__bar">
+    <button class="btn btn-ghost btn-icon" id="interro-close" aria-label="Fermer"><span data-icon="x"></span></button>
+    <h2 id="interro-title">Oral blanc</h2>
+  </div>
+  <div class="reader__body" id="interro-body"></div>
+  <div class="reader__footer" id="interro-footer"></div>
+</div>
+
 <nav class="bottomnav">
   <a href="index.html"><span class="bn-ico" data-icon="home"></span> Accueil</a>
   <a href="cours.html"><span class="bn-ico" data-icon="book"></span> Cours</a>
@@ -211,9 +244,13 @@
 <script src="supabase-config.js"></script>
 <script src="app.js"></script>
 <script>
-const { State, icon, hydrateIcons, escapeHtml, isMultiAnswer, answerKey, isSelectionCorrect, progressRing, setRing, animateNumber, celebrate, sfx } = window.APP;
+const { State, icon, hydrateIcons, escapeHtml, isMultiAnswer, answerKey, isSelectionCorrect, progressRing, setRing, animateNumber, celebrate, sfx, tts } = window.APP;
 
 let currentSystem = null;   // filtre système actif (null = tout)
+let currentQuery = '';      // recherche texte (filtre toutes fiches)
+
+// Normalisation sans accents/casse pour la recherche
+const norm = s => (s || '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
 
 // Mini-markdown : échappe puis **gras** et *italique*
 function md(s) {
@@ -283,11 +320,20 @@ function renderSystems() {
 function renderFiches() {
   const grid = document.getElementById('fiche-grid');
   let fiches = State.dysFiches();
-  if (currentSystem) fiches = fiches.filter(f => f.systeme === currentSystem);
-  const sysName = currentSystem ? (State.dysSystemes().find(s => s.key === currentSystem) || {}).nom : null;
-  document.getElementById('fiches-title').innerHTML = `<span data-icon="list"></span> ${sysName ? escapeHtml(sysName) : 'Toutes les fiches'} (${fiches.length})`;
+  const q = norm(currentQuery.trim());
+  let titre;
+  if (q) {                                   // recherche : ignore le filtre système, cherche partout
+    fiches = fiches.filter(f => norm(f.nom + ' ' + f.concept).includes(q));
+    titre = `Résultats pour « ${escapeHtml(currentQuery.trim())} »`;
+  } else if (currentSystem) {
+    fiches = fiches.filter(f => f.systeme === currentSystem);
+    titre = escapeHtml((State.dysSystemes().find(s => s.key === currentSystem) || {}).nom || '');
+  } else {
+    titre = 'Toutes les fiches';
+  }
+  document.getElementById('fiches-title').innerHTML = `<span data-icon="list"></span> ${titre} (${fiches.length})`;
   hydrateIcons(document.getElementById('fiches-title'));
-  if (!fiches.length) { grid.innerHTML = '<div class="empty">Aucune fiche dans ce système pour le moment.</div>'; return; }
+  if (!fiches.length) { grid.innerHTML = '<div class="empty">Aucune fiche ne correspond. Essaie un autre mot ou choisis un système.</div>'; return; }
   grid.innerHTML = fiches.map(f => {
     const m = State.dysFicheMastery(f.id);
     return `
@@ -342,13 +388,17 @@ function openFiche(id, fromConcept) {
   `;
   hydrateIcons(body);
 
-  // Footer : s'entraîner + (si concept du jour non relevé) valider
+  // Footer : s'entraîner + écouter + (si concept du jour non relevé) valider
   const footer = document.getElementById('reader-footer');
   const isToday = State.getConceptOfDay() && State.getConceptOfDay().id === f.id;
+  const canSpeak = tts && tts.supported && tts.supported();
   footer.innerHTML = `<button class="btn btn-primary" id="fiche-quiz"><span data-icon="zap"></span> S'entraîner sur cette fiche</button>` +
+    (canSpeak ? `<button class="btn btn-ghost btn-icon" id="fiche-tts" title="Écouter la fiche" aria-label="Écouter"><span data-icon="volume"></span></button>` : '') +
     ((isToday && !State.isConceptDoneToday()) ? `<button class="btn" id="fiche-valider"><span data-icon="check"></span> Valider le concept (+15 XP)</button>` : '');
   hydrateIcons(footer);
   document.getElementById('fiche-quiz').addEventListener('click', () => startQuiz(ficheQuestions(f.id), f.nom, f.id));
+  const ttsBtn = document.getElementById('fiche-tts');
+  if (ttsBtn) ttsBtn.addEventListener('click', () => { if (tts.speaking && tts.speaking()) { tts.cancel(); } else { tts.speak(ficheToSpeech(f)); } });
   const vbtn = document.getElementById('fiche-valider');
   if (vbtn) vbtn.addEventListener('click', () => { validateConcept(f.id); openFiche(f.id); });
 
@@ -356,7 +406,77 @@ function openFiche(id, fromConcept) {
   document.getElementById('reader-body').scrollTop = 0;
 }
 document.getElementById('reader-close').addEventListener('click', () => {
+  if (tts && tts.cancel) tts.cancel();
   document.getElementById('reader').classList.remove('open');
+  refreshAll();
+});
+
+// Texte lisible (TTS) d'une fiche : retire le markdown/emoji, structure par section
+function plain(s) { return String(s || '').replace(/\*\*/g, '').replace(/[*_`]/g, ''); }
+function ficheToSpeech(f) {
+  const out = [f.nom + '.', 'Concept clé. ' + plain(f.concept),
+    'Anatomie. ' + plain(f.anatomie),
+    'Causes. ' + (f.etiologie || []).map(plain).join('. '),
+    'Symptômes. ' + (f.symptomes || []).map(plain).join('. '),
+    'Les trois piliers. Alimentation. ' + plain(f.piliers.alimentation) + ' Mouvement. ' + plain(f.piliers.mouvement) + ' Émotionnel. ' + plain(f.piliers.emotionnel)];
+  if (f.autres && f.autres.length) out.push('Autres conseils. ' + f.autres.map(plain).join('. '));
+  const c = f.complements || {};
+  const comp = [['Plantes', c.plantes], ['Huiles essentielles', c.he], ['Gemmothérapie', c.gemmo], ['Micronutrition', c.micro]]
+    .filter(x => x[1] && x[1].length).map(x => x[0] + '. ' + x[1].map(plain).join('. ')).join(' ');
+  if (comp) out.push('Compléments. ' + comp);
+  out.push('À retenir. ' + plain(f.memo));
+  return out;
+}
+
+// ── Oral blanc : interrogation active (mémoire de rappel) ─────────
+const INTERRO_Q = [
+  { n: 1, prompt: "Décris l'<b>anatomie / la physiologie</b> et définis le dysfonctionnement.", get: f => `<p>${md(f.anatomie)}</p>` },
+  { n: 2, prompt: "Quelles sont les <b>causes</b> (étiologie) et les <b>symptômes</b> ?", get: f => mdList(f.etiologie) + mdList(f.symptomes) },
+  { n: 3, prompt: "Donne les conseils sur les <b>3 piliers</b> (alimentation · mouvement · émotionnel).", get: f => `<div class="pilier"><b>🍽️ Alimentation —</b> ${md(f.piliers.alimentation)}</div><div class="pilier"><b>🏃 Mouvement —</b> ${md(f.piliers.mouvement)}</div><div class="pilier"><b>🧠 Émotionnel —</b> ${md(f.piliers.emotionnel)}</div>` },
+  { n: 4, prompt: "Quels <b>autres conseils</b> naturopathiques donnes-tu ?", get: f => (f.autres && f.autres.length ? mdList(f.autres) : '<p><em>Rien de spécifique dans le cours.</em></p>') + (f.nePasConfondre ? `<div class="callout callout--warn" style="margin-top:8px"><div class="callout__h">${icon('alert-triangle')} Ne pas confondre</div>${md(f.nePasConfondre)}</div>` : '') },
+  { n: 5, prompt: "Quels <b>compléments</b> conseilles-tu (plantes, HE, gemmo, micronutrition) ?", get: f => { const c = f.complements || {}; const box = (h, a) => (a && a.length) ? `<div class="comp-box"><div class="comp-box__h">${h}</div>${mdList(a)}</div>` : ''; return `<div class="complements-grid">${box('Plantes', c.plantes)}${box('Huiles essentielles', c.he)}${box('Gemmothérapie', c.gemmo)}${box('Micronutrition', c.micro)}</div>`; } },
+];
+let interroFiche = null;
+function startOralBlanc() {
+  // tire une fiche au hasard, en priorité non maîtrisée
+  const all = State.dysFiches();
+  const pool = all.filter(f => !State.dysFicheMastery(f.id).mastered);
+  const list = pool.length ? pool : all;
+  interroFiche = list[Math.floor(Math.random() * list.length)];
+  openInterro(interroFiche);
+}
+function openInterro(f) {
+  if (!f) return;
+  interroFiche = f;
+  document.getElementById('interro-title').textContent = 'Oral blanc — ' + f.nom;
+  const sys = (State.dysSystemes().find(s => s.key === f.systeme) || {}).nom || '';
+  const body = document.getElementById('interro-body');
+  body.innerHTML = `<div class="interro-intro">${icon('stethoscope')} Énoncé : un client présente <b>${escapeHtml(f.nom)}</b> <span style="opacity:.7">(${escapeHtml(sys)})</span>.<br>Réponds <b>à voix haute</b> à chaque question, puis révèle la correction.</div>` +
+    INTERRO_Q.map(b => `
+      <div class="interro-block">
+        <div class="interro-q"><span class="num">${b.n}</span><span>${b.prompt}</span></div>
+        <button class="btn btn-ghost btn-sm interro-reveal" data-n="${b.n}"><span data-icon="eye"></span> Révéler</button>
+        <div class="interro-content" data-c="${b.n}">${b.get(f)}</div>
+      </div>`).join('');
+  hydrateIcons(body);
+  body.querySelectorAll('.interro-reveal').forEach(btn => btn.addEventListener('click', () => {
+    const n = btn.getAttribute('data-n');
+    const c = body.querySelector(`[data-c="${n}"]`);
+    c.classList.toggle('show');
+    btn.innerHTML = c.classList.contains('show') ? `${icon('eye')} Masquer` : `${icon('eye')} Révéler`;
+    hydrateIcons(btn);
+  }));
+  const footer = document.getElementById('interro-footer');
+  footer.innerHTML = `<button class="btn btn-primary" id="interro-quiz"><span data-icon="zap"></span> Tester en QCM</button>` +
+    `<button class="btn btn-ghost" id="interro-next"><span data-icon="shuffle"></span> Autre tirage</button>`;
+  hydrateIcons(footer);
+  document.getElementById('interro-quiz').addEventListener('click', () => startQuiz(ficheQuestions(f.id), f.nom, f.id));
+  document.getElementById('interro-next').addEventListener('click', startOralBlanc);
+  document.getElementById('interro').classList.add('open');
+  document.getElementById('interro-body').scrollTop = 0;
+}
+document.getElementById('interro-close').addEventListener('click', () => {
+  document.getElementById('interro').classList.remove('open');
   refreshAll();
 });
 
@@ -504,8 +624,18 @@ function showBadges() {
 function refreshAll() { renderHero(); renderConcept(); renderSystems(); renderFiches(); }
 
 document.getElementById('btn-srs').addEventListener('click', startSrs);
+document.getElementById('btn-oralblanc').addEventListener('click', startOralBlanc);
 document.getElementById('btn-concept').addEventListener('click', () => {
   const f = State.getConceptOfDay(); if (f) openFiche(f.id, true);
+});
+
+// Recherche : filtre les fiches sur tous les systèmes
+let searchTimer = null;
+document.getElementById('dys-search').addEventListener('input', e => {
+  currentQuery = e.target.value;
+  if (currentQuery.trim()) currentSystem = null;   // une recherche annule le filtre système
+  clearTimeout(searchTimer);
+  searchTimer = setTimeout(() => { renderSystems(); renderFiches(); }, 120);
 });
 
 window.APP.onReady(() => {
@@ -516,6 +646,7 @@ window.APP.onReady(() => {
   const fId = params.get('fiche');
   if (fId) openFiche(fId, true);
   if (params.get('mode') === 'srs') startSrs();
+  if (params.get('mode') === 'oral') startOralBlanc();
 });
 </script>
 </body>
