@@ -174,7 +174,7 @@
   <div class="dys-hero">
     <div class="dys-hero__content">
       <h1>Dysfonctionnements — Oral</h1>
-      <p>Les dysfonctionnements du sujet d'examen <b>oral</b>, appris selon la grille de l'épreuve&nbsp;: anatomie → causes → 3&nbsp;piliers → conseils → compléments. Une banque de QCM <b>distincte</b> de l'examen blanc.</p>
+      <p>Tout le sujet d'examen <b>oral</b>&nbsp;: les <b>dysfonctionnements</b> (grille anatomie → causes → 3&nbsp;piliers → conseils → compléments) et les <b>tempéraments</b> (question&nbsp;1&nbsp;: déduire le profil du client). Une banque de QCM <b>distincte</b> de l'examen blanc.</p>
       <div class="dys-hero__actions">
         <button class="btn btn--solid" id="btn-srs"><span data-icon="zap"></span> Réviser (intelligent)</button>
         <button class="btn" id="btn-oralblanc"><span data-icon="shuffle"></span> Oral blanc 🎲</button>
@@ -357,23 +357,28 @@ function openFiche(id, fromConcept) {
   const body = document.getElementById('reader-body');
   const comp = f.complements || {};
   const compBox = (h, arr) => (arr && arr.length) ? `<div class="comp-box"><div class="comp-box__h">${h}</div>${mdList(arr)}</div>` : '';
+  // Libellés adaptés : un tempérament est un PORTRAIT, pas un dysfonctionnement
+  const T = f.systeme === 'temperament';
+  const L = T
+    ? { def: 'Portrait & morphologie', etio: 'Prédispositions / points faibles', sympt: 'Caractère & signes', piliers: 'Hygiène de vie adaptée', autres: 'Repères (groupe, correspondances)', comp: 'Plantes & soutiens' }
+    : { def: 'Anatomie / Définition', etio: 'Étiologie (causes)', sympt: 'Symptômes', piliers: 'Les 3 piliers', autres: 'Autres conseils & démarches', comp: 'Compléments' };
   body.innerHTML = `
     <div class="callout callout--memo"><div class="callout__h">${icon('lightbulb')} Concept clé</div>${md(f.concept)}</div>
 
-    <div class="fiche-block"><div class="fiche-block__h">${icon('eye')} 1 · Anatomie / Définition</div><p>${md(f.anatomie)}</p></div>
+    <div class="fiche-block"><div class="fiche-block__h">${icon(T ? 'user' : 'eye')} 1 · ${L.def}</div><p>${md(f.anatomie)}</p></div>
 
-    <div class="fiche-block"><div class="fiche-block__h">${icon('alert-triangle')} 2 · Étiologie (causes)</div>${mdList(f.etiologie)}</div>
-    <div class="fiche-block"><div class="fiche-block__h">${icon('activity')} Symptômes</div>${mdList(f.symptomes)}</div>
+    <div class="fiche-block"><div class="fiche-block__h">${icon(T ? 'activity' : 'alert-triangle')} ${T ? L.sympt : '2 · ' + L.etio}</div>${mdList(T ? f.symptomes : f.etiologie)}</div>
+    <div class="fiche-block"><div class="fiche-block__h">${icon(T ? 'alert-triangle' : 'activity')} ${T ? '2 · ' + L.etio : L.sympt}</div>${mdList(T ? f.etiologie : f.symptomes)}</div>
 
-    <div class="fiche-block"><div class="fiche-block__h">${icon('layers')} 3 · Les 3 piliers</div>
+    <div class="fiche-block"><div class="fiche-block__h">${icon('layers')} 3 · ${L.piliers}</div>
       <div class="pilier"><b>🍽️ Alimentation —</b> ${md(f.piliers.alimentation)}</div>
       <div class="pilier"><b>🏃 Mouvement / respiration —</b> ${md(f.piliers.mouvement)}</div>
       <div class="pilier"><b>🧠 Émotionnel —</b> ${md(f.piliers.emotionnel)}</div>
     </div>
 
-    ${(f.autres && f.autres.length) ? `<div class="fiche-block"><div class="fiche-block__h">${icon('list')} 4 · Autres conseils & démarches</div>${mdList(f.autres)}</div>` : ''}
+    ${(f.autres && f.autres.length) ? `<div class="fiche-block"><div class="fiche-block__h">${icon('list')} 4 · ${L.autres}</div>${mdList(f.autres)}</div>` : ''}
 
-    <div class="fiche-block"><div class="fiche-block__h">${icon('flower')} 5 · Compléments</div>
+    <div class="fiche-block"><div class="fiche-block__h">${icon('flower')} 5 · ${L.comp}</div>
       <div class="complements-grid">
         ${compBox('Plantes', comp.plantes)}
         ${compBox('Huiles essentielles', comp.he)}
@@ -438,8 +443,8 @@ const INTERRO_Q = [
 ];
 let interroFiche = null;
 function startOralBlanc() {
-  // tire une fiche au hasard, en priorité non maîtrisée
-  const all = State.dysFiches();
+  // tire un DYSFONCTIONNEMENT au hasard (pas un tempérament), en priorité non maîtrisé
+  const all = State.dysFiches().filter(f => f.systeme !== 'temperament');
   const pool = all.filter(f => !State.dysFicheMastery(f.id).mastered);
   const list = pool.length ? pool : all;
   interroFiche = list[Math.floor(Math.random() * list.length)];
