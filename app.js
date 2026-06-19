@@ -1332,14 +1332,16 @@ const State = {
     const lvl = (this.levelInfo && this.levelInfo().level) || 1;
     return lvl <= 2 ? 1 : (lvl <= 5 ? 2 : 3);
   },
-  // QCM d'entraînement pour une fiche, adaptés au niveau (mélangés, plafonnés)
-  dysFicheQuiz(ficheId, max = 8) {
+  // QCM d'entraînement pour une fiche : jusqu'à `max` questions distinctes,
+  // priorité aux niveaux débloqués (selon le niveau du joueur), puis on complète
+  // avec les plus difficiles pour atteindre le quota → séances variées et fournies.
+  dysFicheQuiz(ficheId, max = 15) {
     const all = this.dysQuestions().filter(q => q.ficheId === ficheId);
     const maxN = this.dysMaxNiveau();
-    let pool = all.filter(q => (q.niveau || 1) <= maxN);
-    if (pool.length < 3) pool = all;            // garder un minimum jouable
-    pool = shuffle(pool);
-    return max ? pool.slice(0, max) : pool;
+    const within = shuffle(all.filter(q => (q.niveau || 1) <= maxN));
+    const beyond = shuffle(all.filter(q => (q.niveau || 1) > maxN));
+    const ordered = within.concat(beyond);
+    return max ? ordered.slice(0, max) : ordered;
   },
   dysFiche(id) { return this.dysFiches().find(f => f.id === id) || null; },
   _dysStat(qid) {
