@@ -244,7 +244,21 @@
 <script src="supabase-config.js"></script>
 <script src="app.js"></script>
 <script>
-const { State, icon, hydrateIcons, escapeHtml, isMultiAnswer, answerKey, isSelectionCorrect, progressRing, setRing, animateNumber, celebrate, sfx, tts, openOverlay, closeOverlay } = window.APP;
+const { State, icon, hydrateIcons, escapeHtml, isMultiAnswer, answerKey, isSelectionCorrect, progressRing, setRing, animateNumber, celebrate, sfx, tts, openOverlay, closeOverlay, shuffle } = window.APP;
+
+// Mélange les propositions d'une question et remappe la/les bonne(s) réponse(s)
+// → la bonne réponse n'est jamais à une position prévisible (souvent la 1re).
+function makeShuffledView(q) {
+  const order = q.options.map((_, i) => i);
+  shuffle(order);
+  const options = order.map(i => q.options[i]);
+  const remap = {}; order.forEach((origIdx, newIdx) => { remap[origIdx] = newIdx; });
+  const keyOrig = Array.isArray(q.bonnes) ? q.bonnes : [q.bonne];
+  const keyNew = keyOrig.map(i => remap[i]);
+  const v = Object.assign({}, q, { options });
+  if (Array.isArray(q.bonnes)) v.bonnes = keyNew; else v.bonne = keyNew[0];
+  return v;
+}
 
 let currentSystem = null;   // filtre système actif (null = tout)
 let currentQuery = '';      // recherche texte (filtre toutes fiches)
@@ -518,7 +532,7 @@ function closeQuiz() {
 
 function renderQuizQ() {
   const host = document.getElementById('quiz-host');
-  const q = quiz.qs[quiz.i];
+  const q = quiz.view = makeShuffledView(quiz.qs[quiz.i]);   // options mélangées
   const multi = isMultiAnswer(q);
   const total = quiz.qs.length;
   quiz.answered = false; quiz.selected = [];
@@ -560,7 +574,7 @@ function onPick(idx, multi) {
 function revealAnswer(multi) {
   if (quiz.answered) return;
   quiz.answered = true;
-  const q = quiz.qs[quiz.i];
+  const q = quiz.view;                 // même vue mélangée que l'affichage
   const key = answerKey(q);
   const ok = isSelectionCorrect(q, quiz.selected);
   if (ok) quiz.correct++;
